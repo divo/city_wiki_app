@@ -1,70 +1,84 @@
-import React from 'react';
-import { View, Text, StyleSheet, Dimensions, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 import MapView from 'react-native-maps';
+import { CategoryTab } from './components/CategoryTab';
+import { SearchBar } from './components/SearchBar';
+import { BottomNav } from './components/BottomNav';
 
-const { width, height } = Dimensions.get('window');
-
-const categories = [
-  'All', 'See', 'Eat', 'Sleep', 'Shop', 'Drink', 'Play'
-];
+const categories = ['All', 'See', 'Eat', 'Sleep', 'Shop', 'Drink', 'Play'];
 
 const MapScreen: React.FC = () => {
+  const [activeCategory, setActiveCategory] = useState('All');
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      />
-      <SafeAreaView style={styles.topBar}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll}>
-          {categories.map((category, index) => (
-            <Text key={index} style={styles.categoryButton}>{category}</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>San Francisco</Text>
+        
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          style={styles.categoriesScroll}
+          contentContainerStyle={styles.categoriesContent}
+        >
+          {categories.map((category) => (
+            <CategoryTab
+              key={category}
+              label={category}
+              isActive={activeCategory === category}
+              onPress={() => setActiveCategory(category)}
+            />
           ))}
         </ScrollView>
-      </SafeAreaView>
-    </View>
+
+        <SearchBar />
+      </View>
+
+      <View style={styles.mapContainer}>
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: 37.7749,
+            longitude: -122.4194,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      </View>
+
+      <BottomNav />
+    </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
+  },
+  header: {
+    paddingTop: 4,
+    paddingBottom: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333333',
+    textAlign: 'center',
+    marginVertical: 4,
+  },
+  categoriesScroll: {
+    marginVertical: 4,
+  },
+  categoriesContent: {
+    paddingHorizontal: 12,
+  },
+  mapContainer: {
+    flex: 1,
   },
   map: {
-    width: '100%',
-    height: '100%',
-  },
-  topBar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    paddingBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  categoryScroll: {
-    paddingHorizontal: 10,
-  },
-  categoryButton: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    marginHorizontal: 5,
-    marginVertical: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 20,
-    fontSize: 14,
-    color: '#333',
+    flex: 1,
   },
 });
 

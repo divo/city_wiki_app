@@ -1,0 +1,62 @@
+App Name: City Explorer (Modern & Editorial Style)
+
+Overall Style & Branding
+	•	Modern “magazine” aesthetic with bold headlines and large, high-quality images.
+	•	Light or off-white background, limited use of a deep accent color (e.g., navy or burgundy).
+	•	Minimal yet sophisticated UI elements, plenty of whitespace.
+
+1. Home Screen (Editorial Feed)
+	•	Full-Width Hero Section:
+	•	Top of the screen displays a city skyline hero image.
+	•	Overlay text with “Explore [City Name]” and a short tagline (e.g., “Your curated guide to must-see spots and hidden gems”).
+	•	A prominent call-to-action button labeled “Open Map” or “Plan Your Day” sits near the hero text.
+	•	Featured Articles & Lists (scrollable feed):
+	•	Each item appears as a “card” with a large image, bold title (e.g., “Top 10 Museums,” “Local Cuisine Guide”), and a short 1–2 line description.
+	•	Tapping a card opens a dedicated detail screen with an editorial layout (large hero image + text).
+	•	Generous spacing between cards, creating a clean, magazine-like feel.
+
+2. Global Navigation
+	•	Bottom Navigation Bar (no floating button):
+	•	Home icon: Returns to the editorial feed.
+	•	Map icon: Opens a dedicated city map view showing points of interest.
+	•	Top 10 icon or label: Takes users to a curated “Top 10” lists overview page (further sub-lists or categories).
+	•	Favorites icon (optional): Displays a list of bookmarked attractions.
+	•	Consistent placement at the bottom of the screen for quick, intuitive switching between major sections.
+
+3. Map Screen
+	•	Interactive Map:
+	•	Shows the user’s current location (if permissions granted).
+	•	Pins for each point of interest (restaurants, museums, etc.).
+	•	POI Detail Modal:
+	•	When a pin is tapped, a card-style overlay appears with the location’s name, image, brief description, hours, and a link to “View Full Details.”
+	•	A “Directions” or “Open in Maps” button may link to Google Maps or similar.
+
+4. Detail & Article Screens
+	•	Header Image:
+	•	Full-width hero photo at the top for each POI or article (e.g., “Top 10 Museums,” “Day Trip to the Old Town,” etc.).
+	•	Title & Subtitle:
+	•	Bold, modern font for the title, smaller font for any subtitles or categories.
+	•	Body Content:
+	•	Paragraphs of text describing the attraction or guide.
+	•	Images embedded between paragraphs or in a mini-gallery for a rich editorial look.
+	•	Essential Info Section:
+	•	For POIs, include location, hours, price, contact info.
+	•	Possibly a small “Bookmark” icon to save the place to Favorites.
+
+5. Favorites (Bookmark) List
+	•	Simple Listing:
+	•	Each favorite POI or article displayed as a small card (title + thumbnail).
+	•	Tapping a card leads to the detail or article screen again.
+
+6. User Flow Summary
+	1.	Open App → see an editorial home with a large hero image and a scrollable list of featured articles or top 10 lists.
+	2.	Bottom Navigation lets users quickly switch to the Map or directly see the Top 10 categories.
+	3.	Map displays pins; tapping a pin shows a quick info overlay, linking to a detail page.
+	4.	Details & Articles have large hero images, bold headings, and enough text to feel like a mini-travel magazine.
+	5.	Users can bookmark POIs/articles and access them later in the Favorites section.
+
+Key Points
+	•	Modern editorial design, focusing on immersive images and well-structured text.
+	•	Bottom nav bar for easy navigation (no floating action button).
+	•	Emphasis on large hero images, bold typography, and curated editorial cards for the homepage feed.
+	•	Simple, clean layout with plenty of whitespace, allowing the imagery and headlines to stand out.

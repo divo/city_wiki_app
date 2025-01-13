@@ -1,64 +1,117 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import MapView from 'react-native-maps';
-import { BlurView } from '@react-native-community/blur';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { BottomNav } from './components/BottomNav';
+import { HighlightCard } from './components/HighlightCard';
+import { VenueHours } from './components/VenueHours';
 
-const { width } = Dimensions.get('window');
+interface ExploreScreenProps {
+  currentScreen: 'map' | 'explore';
+  onNavigate: (screen: 'map' | 'explore') => void;
+}
 
-const categories = [
-  { id: 1, icon: 'silverware-fork-knife', label: 'Restaurants' },
-  { id: 2, icon: 'bed', label: 'Hotels' },
-  { id: 3, icon: 'camera', label: 'Attractions' },
-  { id: 4, icon: 'shopping', label: 'Shopping' },
-  { id: 5, icon: 'party-popper', label: 'Nightlife' },
-  { id: 6, icon: 'train-car', label: 'Transport' },
-];
-
-const ExploreScreen: React.FC = () => {
+const ExploreScreen: React.FC<ExploreScreenProps> = ({ currentScreen, onNavigate }) => {
   return (
     <View style={styles.container}>
-      {/* MapView */}
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: 37.7749,
-          longitude: -122.4194,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-      />
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <SafeAreaView>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>San Francisco</Text>
+            <TouchableOpacity>
+              <Icon name="bookmark-outline" size={24} color="#333333" />
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Icon name="magnify" size={24} color="#666" style={styles.searchIcon} />
-          <TextInput
-            placeholder="Search in San Francisco"
-            placeholderTextColor="#666"
-            style={styles.searchInput}
+        {/* Hero Image */}
+        <Image
+          source={{ uri: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Galileo%20design-2-IlqctxXf8OlrEykrPJXZCOPhudoBGE.png" }}
+          style={styles.heroImage}
+          resizeMode="cover"
+        />
+        
+        {/* Description */}
+        <Text style={styles.description}>
+          The Golden Gate Bridge, the cable cars, Alcatraz... San Francisco is one of the most beautiful and unique cities in the world. It's also one of the most expensive. But there are plenty of things to do for free or on a budget.
+        </Text>
+
+        {/* Highlights Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Highlights</Text>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.highlightsContainer}
+          >
+            <HighlightCard
+              title="Palace of Fine Arts"
+              imageUrl="/placeholder.svg?height=100&width=140"
+            />
+            <HighlightCard
+              title="Alcatraz Island"
+              imageUrl="/placeholder.svg?height=100&width=140"
+            />
+            <HighlightCard
+              title="The Golden Gate Bridge"
+              imageUrl="/placeholder.svg?height=100&width=140"
+            />
+          </ScrollView>
+        </View>
+
+        {/* Hours Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Hours</Text>
+          <VenueHours
+            name="California Academy of Sciences"
+            day="Sunday"
+            status="Open now · Closes 9PM"
+            imageUrl="/placeholder.svg?height=56&width=56"
           />
-          <TouchableOpacity>
-            <Icon name="filter-variant" size={24} color="#666" />
+          <VenueHours
+            name="Exploratorium"
+            day="Tomorrow"
+            status="Opens at 10AM"
+            imageUrl="/placeholder.svg?height=56&width=56"
+          />
+          <VenueHours
+            name="San Francisco Zoo"
+            day="Sunday"
+            status="Open now · Closes 8PM"
+            imageUrl="/placeholder.svg?height=56&width=56"
+          />
+        </View>
+
+        {/* Location Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Location</Text>
+          <View style={styles.mapContainer}>
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: 37.7749,
+                longitude: -122.4194,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
+              scrollEnabled={false}
+              zoomEnabled={false}
+            />
+          </View>
+          <TouchableOpacity style={styles.directionsButton}>
+            <Icon name="navigate-outline" size={20} color="white" style={styles.directionsIcon} />
+            <Text style={styles.directionsText}>Get Directions</Text>
           </TouchableOpacity>
         </View>
-      </View>
 
-      {/* Bottom Sheet */}
-      <View style={styles.bottomSheet}>
-        <View style={styles.bottomSheetHandle} />
-        <Text style={styles.bottomSheetTitle}>Explore San Francisco</Text>
-        <View style={styles.categoriesGrid}>
-          {categories.map((category) => (
-            <TouchableOpacity key={category.id} style={styles.categoryButton}>
-              <View style={styles.categoryIconContainer}>
-                <Icon name={category.icon} size={24} color="#666" />
-              </View>
-              <Text style={styles.categoryLabel}>{category.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
+        {/* Bottom Spacing */}
+        <View style={styles.bottomSpacing} />
+      </ScrollView>
+
+      {/* Bottom Navigation */}
+      <SafeAreaView style={styles.bottomNav}>
+        <BottomNav currentScreen={currentScreen} onNavigate={onNavigate} />
+      </SafeAreaView>
     </View>
   );
 }
@@ -66,102 +119,82 @@ const ExploreScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'white',
   },
-  map: {
-    ...StyleSheet.absoluteFillObject,
+  scrollView: {
+    flex: 1,
   },
-  searchContainer: {
-    position: 'absolute',
-    top: 50,
-    left: 20,
-    right: 20,
-  },
-  searchBar: {
+  header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
   },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-    marginRight: 8,
-  },
-  bottomSheet: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-    paddingTop: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -3,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 10,
-  },
-  bottomSheetHandle: {
-    width: 40,
-    height: 4,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 16,
-  },
-  bottomSheetTitle: {
-    fontSize: 18,
+  headerTitle: {
+    fontSize: 24,
     fontWeight: '600',
-    color: '#333',
-    marginBottom: 20,
+    color: '#333333',
   },
-  categoriesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginHorizontal: -8,
+  heroImage: {
+    width: '100%',
+    height: 240,
   },
-  categoryButton: {
-    width: (width - 56) / 3,
-    alignItems: 'center',
+  description: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#333333',
+    padding: 16,
+  },
+  section: {
+    paddingHorizontal: 16,
+    marginTop: 24,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#333333',
     marginBottom: 16,
   },
-  categoryIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#F5F5F5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
+  highlightsContainer: {
+    paddingRight: 16,
   },
-  categoryLabel: {
-    fontSize: 14,
-    color: '#333',
-    textAlign: 'center',
+  mapContainer: {
+    height: 180,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
+  map: {
+    width: '100%',
+    height: '100%',
+  },
+  directionsButton: {
+    backgroundColor: '#0066CC',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 12,
+  },
+  directionsIcon: {
+    marginRight: 8,
+  },
+  directionsText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  bottomSpacing: {
+    height: 24,
+  },
+  bottomNav: {
+    borderTopWidth: 1,
+    borderTopColor: '#EEEEEE',
+    backgroundColor: 'white',
   },
 });
+ 
 
 export default ExploreScreen;
 

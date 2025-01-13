@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
-import MapView from 'react-native-maps';
+import Mapbox from '@rnmapbox/maps';
 import { CategoryTab } from './components/CategoryTab';
 import { SearchBar } from './components/SearchBar';
 import { BottomNav } from './components/BottomNav';
+
+// Initialize Mapbox with your access token
+Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
 
 const categories = ['All', 'See', 'Eat', 'Sleep', 'Shop', 'Drink', 'Play'];
 
@@ -14,6 +17,7 @@ interface MapScreenProps {
 
 const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
   const [activeCategory, setActiveCategory] = useState('All');
+  
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -39,15 +43,19 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
       </View>
 
       <View style={styles.mapContainer}>
-        <MapView
+        <Mapbox.MapView
           style={styles.map}
-          initialRegion={{
-            latitude: 37.7749,
-            longitude: -122.4194,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        />
+          styleURL={Mapbox.StyleURL.Street}
+          zoomLevel={12}
+          centerCoordinate={[-122.4194, 37.7749]} // San Francisco coordinates
+        >
+          <Mapbox.Camera
+            zoomLevel={12}
+            centerCoordinate={[-122.4194, 37.7749]}
+            animationMode="flyTo"
+            animationDuration={2000}
+          />
+        </Mapbox.MapView>
       </View>
 
       <BottomNav currentScreen={currentScreen} onNavigate={onNavigate} />

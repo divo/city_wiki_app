@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import MapView from 'react-native-maps';
+import Mapbox from '@rnmapbox/maps';
 import { BottomNav } from './components/BottomNav';
 import { HighlightCard } from './components/HighlightCard';
 import { VenueHours } from './components/VenueHours';
@@ -86,17 +86,19 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ currentScreen, onNavigate
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Location</Text>
           <View style={styles.mapContainer}>
-            <MapView
+            <Mapbox.MapView
               style={styles.map}
-              initialRegion={{
-                latitude: 37.7749,
-                longitude: -122.4194,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-              }}
+              styleURL={Mapbox.StyleURL.Street}
+              zoomLevel={12}
+              centerCoordinate={[-122.4194, 37.7749]}
               scrollEnabled={false}
               zoomEnabled={false}
-            />
+            >
+              <Mapbox.Camera
+                zoomLevel={12}
+                centerCoordinate={[-122.4194, 37.7749]}
+              />
+            </Mapbox.MapView>
           </View>
           <TouchableOpacity style={styles.directionsButton}>
             <Icon name="navigate-outline" size={20} color="white" style={styles.directionsIcon} />

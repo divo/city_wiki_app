@@ -33,7 +33,8 @@
           "RNMapboxMapsVersion": "11.8.0",
           "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNXY5MWl6NjAzcnAyaXNnbjRubjAya28ifQ.XWemoR3l3hRrkyT8gsZ6ew"
         }
-      ]
+      ],
+      "expo-asset"
     ]
   }
 }

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import { CategoryTab } from './components/CategoryTab';
 import { SearchBar } from './components/SearchBar';
 import { BottomNav } from './components/BottomNav';
+import { LocationService, Location } from './services/LocationService';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
@@ -17,7 +18,23 @@ interface MapScreenProps {
 
 const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
   const [activeCategory, setActiveCategory] = useState('All');
-  
+  const [locations, setLocations] = useState<PointOfInterest[]>([]);
+
+  useEffect(() => {
+    const loadLocations = async () => {
+      try {
+        const locationService = LocationService.getInstance();
+        await locationService.loadLocations();
+        const filteredLocations = locationService.getPoisByCategory(activeCategory);
+        setLocations(filteredLocations);
+      } catch (error) {
+        console.error('Error loading locations:', error);
+      }
+    };
+
+    loadLocations();
+  }, [activeCategory]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>

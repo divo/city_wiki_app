@@ -7,11 +7,11 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<'home' | 'map' | 'explore'>('home');
 
   if (currentScreen === 'map') {
-    return <MapScreen />;
+    return <MapScreen onNavigate={setCurrentScreen} currentScreen="map" />;
   }
 
   if (currentScreen === 'explore') {
-    return <ExploreScreen />;
+    return <ExploreScreen onNavigate={setCurrentScreen} currentScreen="explore" />;
   }
 
   return (

@@ -27,20 +27,25 @@ function NavItem({ label, icon, isActive, onPress }: NavItem) {
   );
 }
 
-export function BottomNav() {
+interface BottomNavProps {
+  currentScreen: 'explore' | 'map';
+  onNavigate: (screen: 'explore' | 'map') => void;
+}
+
+export function BottomNav({ currentScreen, onNavigate }: BottomNavProps) {
   return (
     <View style={styles.container}>
       <NavItem
         label="Guide"
         icon="book-outline"
-        isActive={false}
-        onPress={() => {}}
+        isActive={currentScreen === 'explore'}
+        onPress={() => onNavigate('explore')}
       />
       <NavItem
         label="Explore"
         icon="map-outline"
-        isActive={true}
-        onPress={() => {}}
+        isActive={currentScreen === 'map'}
+        onPress={() => onNavigate('map')}
       />
       <NavItem
         label="In Detail"

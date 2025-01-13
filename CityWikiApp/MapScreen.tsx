@@ -7,7 +7,12 @@ import { BottomNav } from './components/BottomNav';
 
 const categories = ['All', 'See', 'Eat', 'Sleep', 'Shop', 'Drink', 'Play'];
 
-const MapScreen: React.FC = () => {
+interface MapScreenProps {
+  currentScreen: 'map' | 'explore';
+  onNavigate: (screen: 'map' | 'explore') => void;
+}
+
+const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
   const [activeCategory, setActiveCategory] = useState('All');
   return (
     <SafeAreaView style={styles.container}>
@@ -45,7 +50,7 @@ const MapScreen: React.FC = () => {
         />
       </View>
 
-      <BottomNav />
+      <BottomNav currentScreen={currentScreen} onNavigate={onNavigate} />
     </SafeAreaView>
   );
 }

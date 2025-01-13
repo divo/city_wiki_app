@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image } from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import { CategoryTab } from './components/CategoryTab';
 import { SearchBar } from './components/SearchBar';
@@ -16,9 +16,20 @@ interface MapScreenProps {
   onNavigate: (screen: 'map' | 'explore') => void;
 }
 
+// Add icon imports
+const categoryIcons = {
+  see: require('./assets/see.png'),
+  eat: require('./assets/eat.png'),
+  sleep: require('./assets/sleep.png'),
+  shop: require('./assets/shop.png'),
+  drink: require('./assets/drink.png'),
+  play: require('./assets/play.png'),
+};
+
 const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [locations, setLocations] = useState<PointOfInterest[]>([]);
+  const [zoomLevel, setZoomLevel] = useState(12);
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -38,29 +49,50 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
 
   const validateCoordinates = (poi: PointOfInterest): boolean => {
     if (typeof poi.longitude !== 'number' || typeof poi.latitude !== 'number') {
-      console.warn(`Invalid coordinate types for POI "${poi.name}": longitude=${poi.longitude}, latitude=${poi.latitude}`);
+      //console.warn(`Invalid coordinate types for POI "${poi.name}": longitude=${poi.longitude}, latitude=${poi.latitude}`);
       return false;
     }
     
     if (isNaN(poi.longitude) || isNaN(poi.latitude)) {
-      console.warn(`NaN coordinates for POI "${poi.name}": longitude=${poi.longitude}, latitude=${poi.latitude}`);
+      //console.warn(`NaN coordinates for POI "${poi.name}": longitude=${poi.longitude}, latitude=${poi.latitude}`);
       return false;
     }
     
     if (poi.longitude < -180 || poi.longitude > 180) {
-      console.warn(`Invalid longitude for POI "${poi.name}": ${poi.longitude}`);
+      //console.warn(`Invalid longitude for POI "${poi.name}": ${poi.longitude}`);
       return false;
     }
     
     if (poi.latitude < -90 || poi.latitude > 90) {
-      console.warn(`Invalid latitude for POI "${poi.name}": ${poi.latitude}`);
+      //console.warn(`Invalid latitude for POI "${poi.name}": ${poi.latitude}`);
       return false;
     }
     
     return true;
   };
 
+  const getCategoryColor = (category: string): string => {
+    switch (category.toLowerCase()) {
+      case 'see':
+        return '#F0B429';
+      case 'eat':
+        return '#F35627';
+      case 'sleep':
+        return '#0967D2';
+      case 'shop':
+        return '#DA127D';
+      case 'drink':
+        return '#E12D39';
+      case 'play':
+        return '#6CD410';
+      default:
+        return '#FFFFFF';
+    }
+  };
+
   const renderMarkers = () => {
+    const showIcons = zoomLevel >= 13;
+
     return locations
       .filter(validateCoordinates)
       .map((poi) => (
@@ -69,28 +101,22 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
           id={poi.name}
           coordinate={[Number(poi.longitude), Number(poi.latitude)]}
         >
-          <View style={[styles.markerContainer, { backgroundColor: getCategoryColor(poi.category) }]} />
+          {showIcons ? (
+            <View style={styles.markerContainer}>
+              <Image 
+                source={categoryIcons[poi.category.toLowerCase() as keyof typeof categoryIcons] || categoryIcons.see}
+                style={styles.markerIcon}
+                resizeMode="contain"
+              />
+            </View>
+          ) : (
+            <View style={[
+              styles.dotMarker,
+              { backgroundColor: getCategoryColor(poi.category) }
+            ]} />
+          )}
         </Mapbox.MarkerView>
       ));
-  };
-
-  const getCategoryColor = (category: string): string => {
-    switch (category.toLowerCase()) {
-      case 'eat':
-        return '#FF6B6B';
-      case 'drink':
-        return '#4ECDC4';
-      case 'see':
-        return '#45B7D1';
-      case 'sleep':
-        return '#96CEB4';
-      case 'shop':
-        return '#FFEEAD';
-      case 'play':
-        return '#D4A5A5';
-      default:
-        return '#666666';
-    }
   };
 
   return (
@@ -121,6 +147,10 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
         <Mapbox.MapView
           style={styles.map}
           styleURL={Mapbox.StyleURL.Street}
+          onCameraChanged={event => {
+            console.log('Camera Event:', event.properties);
+            setZoomLevel(event.properties.zoom);
+          }}
         >
           <Mapbox.Camera
             zoomLevel={12}
@@ -168,12 +198,27 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   markerContainer: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 4,
     borderWidth: 2,
     borderColor: 'white',
-    backgroundColor: '#FF0000',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  markerIcon: {
+    width: 24,
+    height: 24,
+  },
+  dotMarker: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: 'white',
   },
 });
 

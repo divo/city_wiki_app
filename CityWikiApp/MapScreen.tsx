@@ -25,7 +25,8 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
       try {
         const locationService = LocationService.getInstance();
         await locationService.loadLocations();
-        const filteredLocations = locationService.getPoisByCategory(activeCategory);
+        const filteredLocations = locationService.getPoisByCategory(activeCategory.toLowerCase());
+        console.log(`Filtered ${filteredLocations.length} locations for category: ${activeCategory.toLowerCase()}`);
         setLocations(filteredLocations);
       } catch (error) {
         console.error('Error loading locations:', error);

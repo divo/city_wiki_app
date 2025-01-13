@@ -79,10 +79,15 @@ class LocationService {
   }
 
   public getPoisByCategory(category: string): PointOfInterest[] {
-    if (category === 'All') {
+    if (category.toLowerCase() === 'all') {
       return this.pois;
     }
-    return this.pois.filter(poi => poi.category === category);
+
+    const normalizedCategory = category.toLowerCase().trim();
+    return this.pois.filter(poi => {
+      const poiCategory = poi.category.toLowerCase().trim();
+      return poiCategory === normalizedCategory;
+    });
   }
 
   public getPoisByDistrict(district: string): PointOfInterest[] {

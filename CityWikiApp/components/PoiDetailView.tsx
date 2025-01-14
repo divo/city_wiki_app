@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Linking, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mapbox from '@rnmapbox/maps';
 import { DetailItem } from './DetailItem';
@@ -27,6 +27,22 @@ export default function POIDetailModal({ onClose, onShare, poi }: POIDetailModal
   const [isSaved, setIsSaved] = React.useState(false);
   const translateY = useSharedValue(0);
   const context = useSharedValue({ y: 0 });
+
+  const openMaps = () => {
+    const scheme = Platform.select({ ios: 'maps:', android: 'geo:' }) ?? 'maps:';
+    const url = Platform.select({
+      ios: `maps:0,0?q=${encodeURIComponent(poi.name)}@${poi.latitude},${poi.longitude}`,
+      android: `geo:0,0?q=${poi.latitude},${poi.longitude}(${encodeURIComponent(poi.name)})`
+    }) ?? `maps:0,0?q=${encodeURIComponent(poi.name)}@${poi.latitude},${poi.longitude}`;
+
+    Linking.canOpenURL(scheme).then(supported => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        console.log("Don't know how to open URI: " + url);
+      }
+    });
+  };
 
   useEffect(() => {
     // Animate the modal in when it mounts
@@ -156,7 +172,7 @@ export default function POIDetailModal({ onClose, onShare, poi }: POIDetailModal
               )}
             </View>
 
-            <TouchableOpacity style={styles.directionsButton}>
+            <TouchableOpacity style={styles.directionsButton} onPress={openMaps}>
               <Icon name="navigate-outline" size={20} color="white" style={styles.directionsIcon} />
               <Text style={styles.directionsText}>Get directions</Text>
             </TouchableOpacity>

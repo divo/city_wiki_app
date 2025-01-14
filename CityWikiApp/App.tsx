@@ -9,9 +9,11 @@ type Screen = 'select' | 'map' | 'explore';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('select');
+  const [selectedCity, setSelectedCity] = useState<string>('');
 
   const handleCitySelect = (cityId: string) => {
-    setCurrentScreen('map');
+    setSelectedCity(cityId);
+    setCurrentScreen('explore');
   };
 
   const handleNavigate = (screen: Screen) => {

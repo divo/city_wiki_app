@@ -33,6 +33,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
   const [locations, setLocations] = useState<PointOfInterest[]>([]);
   const [zoomLevel, setZoomLevel] = useState(12);
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
+  const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>([-122.4194, 37.7749]);
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -42,6 +43,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
         const filteredLocations = locationService.getPoisByCategory(activeCategory.toLowerCase());
         console.log(`Filtered ${filteredLocations.length} locations for category: ${activeCategory.toLowerCase()}`);
         setLocations(filteredLocations);
+        setCenterCoordinate(locationService.getCenterCoordinates());
       } catch (error) {
         console.error('Error loading locations:', error);
       }
@@ -179,10 +181,11 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
           }}
         >
           <Mapbox.Camera
-            zoomLevel={12}
-            centerCoordinate={[-122.4194, 37.7749]}
-            animationMode="flyTo"
-            animationDuration={2000}
+            defaultSettings={{
+              centerCoordinate: centerCoordinate,
+              zoomLevel: 12,
+              animationDuration: 0
+            }}
           />
           {renderMarkers()}
         </Mapbox.MapView>

@@ -97,6 +97,32 @@ class LocationService {
   public getPoisByRank(minRank: number): PointOfInterest[] {
     return this.pois.filter(poi => poi.rank >= minRank);
   }
+
+  public getCenterCoordinates(): [number, number] {
+    if (this.pois.length === 0) {
+      // Default to San Francisco city center if no POIs
+      return [-122.4194, 37.7749];
+    }
+
+    const validPois = this.pois.filter(poi => 
+      typeof poi.longitude === 'number' && 
+      typeof poi.latitude === 'number' && 
+      !isNaN(poi.longitude) && 
+      !isNaN(poi.latitude)
+    );
+
+    if (validPois.length === 0) {
+      return [-122.4194, 37.7749];
+    }
+
+    const sumLat = validPois.reduce((sum, poi) => sum + poi.latitude, 0);
+    const sumLng = validPois.reduce((sum, poi) => sum + poi.longitude, 0);
+    
+    return [
+      sumLng / validPois.length,
+      sumLat / validPois.length
+    ];
+  }
 }
 
 export { LocationService, type PointOfInterest, type CityData }; 

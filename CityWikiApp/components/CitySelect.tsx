@@ -1,6 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { SearchBar } from './SearchBar';
+import { 
+  useFonts,
+  Montserrat_600SemiBold,
+  Montserrat_500Medium,
+} from '@expo-google-fonts/montserrat';
 import LinearGradient from 'react-native-linear-gradient';
 
 interface CitySelectProps {
@@ -54,6 +59,15 @@ const TILE_WIDTH = (SCREEN_WIDTH - (TILE_MARGIN * 4)) / 2; // 2 tiles per row wi
 const TILE_HEIGHT = TILE_WIDTH * 1.5; // 2:3 aspect ratio
 
 export function CitySelect({ onSelectCity }: CitySelectProps) {
+  const [fontsLoaded] = useFonts({
+    Montserrat_600SemiBold,
+    Montserrat_500Medium,
+  });
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -85,8 +99,10 @@ export function CitySelect({ onSelectCity }: CitySelectProps) {
                 style={styles.cityImage}
               />
               <View style={styles.cityInfo}>
-                <Text style={styles.cityName}>{city.name}</Text>
                 <Text style={styles.countryName}>{city.country}</Text>
+                <Text style={styles.cityName} numberOfLines={2}>
+                  {city.name.replace(' ', '\n')}
+                </Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -108,8 +124,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#EEEEEE',
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: 32,
+    fontFamily: 'Montserrat_600SemiBold',
     color: '#333333',
   },
   searchContainer: {
@@ -155,16 +171,17 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   cityName: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 32,
+    fontFamily: 'Montserrat_600SemiBold',
     color: 'white',
-    marginBottom: 2,
+    marginBottom: 4,
     textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
   countryName: {
-    fontSize: 13,
+    fontSize: 16,
+    fontFamily: 'Montserrat_500Medium',
     color: 'rgba(255, 255, 255, 0.95)',
     textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 0, height: 1 },

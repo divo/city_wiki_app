@@ -5,7 +5,7 @@ import { CategoryTab } from './components/CategoryTab';
 import { SearchBar } from './components/SearchBar';
 import { BottomNav } from './components/BottomNav';
 import { LocationService, PointOfInterest } from './services/LocationService';
-import { PoiDetailView } from './components/PoiDetailView';
+import POIDetailModal from './components/PoiDetailView';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
@@ -128,6 +128,11 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
       ));
   };
 
+  const handleShare = () => {
+    // Implement share functionality
+    console.log('Sharing POI:', selectedPoi?.name);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -174,9 +179,10 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
       <BottomNav currentScreen={currentScreen} onNavigate={onNavigate} />
 
       {selectedPoi && (
-        <PoiDetailView 
-          poi={selectedPoi} 
-          onClose={() => setSelectedPoi(null)} 
+        <POIDetailModal 
+          onClose={() => setSelectedPoi(null)}
+          onShare={handleShare}
+          poi={selectedPoi}
         />
       )}
     </SafeAreaView>

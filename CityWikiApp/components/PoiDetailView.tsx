@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { PointOfInterest } from '../services/LocationService';
 
@@ -21,6 +21,20 @@ export function PoiDetailView({ poi, onClose }: PoiDetailViewProps) {
     }
   };
 
+  const handleNavigationPress = () => {
+    const scheme = Platform.select({ ios: 'maps:0,0?q=', android: 'geo:0,0?q=' });
+    const latLng = `${poi.latitude},${poi.longitude}`;
+    const label = poi.name;
+    const url = Platform.select({
+      ios: `${scheme}${label}@${latLng}`,
+      android: `${scheme}${latLng}(${label})`
+    });
+
+    if (url) {
+      Linking.openURL(url);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -36,10 +50,10 @@ export function PoiDetailView({ poi, onClose }: PoiDetailViewProps) {
       <Text style={styles.description}>{poi.description}</Text>
 
       <View style={styles.infoSection}>
-        <View style={styles.infoRow}>
-          <Icon name="location" size={20} color="#666" />
-          <Text style={styles.infoText}>{poi.address}</Text>
-        </View>
+        <TouchableOpacity style={styles.infoRow} onPress={handleNavigationPress}>
+          <Icon name="navigate" size={20} color="#0066CC" />
+          <Text style={[styles.infoText, styles.linkText]}>{poi.address}</Text>
+        </TouchableOpacity>
         
         {poi.phone && (
           <TouchableOpacity style={styles.infoRow} onPress={handlePhonePress}>
@@ -112,5 +126,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#444',
     flex: 1,
+  },
+  linkText: {
+    color: '#0066CC',
   },
 }); 

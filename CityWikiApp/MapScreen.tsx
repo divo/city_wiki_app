@@ -3,7 +3,6 @@ import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpaci
 import Mapbox from '@rnmapbox/maps';
 import { CategoryTab } from './components/CategoryTab';
 import { SearchBar } from './components/SearchBar';
-import { BottomNav } from './components/BottomNav';
 import { LocationService, PointOfInterest } from './services/LocationService';
 import POIDetailModal from './components/PoiDetailView';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -14,8 +13,9 @@ Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybH
 const categories = ['All', 'See', 'Eat', 'Sleep', 'Shop', 'Drink', 'Play'];
 
 interface MapScreenProps {
-  currentScreen: 'map' | 'explore' | 'select';
-  onNavigate: (screen: 'map' | 'explore' | 'select') => void;
+  initialCenter: [number, number];
+  initialZoom: number;
+  onMapStateChange: (center: [number, number], zoom: number) => void;
 }
 
 // Add icon imports
@@ -28,39 +28,38 @@ const categoryIcons = {
   play: require('./assets/play.png'),
 };
 
-const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
+const MapScreen: React.FC<MapScreenProps> = ({ 
+  initialCenter,
+  initialZoom,
+  onMapStateChange 
+}) => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [locations, setLocations] = useState<PointOfInterest[]>([]);
-  const [zoomLevel, setZoomLevel] = useState(12);
+  const [zoomLevel, setZoomLevel] = useState(initialZoom);
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
-  const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>([-122.4194, 37.7749]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>(initialCenter);
 
   useEffect(() => {
     const loadLocations = async () => {
-      setIsLoading(true);
       try {
         const locationService = LocationService.getInstance();
         await locationService.loadLocations();
         const filteredLocations = locationService.getPoisByCategory(activeCategory.toLowerCase());
         console.log(`Filtered ${filteredLocations.length} locations for category: ${activeCategory.toLowerCase()}`);
         setLocations(filteredLocations);
-        setCenterCoordinate(locationService.getCenterCoordinates());
       } catch (error) {
         console.error('Error loading locations:', error);
-      } finally {
-        setIsLoading(false);
       }
     };
 
     loadLocations();
   }, [activeCategory]);
 
-  if (isLoading) {
-    return (
-      <SafeAreaView style={[styles.container, { backgroundColor: 'white' }]} />
-    );
-  }
+  // Only set initial center coordinates once on mount
+  useEffect(() => {
+    const locationService = LocationService.getInstance();
+    setCenterCoordinate(locationService.getCenterCoordinates());
+  }, []);
 
   const validateCoordinates = (poi: PointOfInterest): boolean => {
     if (typeof poi.longitude !== 'number' || typeof poi.latitude !== 'number') {
@@ -149,22 +148,6 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <TouchableOpacity 
-            onPress={() => onNavigate('select')}
-            style={styles.backButton}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <Icon name="chevron-back" size={24} color="#333333" />
-          </TouchableOpacity>
-          <Text style={styles.title}>San Francisco</Text>
-          <View style={styles.backButton} />
-        </View>
-
-        <View style={styles.searchContainer}>
-          <SearchBar />
-        </View>
-
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false}
@@ -180,6 +163,11 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
             />
           ))}
         </ScrollView>
+
+        <View style={styles.searchContainer}>
+          <SearchBar />
+        </View>
+
       </View>
 
       <View style={styles.mapContainer}>
@@ -187,21 +175,21 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
           style={styles.map}
           styleURL={Mapbox.StyleURL.Street}
           onCameraChanged={event => {
-            setZoomLevel(event.properties.zoom);
+            const newZoom = event.properties.zoom;
+            setZoomLevel(newZoom);
+            onMapStateChange([event.properties.center[0], event.properties.center[1]], newZoom);
           }}
         >
           <Mapbox.Camera
             defaultSettings={{
               centerCoordinate: centerCoordinate,
-              zoomLevel: 12,
+              zoomLevel: zoomLevel,
               animationDuration: 0
             }}
           />
           {renderMarkers()}
         </Mapbox.MapView>
       </View>
-
-      <BottomNav currentScreen={currentScreen} onNavigate={onNavigate} />
 
       {selectedPoi && (
         <POIDetailModal 

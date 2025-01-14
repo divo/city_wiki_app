@@ -2,33 +2,24 @@ import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mapbox from '@rnmapbox/maps';
-import { BottomNav } from './components/BottomNav';
 import { HighlightCard } from './components/HighlightCard';
 import { VenueHours } from './components/VenueHours';
 
 interface ExploreScreenProps {
-  currentScreen: 'map' | 'explore';
-  onNavigate: (screen: 'map' | 'explore' | 'select') => void;
+  route: {
+    params: {
+      mapCenter: [number, number];
+      mapZoom: number;
+    };
+  };
 }
 
-const ExploreScreen: React.FC<ExploreScreenProps> = ({ currentScreen, onNavigate }) => {
+const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
+  const { mapCenter, mapZoom } = route.params;
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <SafeAreaView>
-          <View style={styles.header}>
-            <TouchableOpacity 
-              onPress={() => onNavigate('select')}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Icon name="chevron-back" size={24} color="#333333" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>San Francisco</Text>
-            <TouchableOpacity>
-              <Icon name="bookmark-outline" size={24} color="#FF3B30" />
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
 
         {/* Hero Image */}
         <Image
@@ -95,14 +86,12 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ currentScreen, onNavigate
             <Mapbox.MapView
               style={styles.map}
               styleURL={Mapbox.StyleURL.Street}
-              zoomLevel={12}
-              centerCoordinate={[-122.4194, 37.7749]}
               scrollEnabled={false}
               zoomEnabled={false}
             >
               <Mapbox.Camera
-                zoomLevel={12}
-                centerCoordinate={[-122.4194, 37.7749]}
+                zoomLevel={mapZoom}
+                centerCoordinate={mapCenter}
               />
             </Mapbox.MapView>
           </View>
@@ -115,11 +104,6 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ currentScreen, onNavigate
         {/* Bottom Spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
-
-      {/* Bottom Navigation */}
-      <SafeAreaView style={styles.bottomNav}>
-        <BottomNav currentScreen={currentScreen} onNavigate={onNavigate} />
-      </SafeAreaView>
     </View>
   );
 }
@@ -198,11 +182,6 @@ const styles = StyleSheet.create({
   },
   bottomSpacing: {
     height: 24,
-  },
-  bottomNav: {
-    borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
-    backgroundColor: 'white',
   },
 });
  

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import { CategoryTab } from './components/CategoryTab';
 import { SearchBar } from './components/SearchBar';
 import { BottomNav } from './components/BottomNav';
 import { LocationService, PointOfInterest } from './services/LocationService';
+import { PoiDetailView } from './components/PoiDetailView';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
@@ -30,6 +31,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [locations, setLocations] = useState<PointOfInterest[]>([]);
   const [zoomLevel, setZoomLevel] = useState(12);
+  const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -101,20 +103,27 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
           id={poi.name}
           coordinate={[Number(poi.longitude), Number(poi.latitude)]}
         >
-          {showIcons ? (
-            <View style={styles.markerContainer}>
-              <Image 
-                source={categoryIcons[poi.category.toLowerCase() as keyof typeof categoryIcons] || categoryIcons.see}
-                style={styles.markerIcon}
-                resizeMode="contain"
-              />
-            </View>
-          ) : (
-            <View style={[
-              styles.dotMarker,
-              { backgroundColor: getCategoryColor(poi.category) }
-            ]} />
-          )}
+          <TouchableOpacity
+            onPress={() => {
+              console.log('POI tapped:', poi.name);
+              setSelectedPoi(poi);
+            }}
+          >
+            {showIcons ? (
+              <View style={styles.markerContainer}>
+                <Image 
+                  source={categoryIcons[poi.category.toLowerCase() as keyof typeof categoryIcons] || categoryIcons.see}
+                  style={styles.markerIcon}
+                  resizeMode="contain"
+                />
+              </View>
+            ) : (
+              <View style={[
+                styles.dotMarker,
+                { backgroundColor: getCategoryColor(poi.category) }
+              ]} />
+            )}
+          </TouchableOpacity>
         </Mapbox.MarkerView>
       ));
   };
@@ -148,7 +157,7 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
           style={styles.map}
           styleURL={Mapbox.StyleURL.Street}
           onCameraChanged={event => {
-            console.log('Camera Event:', event.properties);
+            //console.log('Camera Event:', event.properties);
             setZoomLevel(event.properties.zoom);
           }}
         >
@@ -163,6 +172,13 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
       </View>
 
       <BottomNav currentScreen={currentScreen} onNavigate={onNavigate} />
+
+      {selectedPoi && (
+        <PoiDetailView 
+          poi={selectedPoi} 
+          onClose={() => setSelectedPoi(null)} 
+        />
+      )}
     </SafeAreaView>
   );
 }

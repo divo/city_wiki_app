@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { PointOfInterest } from '../services/LocationService';
 
@@ -10,12 +10,24 @@ interface PoiListProps {
 }
 
 export function PoiList({ pois, onSelectPoi, snapPoints }: PoiListProps) {
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
+
+  const handleSheetChange = useCallback((index: number) => {
+    if (index === 0) {
+      setIsCollapsed(true);
+    } else if (isCollapsed) {
+      setIsCollapsed(false);
+    }
+  }, [isCollapsed]);
+
   return (
     <BottomSheet
-      snapPoints={snapPoints}
-      index={1}
+      snapPoints={isCollapsed ? ['5%', '50%', '90%'] : ['15%', '50%', '90%']}
+      index={isCollapsed ? 0 : 1}
       style={styles.bottomSheet}
       handleIndicatorStyle={styles.handle}
+      onChange={handleSheetChange}
+      enablePanDownToClose={false}
     >
       <View style={styles.header}>
         <Text style={styles.title}>Points of Interest</Text>
@@ -92,9 +104,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666666',
     marginBottom: 2,
-  },
-  poiDistrict: {
-    fontSize: 14,
-    color: '#999999',
   },
 }); 

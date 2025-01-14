@@ -7,10 +7,20 @@ import {
   Montserrat_500Medium,
 } from '@expo-google-fonts/montserrat';
 import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-interface CitySelectProps {
-  onSelectCity: (city: string) => void;
-}
+type RootStackParamList = {
+  CitySelect: undefined;
+  CityGuide: {
+    cityId: string;
+    mapCenter: [number, number];
+    mapZoom: number;
+    onMapStateChange: (center: [number, number], zoom: number) => void;
+  };
+};
+
+type CitySelectScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CitySelect'>;
 
 interface City {
   id: string;
@@ -58,7 +68,8 @@ const TILE_MARGIN = 8;
 const TILE_WIDTH = (SCREEN_WIDTH - (TILE_MARGIN * 4)) / 2; // 2 tiles per row with margins
 const TILE_HEIGHT = TILE_WIDTH * 1.5; // 2:3 aspect ratio
 
-export function CitySelect({ onSelectCity }: CitySelectProps) {
+export function CitySelect() {
+  const navigation = useNavigation<CitySelectScreenNavigationProp>();
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_500Medium,
@@ -67,6 +78,15 @@ export function CitySelect({ onSelectCity }: CitySelectProps) {
   if (!fontsLoaded) {
     return null;
   }
+
+  const handleCitySelect = (cityId: string) => {
+    navigation.navigate('CityGuide', {
+      cityId,
+      mapCenter: [-122.4194, 37.7749], // San Francisco coordinates
+      mapZoom: 12,
+      onMapStateChange: () => {}, // This will be overridden by the actual handler in App.tsx
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,14 +101,14 @@ export function CitySelect({ onSelectCity }: CitySelectProps) {
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
       >
         <View style={styles.tilesContainer}>
           {cities.map(city => (
             <TouchableOpacity
               key={city.id}
               style={styles.cityTile}
-              onPress={() => onSelectCity(city.id)}
+              onPress={() => handleCitySelect(city.id)}
             >
               <Image
                 source={
@@ -148,6 +168,8 @@ const styles = StyleSheet.create({
     height: TILE_HEIGHT,
     marginBottom: TILE_MARGIN * 2,
     backgroundColor: '#F5F5F5',
+    borderRadius: 15,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -187,4 +209,4 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
-}); 
+});

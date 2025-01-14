@@ -6,6 +6,7 @@ import { SearchBar } from './components/SearchBar';
 import { BottomNav } from './components/BottomNav';
 import { LocationService, PointOfInterest } from './services/LocationService';
 import POIDetailModal from './components/PoiDetailView';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
@@ -13,8 +14,8 @@ Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybH
 const categories = ['All', 'See', 'Eat', 'Sleep', 'Shop', 'Drink', 'Play'];
 
 interface MapScreenProps {
-  currentScreen: 'map' | 'explore';
-  onNavigate: (screen: 'map' | 'explore') => void;
+  currentScreen: 'map' | 'explore' | 'select';
+  onNavigate: (screen: 'map' | 'explore' | 'select') => void;
 }
 
 // Add icon imports
@@ -136,8 +137,22 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>San Francisco</Text>
-        
+        <View style={styles.headerTop}>
+          <TouchableOpacity 
+            onPress={() => onNavigate('select')}
+            style={styles.backButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Icon name="chevron-back" size={24} color="#333333" />
+          </TouchableOpacity>
+          <Text style={styles.title}>San Francisco</Text>
+          <View style={styles.backButton} />
+        </View>
+
+        <View style={styles.searchContainer}>
+          <SearchBar />
+        </View>
+
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false}
@@ -153,8 +168,6 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
             />
           ))}
         </ScrollView>
-
-        <SearchBar />
       </View>
 
       <View style={styles.mapContainer}>
@@ -162,7 +175,6 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
           style={styles.map}
           styleURL={Mapbox.StyleURL.Street}
           onCameraChanged={event => {
-            //console.log('Camera Event:', event.properties);
             setZoomLevel(event.properties.zoom);
           }}
         >
@@ -195,17 +207,30 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   header: {
-    paddingTop: 4,
-    paddingBottom: 4,
     borderBottomWidth: 1,
     borderBottomColor: '#EEEEEE',
+  },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
+  backButton: {
+    width: 24,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
     color: '#333333',
+    flex: 1,
     textAlign: 'center',
-    marginVertical: 4,
+  },
+  searchContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   categoriesScroll: {
     marginVertical: 4,

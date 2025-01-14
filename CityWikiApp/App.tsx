@@ -11,8 +11,11 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('select');
 
   const handleCitySelect = (cityId: string) => {
-    // For now, just navigate to map screen when any city is selected
     setCurrentScreen('map');
+  };
+
+  const handleNavigate = (screen: Screen) => {
+    setCurrentScreen(screen);
   };
 
   const renderScreen = () => {
@@ -21,10 +24,10 @@ export default function App() {
     }
     
     if (currentScreen === 'map') {
-      return <MapScreen onNavigate={setCurrentScreen} currentScreen="map" />;
+      return <MapScreen onNavigate={handleNavigate} currentScreen="map" />;
     }
 
-    return <ExploreScreen onNavigate={setCurrentScreen} currentScreen="explore" />;
+    return <ExploreScreen onNavigate={handleNavigate} currentScreen="explore" />;
   };
 
   return (

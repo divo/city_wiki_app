@@ -8,7 +8,7 @@ import { VenueHours } from './components/VenueHours';
 
 interface ExploreScreenProps {
   currentScreen: 'map' | 'explore';
-  onNavigate: (screen: 'map' | 'explore') => void;
+  onNavigate: (screen: 'map' | 'explore' | 'select') => void;
 }
 
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ currentScreen, onNavigate }) => {
@@ -17,9 +17,15 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ currentScreen, onNavigate
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <SafeAreaView>
           <View style={styles.header}>
+            <TouchableOpacity 
+              onPress={() => onNavigate('select')}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Icon name="chevron-back" size={24} color="#333333" />
+            </TouchableOpacity>
             <Text style={styles.headerTitle}>San Francisco</Text>
             <TouchableOpacity>
-              <Icon name="bookmark-outline" size={24} color="#333333" />
+              <Icon name="bookmark-outline" size={24} color="#FF3B30" />
             </TouchableOpacity>
           </View>
         </SafeAreaView>
@@ -137,6 +143,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '600',
     color: '#333333',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: 32,
   },
   heroImage: {
     width: '100%',

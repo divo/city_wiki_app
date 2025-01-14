@@ -14,7 +14,6 @@ type RootStackParamList = {
   CitySelect: undefined;
   CityGuide: {
     cityId: string;
-    mapCenter: [number, number];
     mapZoom: number;
     onMapStateChange: (center: [number, number], zoom: number) => void;
   };
@@ -38,25 +37,25 @@ const cityImages = {
 
 const cities: City[] = [
   {
-    id: 'paris',
+    id: 'Paris',
     name: 'Paris',
     country: 'France',
     imageUrl: 'paris_cover.png'
   },
   {
-    id: 'rm',
+    id: 'Rome',
     name: 'Rome',
     country: 'Italy',
     imageUrl: 'rome_cover.png'
   },
   {
-    id: 'sf',
+    id: 'San Francisco',
     name: 'San Francisco',
     country: 'United States',
     imageUrl: 'san_francisco_cover.png'
   },
   {
-    id: 'tk',
+    id: 'Tokyo',
     name: 'Tokyo',
     country: 'Japan',
     imageUrl: 'tokyo_cover.png'
@@ -68,7 +67,11 @@ const TILE_MARGIN = 8;
 const TILE_WIDTH = (SCREEN_WIDTH - (TILE_MARGIN * 4)) / 2; // 2 tiles per row with margins
 const TILE_HEIGHT = TILE_WIDTH * 1.5; // 2:3 aspect ratio
 
-export function CitySelect() {
+interface CitySelectProps {
+  onCitySelect: (cityId: string) => Promise<void>;
+}
+
+export function CitySelect({ onCitySelect }: CitySelectProps) {
   const navigation = useNavigation<CitySelectScreenNavigationProp>();
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
@@ -79,12 +82,12 @@ export function CitySelect() {
     return null;
   }
 
-  const handleCitySelect = (cityId: string) => {
+  const handleCitySelect = async (cityId: string) => {
+    await onCitySelect(cityId);
     navigation.navigate('CityGuide', {
       cityId,
-      mapCenter: [-122.4194, 37.7749], // San Francisco coordinates
       mapZoom: 12,
-      onMapStateChange: () => {}, // This will be overridden by the actual handler in App.tsx
+      onMapStateChange: () => {}, // This will be overridden by App.tsx
     });
   };
 

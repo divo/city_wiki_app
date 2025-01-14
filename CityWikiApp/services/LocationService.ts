@@ -39,7 +39,7 @@ class LocationService {
   private static instance: LocationService;
   private pois: PointOfInterest[] = [];
   private cityData?: CityData;
-  private baseUrl = 'http://127.0.0.1:8000';
+  private baseUrl = 'http://192.168.1.220:8000';
 
   private constructor() {}
 
@@ -50,21 +50,14 @@ class LocationService {
     return LocationService.instance;
   }
 
-  public async loadLocations(cityName: string): Promise<PointOfInterest[]> {
+  public async loadLocations(cityId: string): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/city/${cityName}/dump/`);
+      const response = await fetch(`http://192.168.1.164:8000/city/${cityId}/dump/`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      
-      if (!data || !data.points_of_interest) {
-        throw new Error('No points of interest found in response');
-      }
-
-      this.cityData = data;
-      this.pois = data.points_of_interest;
-      return this.pois;
+      this.pois = data.points_of_interest || [];
     } catch (error) {
       console.error('Error loading points of interest:', error);
       throw error;

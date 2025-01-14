@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { PointOfInterest } from '../services/LocationService';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 type FilterType = 'name' | 'must-visit' | 'nearby';
 
@@ -28,7 +29,7 @@ export function PoiList({ pois, onSelectPoi, snapPoints }: PoiListProps) {
       case 'name':
         return [...pois].sort((a, b) => a.name.localeCompare(b.name));
       case 'must-visit':
-        return [...pois].sort((a, b) => (b.rank || 0) - (a.rank || 0));
+        return [...pois].sort((a, b) => (a.rank || 0) - (b.rank || 0));
       case 'nearby':
         // TODO: Implement nearby sorting based on user location
         return pois;
@@ -80,7 +81,17 @@ export function PoiList({ pois, onSelectPoi, snapPoints }: PoiListProps) {
             onPress={() => onSelectPoi(poi)}
           >
             <View style={styles.poiInfo}>
-              <Text style={styles.poiName}>{poi.name}</Text>
+              <View style={styles.titleRow}>
+                {poi.rank === 1 && (
+                  <Icon 
+                    name="star" 
+                    size={16} 
+                    color="#333333" 
+                    style={styles.starIcon}
+                  />
+                )}
+                <Text style={styles.poiName}>{poi.name}</Text>
+              </View>
               <Text style={styles.poiCategory}>{poi.district} · {poi.category.charAt(0).toUpperCase() + poi.category.slice(1)}</Text>
             </View>
           </TouchableOpacity>
@@ -163,11 +174,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#333333',
-    marginBottom: 4,
   },
   poiCategory: {
     fontSize: 14,
     color: '#666666',
     marginBottom: 2,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  starIcon: {
+    marginRight: 4,
+    marginTop: 0,
   },
 }); 

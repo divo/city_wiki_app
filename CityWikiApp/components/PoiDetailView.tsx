@@ -19,7 +19,7 @@ interface POIDetailModalProps {
 }
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-const MAX_TRANSLATE_Y = -SCREEN_HEIGHT * 0.8;
+const MAX_TRANSLATE_Y = -SCREEN_HEIGHT * 0.7;
 const MIN_TRANSLATE_Y = -SCREEN_HEIGHT * 0.4;
 const DISMISS_THRESHOLD = -SCREEN_HEIGHT * 0.3;
 

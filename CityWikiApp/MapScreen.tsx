@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import { CategoryTab } from './components/CategoryTab';
@@ -6,6 +6,8 @@ import { SearchBar } from './components/SearchBar';
 import { LocationService, PointOfInterest } from './services/LocationService';
 import POIDetailModal from './components/PoiDetailView';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { PoiList } from './components/PoiList';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
@@ -29,25 +31,21 @@ const categoryIcons = {
   play: require('./assets/play.png'),
 };
 
-const MapScreen: React.FC<MapScreenProps> = ({ 
-  initialCenter,
-  initialZoom,
-  onMapStateChange,
-  cityId
-}) => {
-  const [activeCategory, setActiveCategory] = useState('All');
+export default function MapScreen({ initialZoom, onMapStateChange, cityId }: MapScreenProps) {
+  const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [locations, setLocations] = useState<PointOfInterest[]>([]);
   const [zoomLevel, setZoomLevel] = useState(initialZoom);
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
-  const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>(initialCenter);
+  const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>([-122.4194, 37.7749]);
+  const bottomSheetSnapPoints = useMemo(() => ['25%', '50%', '90%'], []);
 
   useEffect(() => {
     const loadLocations = async () => {
       try {
         const locationService = LocationService.getInstance();
         await locationService.loadLocations(cityId);
-        const filteredLocations = locationService.getPoisByCategory(activeCategory.toLowerCase());
-        console.log(`Filtered ${filteredLocations.length} locations for category: ${activeCategory.toLowerCase()}`);
+        const filteredLocations = locationService.getPoisByCategory(selectedCategory.toLowerCase());
+        console.log(`Filtered ${filteredLocations.length} locations for category: ${selectedCategory.toLowerCase()}`);
         setLocations(filteredLocations);
       } catch (error) {
         console.error('Error loading locations:', error);
@@ -55,7 +53,7 @@ const MapScreen: React.FC<MapScreenProps> = ({
     };
 
     loadLocations();
-  }, [activeCategory, cityId]);
+  }, [selectedCategory, cityId]);
 
   // Only set initial center coordinates once on mount
   useEffect(() => {
@@ -148,59 +146,70 @@ const MapScreen: React.FC<MapScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.categoriesScroll}
-          contentContainerStyle={styles.categoriesContent}
-        >
-          {categories.map((category) => (
-            <CategoryTab
-              key={category}
-              label={category}
-              isActive={activeCategory === category}
-              onPress={() => setActiveCategory(category)}
-            />
-          ))}
-        </ScrollView>
-
-        <View style={styles.searchContainer}>
-          <SearchBar />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            <Text style={styles.title}>San Francisco</Text>
+          </View>
+          <View style={styles.searchContainer}>
+            <SearchBar />
+          </View>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            style={styles.categoriesScroll}
+            contentContainerStyle={styles.categoriesContent}
+          >
+            {categories.map((category) => (
+              <CategoryTab
+                key={category}
+                label={category}
+                isActive={selectedCategory === category}
+                onPress={() => setSelectedCategory(category)}
+              />
+            ))}
+          </ScrollView>
         </View>
 
-      </View>
-
-      <View style={styles.mapContainer}>
-        <Mapbox.MapView
-          style={styles.map}
-          styleURL={Mapbox.StyleURL.Street}
-          onCameraChanged={event => {
-            const newZoom = event.properties.zoom;
-            setZoomLevel(newZoom);
-            onMapStateChange([event.properties.center[0], event.properties.center[1]], newZoom);
-          }}
-        >
-          <Mapbox.Camera
-            defaultSettings={{
-              centerCoordinate: centerCoordinate,
-              zoomLevel: zoomLevel,
-              animationDuration: 0
+        <View style={styles.mapContainer}>
+          <Mapbox.MapView
+            style={styles.map}
+            styleURL={Mapbox.StyleURL.Street}
+            onCameraChanged={event => {
+              console.log('Camera zoom:', event.properties.zoom);
+              setZoomLevel(event.properties.zoom);
+              if (onMapStateChange) {
+                onMapStateChange([event.properties.center[0], event.properties.center[1]], event.properties.zoom);
+              }
             }}
-          />
-          {renderMarkers()}
-        </Mapbox.MapView>
-      </View>
+          >
+            <Mapbox.Camera
+              defaultSettings={{
+                centerCoordinate: centerCoordinate,
+                zoomLevel: zoomLevel,
+                animationDuration: 0
+              }}
+            />
+            {renderMarkers()}
+          </Mapbox.MapView>
+        </View>
 
-      {selectedPoi && (
-        <POIDetailModal 
-          onClose={() => setSelectedPoi(null)}
-          onShare={handleShare}
-          poi={selectedPoi}
+        <PoiList
+          pois={locations}
+          onSelectPoi={setSelectedPoi}
+          snapPoints={bottomSheetSnapPoints}
         />
-      )}
-    </SafeAreaView>
+
+        {selectedPoi && (
+          <POIDetailModal
+            poi={selectedPoi}
+            onClose={() => setSelectedPoi(null)}
+            onShare={handleShare}
+          />
+        )}
+      </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -218,31 +227,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 4,
-    paddingBottom: 4,
-  },
-  backButton: {
-    width: 24,
+    paddingTop: 12,
+    paddingBottom: 12,
   },
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: '600',
     color: '#333333',
-    flex: 1,
     textAlign: 'center',
+    flex: 1,
   },
   searchContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingBottom: 12,
   },
   categoriesScroll: {
-    marginVertical: 4,
+    flexGrow: 0,
   },
   categoriesContent: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
   },
   mapContainer: {
     flex: 1,
+    backgroundColor: '#F5F5F5',
   },
   map: {
     flex: 1,
@@ -271,5 +279,3 @@ const styles = StyleSheet.create({
     borderColor: 'white',
   },
 });
-
-export default MapScreen;

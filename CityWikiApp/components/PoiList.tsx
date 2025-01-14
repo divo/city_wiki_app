@@ -1,7 +1,9 @@
-import React, { useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { PointOfInterest } from '../services/LocationService';
+
+type FilterType = 'name' | 'must-visit' | 'nearby';
 
 interface PoiListProps {
   pois: PointOfInterest[];
@@ -11,6 +13,7 @@ interface PoiListProps {
 
 export function PoiList({ pois, onSelectPoi, snapPoints }: PoiListProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [activeFilter, setActiveFilter] = useState<FilterType>('name');
 
   const handleSheetChange = useCallback((index: number) => {
     if (index === 0) {
@@ -19,6 +22,37 @@ export function PoiList({ pois, onSelectPoi, snapPoints }: PoiListProps) {
       setIsCollapsed(false);
     }
   }, [isCollapsed]);
+
+  const filteredPois = React.useMemo(() => {
+    switch (activeFilter) {
+      case 'name':
+        return [...pois].sort((a, b) => a.name.localeCompare(b.name));
+      case 'must-visit':
+        return [...pois].sort((a, b) => (b.rank || 0) - (a.rank || 0));
+      case 'nearby':
+        // TODO: Implement nearby sorting based on user location
+        return pois;
+      default:
+        return pois;
+    }
+  }, [pois, activeFilter]);
+
+  const renderSegmentButton = (type: FilterType, label: string) => (
+    <TouchableOpacity
+      style={[
+        styles.segmentButton,
+        activeFilter === type && styles.segmentButtonActive
+      ]}
+      onPress={() => setActiveFilter(type)}
+    >
+      <Text style={[
+        styles.segmentButtonText,
+        activeFilter === type && styles.segmentButtonTextActive
+      ]}>
+        {label}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
     <BottomSheet
@@ -30,12 +64,16 @@ export function PoiList({ pois, onSelectPoi, snapPoints }: PoiListProps) {
       enablePanDownToClose={false}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>Points of Interest</Text>
-        <Text style={styles.count}>{pois.length} places</Text>
+        <View style={styles.segmentedControl}>
+          {renderSegmentButton('name', 'Name')}
+          {renderSegmentButton('must-visit', 'Must Visit')}
+          {renderSegmentButton('nearby', 'Nearby')}
+        </View>
+        <Text style={styles.count}>{filteredPois.length} places</Text>
       </View>
       
       <BottomSheetScrollView contentContainerStyle={styles.scrollContent}>
-        {pois.map((poi) => (
+        {filteredPois.map((poi) => (
           <TouchableOpacity
             key={`${poi.name}-${poi.latitude}-${poi.longitude}`}
             style={styles.poiItem}
@@ -72,11 +110,38 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#EEEEEE',
   },
-  title: {
-    fontSize: 20,
+  segmentedControl: {
+    flexDirection: 'row',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 8,
+    padding: 2,
+    marginBottom: 8,
+  },
+  segmentButton: {
+    flex: 1,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderRadius: 6,
+  },
+  segmentButtonActive: {
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  segmentButtonText: {
+    fontSize: 14,
+    color: '#666666',
+    fontWeight: '500',
+  },
+  segmentButtonTextActive: {
+    color: '#007AFF',
     fontWeight: '600',
-    color: '#333333',
-    marginBottom: 4,
   },
   count: {
     fontSize: 14,

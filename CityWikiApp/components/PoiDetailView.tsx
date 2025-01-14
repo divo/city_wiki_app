@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mapbox from '@rnmapbox/maps';
 import { DetailItem } from './DetailItem';
@@ -79,7 +79,7 @@ export default function POIDetailModal({ onClose, onShare, poi }: POIDetailModal
               </TouchableOpacity>
               <Text style={styles.headerTitle}>Point of Interest</Text>
               <TouchableOpacity onPress={onShare} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                <Icon name="share-outline" size={24} color="#333333" />
+                <Icon name="share-outline" size={24} color="#FF3B30" />
               </TouchableOpacity>
             </View>
 
@@ -95,7 +95,7 @@ export default function POIDetailModal({ onClose, onShare, poi }: POIDetailModal
                 <Icon 
                   name={isSaved ? "bookmark" : "bookmark-outline"} 
                   size={24} 
-                  color="#333333" 
+                  color="#FF3B30" 
                 />
               </TouchableOpacity>
             </View>
@@ -104,7 +104,7 @@ export default function POIDetailModal({ onClose, onShare, poi }: POIDetailModal
               {poi.description}
             </Text>
 
-            <View style={styles.mapContainer}>
+            <View style={styles.mapContainer} pointerEvents="none">
               <Mapbox.MapView
                 style={styles.map}
                 styleURL={Mapbox.StyleURL.Street}
@@ -129,9 +129,6 @@ export default function POIDetailModal({ onClose, onShare, poi }: POIDetailModal
                   <View style={styles.mapMarker} />
                 </Mapbox.PointAnnotation>
               </Mapbox.MapView>
-              <TouchableWithoutFeedback onPress={() => {}}>
-                <View style={[styles.mapOverlay, { backgroundColor: 'transparent' }]} />
-              </TouchableWithoutFeedback>
             </View>
 
             <View style={styles.details}>

@@ -34,9 +34,11 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
   const [zoomLevel, setZoomLevel] = useState(12);
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
   const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>([-122.4194, 37.7749]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadLocations = async () => {
+      setIsLoading(true);
       try {
         const locationService = LocationService.getInstance();
         await locationService.loadLocations();
@@ -46,11 +48,19 @@ const MapScreen: React.FC<MapScreenProps> = ({ currentScreen, onNavigate }) => {
         setCenterCoordinate(locationService.getCenterCoordinates());
       } catch (error) {
         console.error('Error loading locations:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadLocations();
   }, [activeCategory]);
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: 'white' }]} />
+    );
+  }
 
   const validateCoordinates = (poi: PointOfInterest): boolean => {
     if (typeof poi.longitude !== 'number' || typeof poi.latitude !== 'number') {

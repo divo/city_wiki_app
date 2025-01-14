@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapScreen from './MapScreen';
 import ExploreScreen from './ExploreScreen';
 import { CitySelect } from './components/CitySelect';
+import { LocationService } from './services/LocationService';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -23,7 +24,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const TabNavigator = ({ route, navigation }: any) => {
-  const { cityId, mapCenter, mapZoom, onMapStateChange } = route.params;
+  const { cityId, mapZoom, onMapStateChange } = route.params;
   
   return (
     <Tab.Navigator
@@ -51,7 +52,7 @@ const TabNavigator = ({ route, navigation }: any) => {
       <Tab.Screen name="Guide">
         {() => (
           <ExploreScreen
-            route={{ params: { mapCenter, mapZoom } }}
+            route={{ params: { mapZoom, cityId } }}
           />
         )}
       </Tab.Screen>
@@ -59,9 +60,9 @@ const TabNavigator = ({ route, navigation }: any) => {
       <Tab.Screen name="Map">
         {() => (
           <MapScreen
-            initialCenter={mapCenter}
             initialZoom={mapZoom}
             onMapStateChange={onMapStateChange}
+            cityId={cityId}
           />
         )}
       </Tab.Screen>
@@ -70,12 +71,19 @@ const TabNavigator = ({ route, navigation }: any) => {
 };
 
 export default function App() {
-  const [mapCenter, setMapCenter] = useState<[number, number]>([-122.4194, 37.7749]);
   const [mapZoom, setMapZoom] = useState(12);
 
   const handleMapStateChange = (center: [number, number], zoom: number) => {
-    setMapCenter(center);
     setMapZoom(zoom);
+  };
+
+  const handleCitySelect = async (cityId: string) => {
+    try {
+      const locationService = LocationService.getInstance();
+      await locationService.loadLocations(cityId);
+    } catch (error) {
+      console.error('Error loading city data:', error);
+    }
   };
 
   return (
@@ -84,9 +92,10 @@ export default function App() {
         <Stack.Navigator>
           <Stack.Screen 
             name="CitySelect" 
-            component={CitySelect}
             options={{ headerShown: false }}
-          />
+          >
+            {() => <CitySelect onCitySelect={handleCitySelect} />}
+          </Stack.Screen>
           <Stack.Screen
             name="CityGuide"
             component={TabNavigator}

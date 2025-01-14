@@ -16,6 +16,7 @@ interface MapScreenProps {
   initialCenter: [number, number];
   initialZoom: number;
   onMapStateChange: (center: [number, number], zoom: number) => void;
+  cityId: string;
 }
 
 // Add icon imports
@@ -31,7 +32,8 @@ const categoryIcons = {
 const MapScreen: React.FC<MapScreenProps> = ({ 
   initialCenter,
   initialZoom,
-  onMapStateChange 
+  onMapStateChange,
+  cityId
 }) => {
   const [activeCategory, setActiveCategory] = useState('All');
   const [locations, setLocations] = useState<PointOfInterest[]>([]);
@@ -43,7 +45,7 @@ const MapScreen: React.FC<MapScreenProps> = ({
     const loadLocations = async () => {
       try {
         const locationService = LocationService.getInstance();
-        await locationService.loadLocations();
+        await locationService.loadLocations(cityId);
         const filteredLocations = locationService.getPoisByCategory(activeCategory.toLowerCase());
         console.log(`Filtered ${filteredLocations.length} locations for category: ${activeCategory.toLowerCase()}`);
         setLocations(filteredLocations);
@@ -53,7 +55,7 @@ const MapScreen: React.FC<MapScreenProps> = ({
     };
 
     loadLocations();
-  }, [activeCategory]);
+  }, [activeCategory, cityId]);
 
   // Only set initial center coordinates once on mount
   useEffect(() => {

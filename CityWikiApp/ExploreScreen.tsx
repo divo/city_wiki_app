@@ -8,19 +8,19 @@ import { VenueHours } from './components/VenueHours';
 interface ExploreScreenProps {
   route: {
     params: {
-      mapCenter: [number, number];
       mapZoom: number;
+      cityId: string;
     };
   };
 }
 
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
-  const { mapCenter, mapZoom } = route.params;
+  const { mapZoom } = route.params;
+  const placeholderCenter: [number, number] = [-122.4194, 37.7749]; // San Francisco coordinates as placeholder
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-
         {/* Hero Image */}
         <Image
           source={{ uri: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Galileo%20design-2-IlqctxXf8OlrEykrPJXZCOPhudoBGE.png" }}
@@ -91,7 +91,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
             >
               <Mapbox.Camera
                 zoomLevel={mapZoom}
-                centerCoordinate={mapCenter}
+                centerCoordinate={placeholderCenter}
               />
             </Mapbox.MapView>
           </View>

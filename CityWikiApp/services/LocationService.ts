@@ -1,6 +1,5 @@
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
-import cityData from '../assets/san_francisco.json';
 
 interface PointOfInterest {
   district: string;
@@ -40,6 +39,7 @@ class LocationService {
   private static instance: LocationService;
   private pois: PointOfInterest[] = [];
   private cityData?: CityData;
+  private baseUrl = 'http://127.0.0.1:8000';
 
   private constructor() {}
 
@@ -50,15 +50,20 @@ class LocationService {
     return LocationService.instance;
   }
 
-  public async loadLocations(): Promise<PointOfInterest[]> {
+  public async loadLocations(cityName: string): Promise<PointOfInterest[]> {
     try {
-      this.cityData = cityData;
-      
-      if (!this.cityData.points_of_interest) {
-        throw new Error('No points of interest found in san_francisco.json');
+      const response = await fetch(`${this.baseUrl}/city/${cityName}/dump/`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
+      const data = await response.json();
       
-      this.pois = this.cityData.points_of_interest;
+      if (!data || !data.points_of_interest) {
+        throw new Error('No points of interest found in response');
+      }
+
+      this.cityData = data;
+      this.pois = data.points_of_interest;
       return this.pois;
     } catch (error) {
       console.error('Error loading points of interest:', error);

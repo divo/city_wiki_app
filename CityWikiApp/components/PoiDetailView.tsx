@@ -1,9 +1,16 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mapbox from '@rnmapbox/maps';
 import { DetailItem } from './DetailItem';
 import { PointOfInterest } from '../services/LocationService';
+import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import Animated, { 
+  useAnimatedStyle, 
+  useSharedValue, 
+  withSpring,
+  runOnJS
+} from 'react-native-reanimated';
 
 interface POIDetailModalProps {
   onClose: () => void;
@@ -11,120 +18,162 @@ interface POIDetailModalProps {
   poi: PointOfInterest;
 }
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const MAX_TRANSLATE_Y = -SCREEN_HEIGHT * 0.8;
+const MIN_TRANSLATE_Y = -SCREEN_HEIGHT * 0.4;
+const DISMISS_THRESHOLD = -SCREEN_HEIGHT * 0.3;
+
 export default function POIDetailModal({ onClose, onShare, poi }: POIDetailModalProps) {
   const [isSaved, setIsSaved] = React.useState(false);
+  const translateY = useSharedValue(0);
+  const context = useSharedValue({ y: 0 });
 
-  console.log('Rendering POI Detail Modal for:', poi.name);
+  useEffect(() => {
+    // Animate the modal in when it mounts
+    translateY.value = withSpring(MAX_TRANSLATE_Y, { damping: 50 });
+  }, []);
+
+  const gesture = Gesture.Pan()
+    .onStart(() => {
+      context.value = { y: translateY.value };
+    })
+    .onUpdate((event) => {
+      translateY.value = event.translationY + context.value.y;
+      translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y);
+    })
+    .onEnd((event) => {
+      if (translateY.value > DISMISS_THRESHOLD) {
+        translateY.value = withSpring(0, { damping: 50 });
+        runOnJS(onClose)();
+      } else {
+        const shouldSnap = event.velocityY > 0;
+        if (shouldSnap) {
+          translateY.value = withSpring(MIN_TRANSLATE_Y, { damping: 50 });
+        } else {
+          translateY.value = withSpring(MAX_TRANSLATE_Y, { damping: 50 });
+        }
+      }
+    });
+
+  const rBottomSheetStyle = useAnimatedStyle(() => {
+    const translateStyle = {
+      transform: [{ translateY: translateY.value }]
+    };
+    return translateStyle;
+  });
 
   return (
-    <View style={styles.modalOverlay}>
-      <View style={styles.modalContainer}>
-        <View style={styles.handle} />
-        <ScrollView 
-          style={styles.scrollView} 
-          bounces={false}
-          contentContainerStyle={styles.scrollContent}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Icon name="arrow-back" size={24} color="#333333" />
-            </TouchableOpacity>
-            <Text style={styles.headerTitle}>Point of Interest</Text>
-            <TouchableOpacity onPress={onShare} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Icon name="share-outline" size={24} color="#333333" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Title Section */}
-          <View style={styles.titleSection}>
-            <View style={styles.titleContainer}>
-              <Text style={styles.title}>{poi.name}</Text>
-              <Text style={styles.subtitle}>{poi.sub_category} · {poi.district}</Text>
+    <View style={styles.overlay}>
+      <GestureDetector gesture={gesture}>
+        <Animated.View style={[styles.modalContainer, rBottomSheetStyle]}>
+          <View style={styles.handle} />
+          <ScrollView 
+            style={styles.scrollView} 
+            bounces={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {/* Rest of your content stays the same */}
+            <View style={styles.header}>
+              <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                <Icon name="arrow-back" size={24} color="#333333" />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Point of Interest</Text>
+              <TouchableOpacity onPress={onShare} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                <Icon name="share-outline" size={24} color="#333333" />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity 
-              onPress={() => setIsSaved(!isSaved)}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Icon 
-                name={isSaved ? "bookmark" : "bookmark-outline"} 
-                size={24} 
-                color="#333333" 
-              />
-            </TouchableOpacity>
-          </View>
 
-          {/* Description */}
-          <Text style={styles.description}>
-            {poi.description}
-          </Text>
-
-          {/* Map */}
-          <View style={styles.mapContainer}>
-            <Mapbox.MapView
-              style={styles.map}
-              styleURL={Mapbox.StyleURL.Street}
-              scrollEnabled={false}
-              zoomEnabled={false}
-            >
-              <Mapbox.Camera
-                zoomLevel={15}
-                centerCoordinate={[poi.longitude, poi.latitude]}
-                animationMode="none"
-              />
-              <Mapbox.PointAnnotation
-                id={poi.name}
-                coordinate={[poi.longitude, poi.latitude]}
+            <View style={styles.titleSection}>
+              <View style={styles.titleContainer}>
+                <Text style={styles.title}>{poi.name}</Text>
+                <Text style={styles.subtitle}>{poi.sub_category} · {poi.district}</Text>
+              </View>
+              <TouchableOpacity 
+                onPress={() => setIsSaved(!isSaved)}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <View style={styles.mapMarker} />
-              </Mapbox.PointAnnotation>
-            </Mapbox.MapView>
-          </View>
+                <Icon 
+                  name={isSaved ? "bookmark" : "bookmark-outline"} 
+                  size={24} 
+                  color="#333333" 
+                />
+              </TouchableOpacity>
+            </View>
 
-          {/* Details */}
-          <View style={styles.details}>
-            <DetailItem
-              icon="location"
-              text={poi.address}
-            />
-            {poi.phone && (
-              <DetailItem
-                icon="call"
-                text={poi.phone}
-              />
-            )}
-            {poi.website && (
-              <DetailItem
-                icon="globe"
-                text={poi.website}
-              />
-            )}
-            {poi.hours && (
-              <DetailItem
-                icon="time"
-                text="Open today"
-              />
-            )}
-          </View>
+            <Text style={styles.description}>
+              {poi.description}
+            </Text>
 
-          {/* Get Directions Button */}
-          <TouchableOpacity style={styles.directionsButton}>
-            <Icon name="navigate-outline" size={20} color="white" style={styles.directionsIcon} />
-            <Text style={styles.directionsText}>Get directions</Text>
-          </TouchableOpacity>
+            <View style={styles.mapContainer}>
+              <Mapbox.MapView
+                style={styles.map}
+                styleURL={Mapbox.StyleURL.Street}
+                scrollEnabled={false}
+                zoomEnabled={false}
+                pitchEnabled={false}
+                rotateEnabled={false}
+                attributionEnabled={false}
+                logoEnabled={false}
+                compassEnabled={false}
+              >
+                <Mapbox.Camera
+                  zoomLevel={15}
+                  centerCoordinate={[poi.longitude, poi.latitude]}
+                  animationMode="flyTo"
+                  animationDuration={0}
+                />
+                <Mapbox.PointAnnotation
+                  id={poi.name}
+                  coordinate={[poi.longitude, poi.latitude]}
+                >
+                  <View style={styles.mapMarker} />
+                </Mapbox.PointAnnotation>
+              </Mapbox.MapView>
+              <TouchableWithoutFeedback onPress={() => {}}>
+                <View style={[styles.mapOverlay, { backgroundColor: 'transparent' }]} />
+              </TouchableWithoutFeedback>
+            </View>
 
-          {/* Bottom Spacing */}
-          <View style={styles.bottomSpacing} />
-        </ScrollView>
-      </View>
+            <View style={styles.details}>
+              <DetailItem
+                icon="location"
+                text={poi.address}
+              />
+              {poi.phone && (
+                <DetailItem
+                  icon="call"
+                  text={poi.phone}
+                />
+              )}
+              {poi.website && (
+                <DetailItem
+                  icon="globe"
+                  text={poi.website}
+                />
+              )}
+              {poi.hours && (
+                <DetailItem
+                  icon="time"
+                  text="Open today"
+                />
+              )}
+            </View>
+
+            <TouchableOpacity style={styles.directionsButton}>
+              <Icon name="navigate-outline" size={20} color="white" style={styles.directionsIcon} />
+              <Text style={styles.directionsText}>Get directions</Text>
+            </TouchableOpacity>
+
+            <View style={styles.bottomSpacing} />
+          </ScrollView>
+        </Animated.View>
+      </GestureDetector>
     </View>
   );
 }
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
-  modalOverlay: {
+  overlay: {
     position: 'absolute',
     top: 0,
     left: 0,
@@ -139,6 +188,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     height: SCREEN_HEIGHT * 0.8,
+    width: '100%',
+    position: 'absolute',
+    bottom: -SCREEN_HEIGHT * 0.8,
     paddingTop: 8,
   },
   handle: {
@@ -202,9 +254,18 @@ const styles = StyleSheet.create({
     height: 180,
     marginTop: 16,
     backgroundColor: 'white',
+    position: 'relative',
   },
   map: {
     flex: 1,
+  },
+  mapOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'transparent',
   },
   mapMarker: {
     width: 12,

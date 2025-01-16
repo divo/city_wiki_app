@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     width: TILE_WIDTH,
     height: TILE_HEIGHT,
     marginBottom: TILE_MARGIN * 2,
-    borderRadius: 12,
+    borderRadius: 0,
     overflow: 'hidden',
     backgroundColor: '#F5F5F5',
   },

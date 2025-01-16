@@ -20,6 +20,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
   const placeholderCenter: [number, number] = [-122.4194, 37.7749];
   const [topPois, setTopPois] = useState<PointOfInterest[]>([]);
   const [heroImageUrl, setHeroImageUrl] = useState<string>('');
+  const [cityName, setCityName] = useState<string>('');
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -36,6 +37,9 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         if (cityInfo?.image_url) {
           setHeroImageUrl(cityInfo.image_url);
         }
+        if (cityInfo?.name) {
+          setCityName(cityInfo.name);
+        }
       } catch (error) {
         console.error('Error loading locations:', error);
       }
@@ -47,12 +51,17 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Hero Image */}
-        <Image
-          source={{ uri: heroImageUrl || "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Galileo%20design-2-IlqctxXf8OlrEykrPJXZCOPhudoBGE.png" }}
-          style={styles.heroImage}
-          resizeMode="cover"
-        />
+        {/* Hero Image with City Name Overlay */}
+        <View style={styles.heroContainer}>
+          <Image
+            source={{ uri: heroImageUrl || "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Galileo%20design-2-IlqctxXf8OlrEykrPJXZCOPhudoBGE.png" }}
+            style={styles.heroImage}
+            resizeMode="cover"
+          />
+          <View style={styles.heroOverlay}>
+            <Text style={styles.cityNameOverlay}>{cityName}</Text>
+          </View>
+        </View>
         
         {/* Description */}
         <Text style={styles.description}>
@@ -157,9 +166,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginHorizontal: 32,
   },
-  heroImage: {
+  heroContainer: {
+    position: 'relative',
     width: '100%',
     height: 240,
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
+  },
+  heroOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cityNameOverlay: {
+    color: 'white',
+    fontSize: 36,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   description: {
     fontSize: 15,

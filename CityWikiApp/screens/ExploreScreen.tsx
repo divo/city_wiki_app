@@ -21,6 +21,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
   const [topPois, setTopPois] = useState<PointOfInterest[]>([]);
   const [heroImageUrl, setHeroImageUrl] = useState<string>('');
   const [cityName, setCityName] = useState<string>('');
+  const [cityAbout, setCityAbout] = useState<string>('');
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -39,6 +40,9 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         }
         if (cityInfo?.name) {
           setCityName(cityInfo.name);
+        }
+        if (cityInfo?.about) {
+          setCityAbout(cityInfo.about);
         }
       } catch (error) {
         console.error('Error loading locations:', error);
@@ -65,7 +69,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         
         {/* Description */}
         <Text style={styles.description}>
-          The Golden Gate Bridge, the cable cars, Alcatraz... San Francisco is one of the most beautiful and unique cities in the world. It's also one of the most expensive. But there are plenty of things to do for free or on a budget.
+          {cityAbout}
         </Text>
 
         {/* Highlights Section */}

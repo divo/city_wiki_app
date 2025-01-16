@@ -29,6 +29,7 @@ interface CityData {
     latitude: number | null;
     longitude: number | null;
     image_url: string;
+    about: string;
   };
   districts: {
     name: string;

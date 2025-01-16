@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mapbox from '@rnmapbox/maps';
-import { HighlightCard } from './components/HighlightCard';
-import { VenueHours } from './components/VenueHours';
+import { HighlightCard } from '../components/HighlightCard';
+import { VenueHours } from '../components/VenueHours';
 
 interface ExploreScreenProps {
   route: {

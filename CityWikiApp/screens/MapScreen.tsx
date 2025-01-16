@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
 import Mapbox from '@rnmapbox/maps';
-import { CategoryTab } from './components/CategoryTab';
-import { SearchBar } from './components/SearchBar';
-import { LocationService, PointOfInterest } from './services/LocationService';
-import POIDetailModal from './components/PoiDetailView';
+import { CategoryTab } from '../components/CategoryTab';
+import { SearchBar } from '../components/SearchBar';
+import { LocationService, PointOfInterest } from '../services/LocationService';
+import POIDetailModal from '../components/PoiDetailView';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { PoiList } from './components/PoiList';
+import { PoiList } from '../components/PoiList';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Initialize Mapbox with your access token
@@ -23,12 +23,12 @@ interface MapScreenProps {
 
 // Add icon imports
 const categoryIcons = {
-  see: require('./assets/see.png'),
-  eat: require('./assets/eat.png'),
-  sleep: require('./assets/sleep.png'),
-  shop: require('./assets/shop.png'),
-  drink: require('./assets/drink.png'),
-  play: require('./assets/play.png'),
+  see: require('../assets/see.png'),
+  eat: require('../assets/eat.png'),
+  sleep: require('../assets/sleep.png'),
+  shop: require('../assets/shop.png'),
+  drink: require('../assets/drink.png'),
+  play: require('../assets/play.png'),
 };
 
 export default function MapScreen({ initialZoom, onMapStateChange, cityId }: MapScreenProps) {

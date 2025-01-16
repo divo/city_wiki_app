@@ -5,8 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import MapScreen from './MapScreen';
-import ExploreScreen from './ExploreScreen';
+import MapScreen from './screens/MapScreen';
+import ExploreScreen from './screens/ExploreScreen';
 import { CitySelect } from './components/CitySelect';
 
 type RootStackParamList = {

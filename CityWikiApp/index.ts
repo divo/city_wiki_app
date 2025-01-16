@@ -7,4 +7,4 @@ import App from './App';
 // the environment is set up appropriately
 registerRootComponent(App);
 
-export { MapScreen } from './MapScreen';
+export { MapScreen } from './screens/MapScreen';

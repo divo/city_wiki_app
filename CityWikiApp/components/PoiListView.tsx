@@ -75,11 +75,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   listTile: {
-    width: 160,
-    height: 100,
+    width: 260,
+    height: 200,
     marginRight: 12,
     backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    borderRadius: 1,
     overflow: 'hidden',
   },
   listImage: {
@@ -90,17 +90,20 @@ const styles = StyleSheet.create({
   listContent: {
     flex: 1,
     padding: 12,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
   },
   listTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: 'white',
-    marginBottom: 4,
+    marginBottom: 8,
+    textAlign: 'center',
   },
   listCount: {
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.8)',
+    textAlign: 'center',
   },
 }); 

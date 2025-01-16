@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { View, Text, Modal, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions, Image } from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -35,6 +35,14 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
+
+  // Filter out POIs that are in the "Must See" or "Highlights" list
+  const filteredPois = useMemo(() => {
+    return list.pois.filter(poi => 
+      poi.sub_category?.toLowerCase() !== 'must see' && 
+      poi.sub_category?.toLowerCase() !== 'highlights'
+    );
+  }, [list.pois]);
 
   const calculateBounds = useCallback(() => {
     const validPois = list.pois.filter(validateCoordinates);
@@ -159,7 +167,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
             </Mapbox.MapView>
 
             <PoiList
-              pois={list.pois}
+              pois={filteredPois}
               onSelectPoi={setSelectedPoi}
               snapPoints={['25%', '50%', '90%']}
               showSegmentedControl={false}

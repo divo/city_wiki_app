@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mapbox from '@rnmapbox/maps';
@@ -7,6 +7,8 @@ import { VenueHours } from '../components/VenueHours';
 import { LocationService, PointOfInterest } from '../services/LocationService';
 import { PoiListView } from '../components/PoiListView';
 import { PoiListDetailView } from '../components/PoiListDetailView';
+import { PoiListFullView } from '../components/PoiListFullView';
+import POIDetailModal from '../components/PoiDetailView';
 
 interface ExploreScreenProps {
   route: {
@@ -27,6 +29,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
   const [poiLists, setPoiLists] = useState<{ title: string; pois: PointOfInterest[] }[]>([]);
   const [selectedList, setSelectedList] = useState<{ title: string; pois: PointOfInterest[] } | null>(null);
   const [isListModalVisible, setIsListModalVisible] = useState(false);
+  const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -63,14 +66,24 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
   }, [cityId]);
 
   const handlePoiSelect = (poi: PointOfInterest) => {
-    // Handle POI selection - can be implemented later
-    console.log('Selected POI:', poi.name);
+    setSelectedPoi(poi);
+  };
+
+  const handleShare = () => {
+    console.log('Sharing POI:', selectedPoi?.name);
   };
 
   const handleListSelect = (list: { title: string; pois: PointOfInterest[] }) => {
     setSelectedList(list);
     setIsListModalVisible(true);
   };
+
+  const mustSeeList = useMemo(() => {
+    return poiLists.find(list => 
+      list.title.toLowerCase() === 'must see' || 
+      list.title.toLowerCase() === 'highlights'
+    );
+  }, [poiLists]);
 
   return (
     <View style={styles.container}>
@@ -91,34 +104,24 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         <Text style={styles.description}>
           {cityAbout}
         </Text>
-        {/* Highlights Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Highlights</Text>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.highlightsContainer}
-          >
-            <HighlightCard
-              title="Palace of Fine Arts"
-              imageUrl="/placeholder.svg?height=100&width=140"
-            />
-            <HighlightCard
-              title="Alcatraz Island"
-              imageUrl="/placeholder.svg?height=100&width=140"
-            />
-            <HighlightCard
-              title="The Golden Gate Bridge"
-              imageUrl="/placeholder.svg?height=100&width=140"
-            />
-          </ScrollView>
-        </View>
+
+        {/* Must See/Highlights Section */}
+        {mustSeeList && (
+          <PoiListFullView
+            title={mustSeeList.title}
+            pois={mustSeeList.pois}
+            onSelectPoi={handlePoiSelect}
+          />
+        )}
 
         {/* POI Lists */}
         <PoiListView
           key="collections"
           title="Collections"
-          pois={poiLists}
+          pois={poiLists.filter(list => 
+            list.title.toLowerCase() !== 'must see' && 
+            list.title.toLowerCase() !== 'highlights'
+          )}
           onSelectList={handleListSelect}
         />
 
@@ -153,6 +156,14 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         onClose={() => setIsListModalVisible(false)}
         list={selectedList}
       />
+
+      {selectedPoi && (
+        <POIDetailModal
+          poi={selectedPoi}
+          onClose={() => setSelectedPoi(null)}
+          onShare={handleShare}
+        />
+      )}
     </View>
   );
 }

@@ -6,6 +6,7 @@ import { HighlightCard } from '../components/HighlightCard';
 import { VenueHours } from '../components/VenueHours';
 import { LocationService, PointOfInterest } from '../services/LocationService';
 import { PoiListView } from '../components/PoiListView';
+import { PoiListDetailView } from '../components/PoiListDetailView';
 
 interface ExploreScreenProps {
   route: {
@@ -24,6 +25,8 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
   const [cityName, setCityName] = useState<string>('');
   const [cityAbout, setCityAbout] = useState<string>('');
   const [poiLists, setPoiLists] = useState<{ title: string; pois: PointOfInterest[] }[]>([]);
+  const [selectedList, setSelectedList] = useState<{ title: string; pois: PointOfInterest[] } | null>(null);
+  const [isListModalVisible, setIsListModalVisible] = useState(false);
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -64,6 +67,11 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
     console.log('Selected POI:', poi.name);
   };
 
+  const handleListSelect = (list: { title: string; pois: PointOfInterest[] }) => {
+    setSelectedList(list);
+    setIsListModalVisible(true);
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -83,17 +91,6 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         <Text style={styles.description}>
           {cityAbout}
         </Text>
-
-        {/* POI Lists */}
-        <PoiListView
-          key="collections"
-          title="Collections"
-          pois={poiLists}
-          onSelectList={(list) => {
-            console.log('Selected list:', list.title);
-          }}
-        />
-
         {/* Highlights Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Highlights</Text>
@@ -117,28 +114,13 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
           </ScrollView>
         </View>
 
-        {/* Hours Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Hours</Text>
-          <VenueHours
-            name="California Academy of Sciences"
-            day="Sunday"
-            status="Open now · Closes 9PM"
-            imageUrl="/placeholder.svg?height=56&width=56"
-          />
-          <VenueHours
-            name="Exploratorium"
-            day="Tomorrow"
-            status="Opens at 10AM"
-            imageUrl="/placeholder.svg?height=56&width=56"
-          />
-          <VenueHours
-            name="San Francisco Zoo"
-            day="Sunday"
-            status="Open now · Closes 8PM"
-            imageUrl="/placeholder.svg?height=56&width=56"
-          />
-        </View>
+        {/* POI Lists */}
+        <PoiListView
+          key="collections"
+          title="Collections"
+          pois={poiLists}
+          onSelectList={handleListSelect}
+        />
 
         {/* Location Section */}
         <View style={styles.section}>
@@ -165,6 +147,12 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         {/* Bottom Spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
+
+      <PoiListDetailView
+        visible={isListModalVisible}
+        onClose={() => setIsListModalVisible(false)}
+        list={selectedList}
+      />
     </View>
   );
 }

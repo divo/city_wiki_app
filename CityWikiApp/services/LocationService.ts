@@ -22,6 +22,11 @@ interface PointOfInterest {
   rank: number;
 }
 
+interface PoiList {
+  title: string;
+  pois: PointOfInterest[];
+}
+
 interface CityData {
   city: {
     name: string;
@@ -36,6 +41,7 @@ interface CityData {
     parent_district: string | null;
   }[];
   points_of_interest: PointOfInterest[];
+  poi_lists: PoiList[];
 }
 
 class LocationService {
@@ -153,6 +159,10 @@ class LocationService {
       console.error('Error clearing data:', error);
       throw error;
     }
+  }
+
+  public getPoiLists(): PoiList[] {
+    return this.cityData?.poi_lists || [];
   }
 }
 

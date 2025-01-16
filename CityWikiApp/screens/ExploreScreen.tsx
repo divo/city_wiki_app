@@ -5,6 +5,7 @@ import Mapbox from '@rnmapbox/maps';
 import { HighlightCard } from '../components/HighlightCard';
 import { VenueHours } from '../components/VenueHours';
 import { LocationService, PointOfInterest } from '../services/LocationService';
+import { PoiListView } from '../components/PoiListView';
 
 interface ExploreScreenProps {
   route: {
@@ -22,6 +23,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
   const [heroImageUrl, setHeroImageUrl] = useState<string>('');
   const [cityName, setCityName] = useState<string>('');
   const [cityAbout, setCityAbout] = useState<string>('');
+  const [poiLists, setPoiLists] = useState<{ title: string; pois: PointOfInterest[] }[]>([]);
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -44,6 +46,10 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         if (cityInfo?.about) {
           setCityAbout(cityInfo.about);
         }
+
+        // Get POI lists
+        const lists = locationService.getPoiLists();
+        setPoiLists(lists);
       } catch (error) {
         console.error('Error loading locations:', error);
       }
@@ -51,6 +57,11 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
 
     loadLocations();
   }, [cityId]);
+
+  const handlePoiSelect = (poi: PointOfInterest) => {
+    // Handle POI selection - can be implemented later
+    console.log('Selected POI:', poi.name);
+  };
 
   return (
     <View style={styles.container}>
@@ -71,6 +82,16 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         <Text style={styles.description}>
           {cityAbout}
         </Text>
+
+        {/* POI Lists */}
+        <PoiListView
+          key="collections"
+          title="Collections"
+          pois={poiLists}
+          onSelectList={(list) => {
+            console.log('Selected list:', list.title);
+          }}
+        />
 
         {/* Highlights Section */}
         <View style={styles.section}>

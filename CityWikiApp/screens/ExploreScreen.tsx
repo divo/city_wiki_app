@@ -49,6 +49,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
 
         // Get POI lists
         const lists = locationService.getPoiLists();
+        console.log('POI Lists:', JSON.stringify(lists, null, 2));
         setPoiLists(lists);
       } catch (error) {
         console.error('Error loading locations:', error);

@@ -13,6 +13,7 @@ interface PointOfInterest {
   address: string;
   phone?: string;
   website?: string;
+  image_url?: string;
   hours?: {
     [key: string]: {
       open: string;

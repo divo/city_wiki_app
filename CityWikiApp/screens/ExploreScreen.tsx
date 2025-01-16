@@ -125,28 +125,6 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
           onSelectList={handleListSelect}
         />
 
-        {/* Location Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Location</Text>
-          <View style={styles.mapContainer}>
-            <Mapbox.MapView
-              style={styles.map}
-              styleURL={Mapbox.StyleURL.Street}
-              scrollEnabled={false}
-              zoomEnabled={false}
-            >
-              <Mapbox.Camera
-                zoomLevel={mapZoom}
-                centerCoordinate={placeholderCenter}
-              />
-            </Mapbox.MapView>
-          </View>
-          <TouchableOpacity style={styles.directionsButton}>
-            <Icon name="navigate-outline" size={20} color="white" style={styles.directionsIcon} />
-            <Text style={styles.directionsText}>Get Directions</Text>
-          </TouchableOpacity>
-        </View>
-
         {/* Bottom Spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>

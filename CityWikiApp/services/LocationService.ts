@@ -143,6 +143,16 @@ class LocationService {
       sumLat / validPois.length
     ];
   }
+
+  public async clearData(): Promise<void> {
+    try {
+      // Clear in-memory data
+      this.storageService.clearAll();
+    } catch (error) {
+      console.error('Error clearing data:', error);
+      throw error;
+    }
+  }
 }
 
 export { LocationService, type PointOfInterest, type CityData }; 

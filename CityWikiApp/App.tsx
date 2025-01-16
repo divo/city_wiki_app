@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapScreen from './screens/MapScreen';
 import ExploreScreen from './screens/ExploreScreen';
 import { CitySelect } from './components/CitySelect';
+import { LocationService } from './services/LocationService';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -81,6 +82,16 @@ export default function App() {
     return Promise.resolve();
   };
 
+  const handleClearCache = async () => {
+    try {
+      const locationService = LocationService.getInstance();
+      await locationService.clearData();
+      console.log('Successfully cleared cache');
+    } catch (error) {
+      console.error('Error clearing cache:', error);
+    }
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
@@ -89,7 +100,17 @@ export default function App() {
             name="CitySelect" 
             options={{ headerShown: false }}
           >
-            {() => <CitySelect onCitySelect={handleCitySelect} />}
+            {() => (
+              <View style={styles.container}>
+                <CitySelect onCitySelect={handleCitySelect} />
+                <TouchableOpacity 
+                  style={styles.clearCacheButton}
+                  onPress={handleClearCache}
+                >
+                  <Text style={styles.clearCacheText}>Clear Cache</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </Stack.Screen>
           <Stack.Screen
             name="CityGuide"
@@ -101,3 +122,23 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  clearCacheButton: {
+    position: 'absolute',
+    bottom: 20,
+    alignSelf: 'center',
+    backgroundColor: '#FF3B30',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  clearCacheText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+});

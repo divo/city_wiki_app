@@ -159,34 +159,35 @@ const styles = StyleSheet.create({
     color: '#666666',
   },
   scrollContent: {
-    padding: 16,
+    padding: 0,
   },
   poiItem: {
     flexDirection: 'row',
-    padding: 12,
+    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#EEEEEE',
+    backgroundColor: 'white',
   },
   poiInfo: {
     flex: 1,
   },
-  poiName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333333',
-  },
-  poiCategory: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 2,
-  },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
+    marginBottom: 6,
+  },
+  poiName: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#333333',
+    letterSpacing: -0.4,
+  },
+  poiCategory: {
+    fontSize: 15,
+    color: '#666666',
+    letterSpacing: -0.2,
   },
   starIcon: {
-    marginRight: 4,
-    marginTop: 0,
+    marginRight: 6,
   },
 }); 

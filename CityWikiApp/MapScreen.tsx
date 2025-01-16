@@ -149,12 +149,6 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <Text style={styles.title}>San Francisco</Text>
-          </View>
-          <View style={styles.searchContainer}>
-            <SearchBar />
-          </View>
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false}
@@ -170,6 +164,10 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
               />
             ))}
           </ScrollView>
+
+          <View style={styles.searchContainer}>
+            <SearchBar />
+          </View>
         </View>
 
         <View style={styles.mapContainer}>
@@ -247,6 +245,7 @@ const styles = StyleSheet.create({
   categoriesContent: {
     paddingHorizontal: 16,
     paddingBottom: 12,
+    paddingTop: 12,
   },
   mapContainer: {
     flex: 1,

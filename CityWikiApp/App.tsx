@@ -17,6 +17,7 @@ type RootStackParamList = {
     mapCenter: [number, number];
     mapZoom: number;
     onMapStateChange: (center: [number, number], zoom: number) => void;
+    headerTitle: string;
   };
 };
 
@@ -24,7 +25,7 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const TabNavigator = ({ route, navigation }: any) => {
-  const { cityId, mapZoom, onMapStateChange } = route.params;
+  const { cityId, mapZoom, onMapStateChange, headerTitle } = route.params;
   
   return (
     <Tab.Navigator
@@ -36,7 +37,7 @@ const TabNavigator = ({ route, navigation }: any) => {
         },
         tabBarActiveTintColor: '#007AFF',
         tabBarInactiveTintColor: 'gray',
-        headerTitle: "San Francisco",
+        headerTitle: headerTitle,
         headerLeft: () => (
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons 

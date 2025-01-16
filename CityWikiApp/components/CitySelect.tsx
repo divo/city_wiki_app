@@ -16,6 +16,7 @@ type RootStackParamList = {
     cityId: string;
     mapZoom: number;
     onMapStateChange: (center: [number, number], zoom: number) => void;
+    headerTitle: string;
   };
 };
 
@@ -88,6 +89,7 @@ export function CitySelect({ onCitySelect }: CitySelectProps) {
       cityId,
       mapZoom: 12,
       onMapStateChange: () => {}, // This will be overridden by App.tsx
+      headerTitle: cities.find(c => c.id === cityId)?.name || cityId,
     });
   };
 

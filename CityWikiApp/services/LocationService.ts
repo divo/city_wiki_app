@@ -39,7 +39,8 @@ class LocationService {
   private static instance: LocationService;
   private pois: PointOfInterest[] = [];
   private cityData?: CityData;
-  private baseUrl = 'http://192.168.1.220:8000';
+  //private baseUrl = 'http://192.168.1.220:8000';
+  private baseUrl = 'http://localhost:8000';
 
   private constructor() {}
 
@@ -52,7 +53,7 @@ class LocationService {
 
   public async loadLocations(cityId: string): Promise<void> {
     try {
-      const response = await fetch(`http://192.168.1.164:8000/city/${cityId}/dump/`);
+      const response = await fetch(`http://localhost:8000/city/${cityId}/dump/`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

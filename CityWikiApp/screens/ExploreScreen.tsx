@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mapbox from '@rnmapbox/maps';
 import { HighlightCard } from '../components/HighlightCard';
 import { VenueHours } from '../components/VenueHours';
+import { LocationService, PointOfInterest } from '../services/LocationService';
 
 interface ExploreScreenProps {
   route: {
@@ -15,15 +16,40 @@ interface ExploreScreenProps {
 }
 
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
-  const { mapZoom } = route.params;
-  const placeholderCenter: [number, number] = [-122.4194, 37.7749]; // San Francisco coordinates as placeholder
+  const { mapZoom, cityId } = route.params;
+  const placeholderCenter: [number, number] = [-122.4194, 37.7749];
+  const [topPois, setTopPois] = useState<PointOfInterest[]>([]);
+  const [heroImageUrl, setHeroImageUrl] = useState<string>('');
+
+  useEffect(() => {
+    const loadLocations = async () => {
+      try {
+        const locationService = LocationService.getInstance();
+        await locationService.loadLocations(cityId);
+        // Get top ranked POIs
+        const allPois = locationService.getPoisByCategory('all');
+        const sortedPois = allPois.sort((a, b) => (a.rank || 999) - (b.rank || 999));
+        setTopPois(sortedPois.slice(0, 3));
+        
+        // Get city info and set hero image
+        const cityInfo = locationService.getCityInfo();
+        if (cityInfo?.image_url) {
+          setHeroImageUrl(cityInfo.image_url);
+        }
+      } catch (error) {
+        console.error('Error loading locations:', error);
+      }
+    };
+
+    loadLocations();
+  }, [cityId]);
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Hero Image */}
         <Image
-          source={{ uri: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Galileo%20design-2-IlqctxXf8OlrEykrPJXZCOPhudoBGE.png" }}
+          source={{ uri: heroImageUrl || "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Galileo%20design-2-IlqctxXf8OlrEykrPJXZCOPhudoBGE.png" }}
           style={styles.heroImage}
           resizeMode="cover"
         />

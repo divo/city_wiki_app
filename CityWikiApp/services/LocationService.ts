@@ -1,5 +1,6 @@
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
+import { StorageService } from './StorageService';
 
 interface PointOfInterest {
   district: string;
@@ -27,6 +28,7 @@ interface CityData {
     country: string;
     latitude: number | null;
     longitude: number | null;
+    image_url: string;
   };
   districts: {
     name: string;
@@ -39,10 +41,12 @@ class LocationService {
   private static instance: LocationService;
   private pois: PointOfInterest[] = [];
   private cityData?: CityData;
-  //private baseUrl = 'http://192.168.1.220:8000';
   private baseUrl = 'http://localhost:8000';
+  private storageService: StorageService;
 
-  private constructor() {}
+  private constructor() {
+    this.storageService = StorageService.getInstance();
+  }
 
   public static getInstance(): LocationService {
     if (!LocationService.instance) {
@@ -53,11 +57,28 @@ class LocationService {
 
   public async loadLocations(cityId: string): Promise<void> {
     try {
-      const response = await fetch(`http://localhost:8000/city/${cityId}/dump/`);
+      // Try to get data from cache first
+      const cachedData = await this.storageService.getCityData(cityId);
+      if (cachedData) {
+        console.log('Using cached data for city:', cityId);
+        this.cityData = cachedData;
+        this.pois = cachedData.points_of_interest;
+        return;
+      }
+
+      // If not in cache, fetch from network
+      console.log('Fetching fresh data for city:', cityId);
+      const response = await fetch(`${this.baseUrl}/city/${cityId}/dump/`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
+      const data: CityData = await response.json();
+      
+      // Store in cache
+      await this.storageService.storeCityData(cityId, data);
+      
+      // Update local state
+      this.cityData = data;
       this.pois = data.points_of_interest || [];
     } catch (error) {
       console.error('Error loading points of interest:', error);

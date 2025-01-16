@@ -8,13 +8,11 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapScreen from './MapScreen';
 import ExploreScreen from './ExploreScreen';
 import { CitySelect } from './components/CitySelect';
-import { LocationService } from './services/LocationService';
 
 type RootStackParamList = {
   CitySelect: undefined;
   CityGuide: {
     cityId: string;
-    mapCenter: [number, number];
     mapZoom: number;
     onMapStateChange: (center: [number, number], zoom: number) => void;
     headerTitle: string;
@@ -79,12 +77,8 @@ export default function App() {
   };
 
   const handleCitySelect = async (cityId: string) => {
-    try {
-      const locationService = LocationService.getInstance();
-      await locationService.loadLocations(cityId);
-    } catch (error) {
-      console.error('Error loading city data:', error);
-    }
+    // No need to load data here anymore, it's handled in CitySelect
+    return Promise.resolve();
   };
 
   return (

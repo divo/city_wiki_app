@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { SearchBar } from './SearchBar';
 import { 
   useFonts,
@@ -9,6 +9,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { LocationService } from '../services/LocationService';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -65,8 +66,8 @@ const cities: City[] = [
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TILE_MARGIN = 8;
-const TILE_WIDTH = (SCREEN_WIDTH - (TILE_MARGIN * 4)) / 2; // 2 tiles per row with margins
-const TILE_HEIGHT = TILE_WIDTH * 1.5; // 2:3 aspect ratio
+const TILE_WIDTH = (SCREEN_WIDTH - (TILE_MARGIN * 4)) / 2;
+const TILE_HEIGHT = TILE_WIDTH * 1.5;
 
 interface CitySelectProps {
   onCitySelect: (cityId: string) => Promise<void>;
@@ -74,6 +75,7 @@ interface CitySelectProps {
 
 export function CitySelect({ onCitySelect }: CitySelectProps) {
   const navigation = useNavigation<CitySelectScreenNavigationProp>();
+  const [loadingCity, setLoadingCity] = useState<string | null>(null);
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_500Medium,
@@ -84,13 +86,27 @@ export function CitySelect({ onCitySelect }: CitySelectProps) {
   }
 
   const handleCitySelect = async (cityId: string) => {
-    await onCitySelect(cityId);
-    navigation.navigate('CityGuide', {
-      cityId,
-      mapZoom: 12,
-      onMapStateChange: () => {}, // This will be overridden by App.tsx
-      headerTitle: cities.find(c => c.id === cityId)?.name || cityId,
-    });
+    try {
+      setLoadingCity(cityId);
+      const locationService = LocationService.getInstance();
+      await locationService.loadLocations(cityId);
+      await onCitySelect(cityId);
+      
+      const cityInfo = locationService.getCityInfo();
+      const centerCoords = locationService.getCenterCoordinates();
+      
+      navigation.navigate('CityGuide', {
+        cityId,
+        mapZoom: 12,
+        onMapStateChange: () => {}, // This will be overridden by App.tsx
+        headerTitle: cityInfo?.name || cityId,
+      });
+    } catch (error) {
+      console.error('Error loading city data:', error);
+      // You might want to show an error message to the user here
+    } finally {
+      setLoadingCity(null);
+    }
   };
 
   return (
@@ -114,6 +130,7 @@ export function CitySelect({ onCitySelect }: CitySelectProps) {
               key={city.id}
               style={styles.cityTile}
               onPress={() => handleCitySelect(city.id)}
+              disabled={loadingCity !== null}
             >
               <Image
                 source={
@@ -129,6 +146,11 @@ export function CitySelect({ onCitySelect }: CitySelectProps) {
                   {city.name.replace(' ', '\n')}
                 </Text>
               </View>
+              {loadingCity === city.id && (
+                <View style={styles.loadingOverlay}>
+                  <ActivityIndicator size="large" color="#FFFFFF" />
+                </View>
+              )}
             </TouchableOpacity>
           ))}
         </View>
@@ -144,9 +166,8 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    paddingTop: 16,
+    paddingBottom: 8,
   },
   title: {
     fontSize: 32,
@@ -155,7 +176,7 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingBottom: 16,
   },
   scrollView: {
     flex: 1,
@@ -172,17 +193,9 @@ const styles = StyleSheet.create({
     width: TILE_WIDTH,
     height: TILE_HEIGHT,
     marginBottom: TILE_MARGIN * 2,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 15,
+    borderRadius: 12,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 8,
+    backgroundColor: '#F5F5F5',
   },
   cityImage: {
     width: '100%',
@@ -194,24 +207,26 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    padding: 12,
-    paddingBottom: 16,
-  },
-  cityName: {
-    fontSize: 32,
-    fontFamily: 'Montserrat_600SemiBold',
-    color: 'white',
-    marginBottom: 4,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    padding: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   countryName: {
     fontSize: 16,
     fontFamily: 'Montserrat_500Medium',
-    color: 'rgba(255, 255, 255, 0.95)',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    color: '#FFFFFF',
+    opacity: 0.8,
+    marginBottom: 4,
+  },
+  cityName: {
+    fontSize: 28,
+    fontFamily: 'Montserrat_600SemiBold',
+    color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

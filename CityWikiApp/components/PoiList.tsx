@@ -10,9 +10,15 @@ interface PoiListProps {
   pois: PointOfInterest[];
   onSelectPoi: (poi: PointOfInterest) => void;
   snapPoints: string[];
+  showSegmentedControl?: boolean;
 }
 
-export function PoiList({ pois, onSelectPoi, snapPoints }: PoiListProps) {
+export function PoiList({ 
+  pois, 
+  onSelectPoi, 
+  snapPoints,
+  showSegmentedControl = true 
+}: PoiListProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>('name');
 
@@ -65,11 +71,13 @@ export function PoiList({ pois, onSelectPoi, snapPoints }: PoiListProps) {
       enablePanDownToClose={false}
     >
       <View style={styles.header}>
-        <View style={styles.segmentedControl}>
-          {renderSegmentButton('name', 'Name')}
-          {renderSegmentButton('must-visit', 'Must Visit')}
-          {renderSegmentButton('nearby', 'Nearby')}
-        </View>
+        {showSegmentedControl ? (
+          <View style={styles.segmentedControl}>
+            {renderSegmentButton('name', 'Name')}
+            {renderSegmentButton('must-visit', 'Must Visit')}
+            {renderSegmentButton('nearby', 'Nearby')}
+          </View>
+        ) : null}
         <Text style={styles.count}>{filteredPois.length} places</Text>
       </View>
       

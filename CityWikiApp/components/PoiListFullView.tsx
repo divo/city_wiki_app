@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
   poiItem: {
     width: 200,
     backgroundColor: 'white',
-    borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -77,8 +76,6 @@ const styles = StyleSheet.create({
   poiImage: {
     width: '100%',
     height: 133,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
   },
   poiInfo: {
     padding: 12,

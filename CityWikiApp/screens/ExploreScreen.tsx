@@ -54,7 +54,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         {/* Hero Image with City Name Overlay */}
         <View style={styles.heroContainer}>
           <Image
-            source={{ uri: heroImageUrl || "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Galileo%20design-2-IlqctxXf8OlrEykrPJXZCOPhudoBGE.png" }}
+            source={{ uri: heroImageUrl || "" }}
             style={styles.heroImage}
             resizeMode="cover"
           />

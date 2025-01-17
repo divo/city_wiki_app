@@ -1,16 +1,39 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Linking, Platform } from 'react-native';
 import { PointOfInterest } from '../services/LocationService';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import Mapbox from '@rnmapbox/maps';
+import { StorageService } from '../services/StorageService';
+import { useFavorites } from '../contexts/FavoritesContext';
 
 interface PoiDetailSheetProps {
   poi: PointOfInterest | null;
   onClose: () => void;
+  cityId: string;
 }
 
-export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose }) => {
+export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose, cityId }) => {
+  const { isFavorite, addFavorite, removeFavorite } = useFavorites();
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const storageService = StorageService.getInstance();
+
+  useEffect(() => {
+    if (poi) {
+      setIsBookmarked(isFavorite(poi));
+    }
+  }, [poi, isFavorite]);
+
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (poi) {
+        const status = await storageService.isFavorite(cityId, poi);
+        setIsBookmarked(status);
+      }
+    };
+    checkFavoriteStatus();
+  }, [poi, cityId]);
+
   if (!poi) return null;
 
   const snapPoints = useMemo(() => ['25%', '75%', '90%'], []);
@@ -21,9 +44,17 @@ export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose }) 
     }
   }, [onClose]);
 
-  const handleShare = () => {
-    // Implement share functionality
-    console.log('Share pressed');
+  const handleSave = async () => {
+    try {
+      if (isBookmarked) {
+        await removeFavorite(cityId, poi);
+      } else {
+        await addFavorite(cityId, poi);
+      }
+      setIsBookmarked(!isBookmarked);
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
   };
 
   const openMaps = () => {
@@ -70,8 +101,12 @@ export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose }) 
               <Ionicons name="close" size={24} color="#000" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>{poi.name}</Text>
-            <TouchableOpacity onPress={handleShare} style={styles.shareButton}>
-              <Ionicons name="bookmark-outline" size={24} color="#000" />
+            <TouchableOpacity onPress={handleSave} style={styles.shareButton}>
+              <Ionicons 
+                name={isBookmarked ? "bookmark" : "bookmark-outline"} 
+                size={24} 
+                color={isBookmarked ? "#007AFF" : "#000"} 
+              />
             </TouchableOpacity>
           </View>
 

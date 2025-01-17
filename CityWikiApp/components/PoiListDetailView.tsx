@@ -24,13 +24,15 @@ interface PoiListDetailViewProps {
     title: string;
     pois: PointOfInterest[];
   } | null;
+  cityId: string;
 }
 
 // Used to display a list of POIs and a map of the POIs
 export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
   visible,
   onClose,
-  list
+  list,
+  cityId
 }) => {
   if (!list) return null;
 
@@ -172,13 +174,17 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
               onSelectPoi={setSelectedPoi}
               snapPoints={['25%', '50%', '90%']}
               showSegmentedControl={false}
+              cityId={cityId}
             />
           </View>
 
-          <PoiDetailSheet
-            poi={selectedPoi}
-            onClose={() => setSelectedPoi(null)}
-          />
+          {selectedPoi && (
+            <PoiDetailSheet 
+              poi={selectedPoi} 
+              onClose={() => setSelectedPoi(null)}
+              cityId={cityId}
+            />
+          )}
         </SafeAreaView>
       </GestureHandlerRootView>
     </Modal>

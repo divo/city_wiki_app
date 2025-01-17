@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CityData } from './LocationService';
+import { CityData, PointOfInterest } from './LocationService';
 
 class StorageService {
   private static instance: StorageService;
+  private static readonly FAVORITES_KEY_PREFIX = 'favorites';
 
   private constructor() {}
 
@@ -63,6 +64,59 @@ class StorageService {
 
   public async getCityData(cityId: string): Promise<CityData | null> {
     return await this.getData<CityData>(this.getCityKey(cityId));
+  }
+
+  private getFavoritesKey(cityId: string): string {
+    return `${StorageService.FAVORITES_KEY_PREFIX}_${cityId.toLowerCase()}`;
+  }
+
+  // Favorites methods
+  public async addFavorite(cityId: string, poi: PointOfInterest): Promise<void> {
+    try {
+      const favorites = await this.getFavorites(cityId);
+      // Check if POI already exists in favorites
+      const exists = favorites.some(fav => fav.name === poi.name && fav.district === poi.district);
+      if (!exists) {
+        favorites.push(poi);
+        await this.storeData(this.getFavoritesKey(cityId), favorites);
+      }
+    } catch (error) {
+      console.error('Error adding favorite:', error);
+      throw error;
+    }
+  }
+
+  public async removeFavorite(cityId: string, poi: PointOfInterest): Promise<void> {
+    try {
+      const favorites = await this.getFavorites(cityId);
+      const updatedFavorites = favorites.filter(
+        fav => !(fav.name === poi.name && fav.district === poi.district)
+      );
+      await this.storeData(this.getFavoritesKey(cityId), updatedFavorites);
+    } catch (error) {
+      console.error('Error removing favorite:', error);
+      throw error;
+    }
+  }
+
+  public async getFavorites(cityId: string): Promise<PointOfInterest[]> {
+    try {
+      const favorites = await this.getData<PointOfInterest[]>(this.getFavoritesKey(cityId));
+      return favorites || [];
+    } catch (error) {
+      console.error('Error getting favorites:', error);
+      throw error;
+    }
+  }
+
+  public async isFavorite(cityId: string, poi: PointOfInterest): Promise<boolean> {
+    try {
+      const favorites = await this.getFavorites(cityId);
+      return favorites.some(fav => fav.name === poi.name && fav.district === poi.district);
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+      throw error;
+    }
   }
 }
 

@@ -250,6 +250,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           pois={locations}
           onSelectPoi={setSelectedPoi}
           snapPoints={bottomSheetSnapPoints}
+          cityId={cityId}
         />}
 
 
@@ -257,6 +258,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           <PoiDetailSheet 
             poi={selectedPoi} 
             onClose={() => setSelectedPoi(null)} 
+            cityId={cityId}
           />
         )}
       </View>

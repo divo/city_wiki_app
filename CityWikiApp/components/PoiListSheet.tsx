@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { PointOfInterest } from '../services/LocationService';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 
 type FilterType = 'name' | 'must-visit' | 'nearby';
 
@@ -11,6 +11,7 @@ interface PoiListProps {
   onSelectPoi: (poi: PointOfInterest) => void;
   snapPoints: string[];
   showSegmentedControl?: boolean;
+  cityId: string;
 }
 
 // Bottom sheet used to display and filter a list of POIs
@@ -18,7 +19,8 @@ export function PoiListSheet({
   pois, 
   onSelectPoi, 
   snapPoints,
-  showSegmentedControl = true 
+  showSegmentedControl = true,
+  cityId 
 }: PoiListProps) {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>('name');
@@ -92,7 +94,7 @@ export function PoiListSheet({
             <View style={styles.poiInfo}>
               <View style={styles.titleRow}>
                 {poi.rank === 1 && (
-                  <Icon 
+                  <Ionicons 
                     name="star" 
                     size={16} 
                     color="#333333" 

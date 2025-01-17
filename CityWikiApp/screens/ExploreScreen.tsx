@@ -135,10 +135,13 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         list={selectedList}
       />
 
-      <PoiDetailSheet
-        poi={selectedPoi}
-        onClose={() => setSelectedPoi(null)}
-      />
+      {selectedPoi && (
+        <PoiDetailSheet 
+          poi={selectedPoi} 
+          onClose={() => setSelectedPoi(null)}
+          cityId={cityId}
+        />
+      )}
     </View>
   );
 }

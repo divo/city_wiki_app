@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
-import Mapbox from '@rnmapbox/maps';
+import Mapbox, { UserLocation, Camera, UserLocationRenderMode, Images } from '@rnmapbox/maps';
 import { CategoryTab } from '../components/CategoryTab';
 import { SearchBar } from '../components/SearchBar';
 import { LocationService, PointOfInterest } from '../services/LocationService';
@@ -8,6 +8,8 @@ import { PoiDetailSheet } from '../components/PoiDetailSheet';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { PoiListSheet } from '../components/PoiListSheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Ionicons } from '@expo/vector-icons';
+import { useLocation } from '../hooks/useLocation';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
@@ -39,6 +41,8 @@ interface BoundingBox {
 }
 
 export default function MapScreen({ initialZoom, onMapStateChange, cityId }: MapScreenProps) {
+  const { location } = useLocation();
+  const cameraRef = useRef<Camera>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [locations, setLocations] = useState<PointOfInterest[]>([]);
   const [zoomLevel, setZoomLevel] = useState(initialZoom);
@@ -117,42 +121,45 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     }
   };
 
-  const renderMarkers = () => {
-    const showIcons = zoomLevel >= 13;
-
-    return locations
+  // Convert POIs to GeoJSON feature collection
+  const poiFeatures = useMemo(() => ({
+    type: 'FeatureCollection' as const,
+    features: locations
       .filter(validateCoordinates)
-      .map((poi) => (
-        <Mapbox.MarkerView
-          key={`${poi.name}-${poi.latitude}-${poi.longitude}`}
-          id={poi.name}
-          coordinate={[Number(poi.longitude), Number(poi.latitude)]}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              console.log('POI tapped:', poi.name);
-              console.log('Setting selectedPoi:', poi);
-              setSelectedPoi(poi);
-            }}
-          >
-            {showIcons ? (
-              <View style={styles.markerContainer}>
-                <Image 
-                  source={categoryIcons[poi.category.toLowerCase() as keyof typeof categoryIcons] || categoryIcons.see}
-                  style={styles.markerIcon}
-                  resizeMode="contain"
-                />
-              </View>
-            ) : (
-              <View style={[
-                styles.dotMarker,
-                { backgroundColor: getCategoryColor(poi.category) }
-              ]} />
-            )}
-          </TouchableOpacity>
-        </Mapbox.MarkerView>
-      ));
-  };
+      .map(poi => ({
+        type: 'Feature' as const,
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [Number(poi.longitude), Number(poi.latitude)]
+        },
+        properties: {
+          id: `${poi.name}-${poi.latitude}-${poi.longitude}`,
+          poiName: poi.name,
+          poiCategory: poi.category.toLowerCase(),
+          district: poi.district,
+          description: poi.description,
+          image_url: poi.image_url,
+          website: poi.website,
+          phone: poi.phone,
+          hours: poi.hours,
+          address: poi.address,
+          rank: poi.rank
+        }
+      }))
+  }), [locations]);
+
+  const handleSymbolPress = useCallback((event: any) => {
+    const feature = event.features[0];
+    if (feature) {
+      const poi = locations.find(p => 
+        p.name === feature.properties.poiName && 
+        p.district === feature.properties.district
+      );
+      if (poi) {
+        setSelectedPoi(poi);
+      }
+    }
+  }, [locations]);
 
   const handleShare = () => {
     // Implement share functionality
@@ -196,6 +203,16 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     };
   }, [locations]);
 
+  const handleLocationPress = () => {
+    if (location && cameraRef.current) {
+      cameraRef.current.setCamera({
+        centerCoordinate: [location.coords.longitude, location.coords.latitude],
+        zoomLevel: 15,
+        animationDuration: 1000,
+      });
+    }
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -226,7 +243,6 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
             style={styles.map}
             styleURL={Mapbox.StyleURL.Street}
             onCameraChanged={event => {
-              console.log('Camera zoom:', event.properties.zoom);
               setZoomLevel(event.properties.zoom);
               if (onMapStateChange) {
                 onMapStateChange([event.properties.center[0], event.properties.center[1]], event.properties.zoom);
@@ -234,6 +250,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
             }}
           >
             <Mapbox.Camera
+              ref={cameraRef}
               defaultSettings={{
                 centerCoordinate: centerCoordinate,
                 zoomLevel: zoomLevel,
@@ -242,7 +259,74 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
               bounds={cameraBounds || undefined}
               animationDuration={1000}
             />
-            {renderMarkers()}
+
+            <Images
+              images={{
+                see: require('../assets/see.png'),
+                eat: require('../assets/eat.png'),
+                sleep: require('../assets/sleep.png'),
+                shop: require('../assets/shop.png'),
+                drink: require('../assets/drink.png'),
+                play: require('../assets/play.png'),
+              }}
+            />
+
+            <Mapbox.ShapeSource
+              id="poiSource"
+              shape={poiFeatures}
+              onPress={handleSymbolPress}
+            >
+              <Mapbox.SymbolLayer
+                id="poiSymbols"
+                style={{
+                  iconImage: ['get', 'poiCategory'],
+                  iconSize: 0.15,
+                  iconAllowOverlap: true,
+                  symbolSortKey: 1,
+                  iconPadding: 4,
+                  iconOffset: [0, 4],
+                  iconOpacity: [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    12.8, 0,
+                    13, 1
+                  ]
+                }}
+              />
+              <Mapbox.CircleLayer
+                id="poiDots"
+                style={{
+                  circleRadius: 4,
+                  circleColor: [
+                    'match',
+                    ['get', 'poiCategory'],
+                    'see', '#F0B429',
+                    'eat', '#F35627',
+                    'sleep', '#0967D2',
+                    'shop', '#DA127D',
+                    'drink', '#E12D39',
+                    'play', '#6CD410',
+                    '#FFFFFF'
+                  ],
+                  circleStrokeWidth: 1,
+                  circleStrokeColor: 'white',
+                  circleOpacity: [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    12.8, 1,
+                    13, 0
+                  ]
+                }}
+              />
+            </Mapbox.ShapeSource>
+
+            <UserLocation 
+              visible={true}
+              renderMode={UserLocationRenderMode.Native}
+              androidRenderMode="compass"
+            />
           </Mapbox.MapView>
         </View>
 
@@ -261,6 +345,13 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
             cityId={cityId}
           />
         )}
+
+        <TouchableOpacity 
+          style={styles.locationButton}
+          onPress={handleLocationPress}
+        >
+          <Ionicons name="locate" size={24} color="#007AFF" />
+        </TouchableOpacity>
       </View>
     </GestureHandlerRootView>
   );
@@ -331,5 +422,24 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderWidth: 1,
     borderColor: 'white',
+  },
+  locationButton: {
+    position: 'absolute',
+    right: 16,
+    bottom: 60,
+    backgroundColor: 'white',
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });

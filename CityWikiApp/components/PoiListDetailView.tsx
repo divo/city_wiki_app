@@ -26,6 +26,7 @@ interface PoiListDetailViewProps {
   } | null;
 }
 
+// Used to display a list of POIs and a map of the POIs
 export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
   visible,
   onClose,
@@ -141,7 +142,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
     <Modal
       visible={visible}
       animationType="slide"
-      presentationStyle="pageSheet"
+      presentationStyle="fullScreen"
     >
       <GestureHandlerRootView style={styles.container}>
         <SafeAreaView style={styles.container}>

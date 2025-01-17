@@ -31,6 +31,13 @@ const categoryIcons = {
   play: require('../assets/play.png'),
 };
 
+interface BoundingBox {
+  minLng: number;
+  maxLng: number;
+  minLat: number;
+  maxLat: number;
+}
+
 export default function MapScreen({ initialZoom, onMapStateChange, cityId }: MapScreenProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [locations, setLocations] = useState<PointOfInterest[]>([]);
@@ -152,6 +159,43 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     console.log('Sharing POI:', selectedPoi?.name);
   };
 
+  const calculateBoundingBox = (pois: PointOfInterest[]): BoundingBox | null => {
+    if (!pois.length) return null;
+
+    return pois.reduce((bounds, poi) => {
+      const lng = Number(poi.longitude);
+      const lat = Number(poi.latitude);
+      
+      if (isNaN(lng) || isNaN(lat)) return bounds;
+      
+      return {
+        minLng: Math.min(bounds.minLng, lng),
+        maxLng: Math.max(bounds.maxLng, lng),
+        minLat: Math.min(bounds.minLat, lat),
+        maxLat: Math.max(bounds.maxLat, lat),
+      };
+    }, {
+      minLng: Number(pois[0].longitude),
+      maxLng: Number(pois[0].longitude),
+      minLat: Number(pois[0].latitude),
+      maxLat: Number(pois[0].latitude),
+    });
+  };
+
+  const cameraBounds = useMemo(() => {
+    const bounds = calculateBoundingBox(locations);
+    if (!bounds) return null;
+
+    // Add padding to the bounds (10% of the total span)
+    const lngPadding = (bounds.maxLng - bounds.minLng) * 0.1;
+    const latPadding = (bounds.maxLat - bounds.minLat) * 0.1;
+
+    return {
+      ne: [bounds.maxLng + lngPadding, bounds.maxLat + latPadding],
+      sw: [bounds.minLng - lngPadding, bounds.minLat - latPadding],
+    };
+  }, [locations]);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -195,6 +239,8 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
                 zoomLevel: zoomLevel,
                 animationDuration: 0
               }}
+              bounds={cameraBounds || undefined}
+              animationDuration={1000}
             />
             {renderMarkers()}
           </Mapbox.MapView>

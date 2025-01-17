@@ -14,6 +14,7 @@ import { PointOfInterest } from './services/LocationService';
 import { StorageService } from './services/StorageService';
 import { PoiDetailSheet } from './components/PoiDetailSheet';
 import { FavoritesProvider, useFavorites } from './contexts/FavoritesContext';
+import { PoiListDetailView } from './components/PoiListDetailView';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -96,20 +97,13 @@ const TabNavigator = ({ route, navigation }: any) => {
       >
         {() => (
           <View style={styles.container}>
-            <PoiListSheet
-              pois={favorites}
-              onSelectPoi={setSelectedPoi}
-              snapPoints={['25%', '50%', '90%']}
+            <PoiListDetailView
+              list={{
+                title: 'Bookmarks',
+                pois: favorites
+              }}
               cityId={cityId}
-              showSegmentedControl={false}
             />
-            {selectedPoi && (
-              <PoiDetailSheet 
-                poi={selectedPoi} 
-                onClose={() => setSelectedPoi(null)}
-                cityId={cityId}
-              />
-            )}
           </View>
         )}
       </Tab.Screen>

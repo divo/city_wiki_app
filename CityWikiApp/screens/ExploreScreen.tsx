@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mapbox from '@rnmapbox/maps';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { HighlightCard } from '../components/HighlightCard';
 import { VenueHours } from '../components/VenueHours';
 import { LocationService, PointOfInterest } from '../services/LocationService';
@@ -129,11 +130,24 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         <View style={styles.bottomSpacing} />
       </ScrollView>
 
-      <PoiListDetailView
+      <Modal
         visible={isListModalVisible}
-        onClose={() => setIsListModalVisible(false)}
-        list={selectedList}
-      />
+        animationType="slide"
+        presentationStyle="fullScreen"
+      >
+        <GestureHandlerRootView style={styles.container}>
+          <PoiListDetailView
+            list={selectedList}
+            cityId={cityId}
+          />
+          <TouchableOpacity 
+            style={styles.closeButton} 
+            onPress={() => setIsListModalVisible(false)}
+          >
+            <Text style={styles.closeButtonText}>Done</Text>
+          </TouchableOpacity>
+        </GestureHandlerRootView>
+      </Modal>
 
       {selectedPoi && (
         <PoiDetailSheet 
@@ -241,6 +255,17 @@ const styles = StyleSheet.create({
   },
   bottomSpacing: {
     height: 24,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 50,
+    left: 16,
+    padding: 8,
+    zIndex: 1,
+  },
+  closeButtonText: {
+    fontSize: 17,
+    color: '#007AFF',
   },
 });
  

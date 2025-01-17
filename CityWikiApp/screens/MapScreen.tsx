@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
 import Mapbox from '@rnmapbox/maps';
 import { CategoryTab } from '../components/CategoryTab';
 import { SearchBar } from '../components/SearchBar';
 import { LocationService, PointOfInterest } from '../services/LocationService';
-import POIDetailModal from '../components/PoiDetailModal';
+import { PoiDetailSheet } from '../components/PoiDetailSheet';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { PoiListSheet } from '../components/PoiListSheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -38,6 +38,12 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
   const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>([-122.4194, 37.7749]);
   const bottomSheetSnapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+
+  // Add effect to log state changes
+  useEffect(() => {
+    console.log('Selected POI changed:', selectedPoi?.name);
+    console.log('About to render PoiDetailSheet:', selectedPoi ? 'yes' : 'no');
+  }, [selectedPoi]);
 
   useEffect(() => {
     const loadLocations = async () => {
@@ -118,6 +124,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           <TouchableOpacity
             onPress={() => {
               console.log('POI tapped:', poi.name);
+              console.log('Setting selectedPoi:', poi);
               setSelectedPoi(poi);
             }}
           >
@@ -193,17 +200,17 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           </Mapbox.MapView>
         </View>
 
-        <PoiListSheet
+        {<PoiListSheet
           pois={locations}
           onSelectPoi={setSelectedPoi}
           snapPoints={bottomSheetSnapPoints}
-        />
+        />}
+
 
         {selectedPoi && (
-          <POIDetailModal
-            poi={selectedPoi}
-            onClose={() => setSelectedPoi(null)}
-            onShare={handleShare}
+          <PoiDetailSheet 
+            poi={selectedPoi} 
+            onClose={() => setSelectedPoi(null)} 
           />
         )}
       </View>

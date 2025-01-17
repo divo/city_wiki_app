@@ -4,7 +4,7 @@ import Mapbox from '@rnmapbox/maps';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { PointOfInterest } from '../services/LocationService';
-import POIDetailModal from './PoiDetailModal';
+import { PoiDetailSheet } from './PoiDetailSheet';
 import { PoiListSheet } from './PoiListSheet';
 
 // Add icon imports
@@ -175,13 +175,10 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
             />
           </View>
 
-          {selectedPoi && (
-            <POIDetailModal
-              poi={selectedPoi}
-              onClose={() => setSelectedPoi(null)}
-              onShare={handleShare}
-            />
-          )}
+          <PoiDetailSheet
+            poi={selectedPoi}
+            onClose={() => setSelectedPoi(null)}
+          />
         </SafeAreaView>
       </GestureHandlerRootView>
     </Modal>

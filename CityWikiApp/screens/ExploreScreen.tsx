@@ -8,7 +8,7 @@ import { LocationService, PointOfInterest } from '../services/LocationService';
 import { PoiCollectionCarousel } from '../components/PoiCollectionCarousel';
 import { PoiListDetailView } from '../components/PoiListDetailView';
 import { PoiListCarousel } from '../components/PoiListCarousel';
-import POIDetailModal from '../components/PoiDetailModal';
+import { PoiDetailSheet } from '../components/PoiDetailSheet';
 
 interface ExploreScreenProps {
   route: {
@@ -135,13 +135,10 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         list={selectedList}
       />
 
-      {selectedPoi && (
-        <POIDetailModal
-          poi={selectedPoi}
-          onClose={() => setSelectedPoi(null)}
-          onShare={handleShare}
-        />
-      )}
+      <PoiDetailSheet
+        poi={selectedPoi}
+        onClose={() => setSelectedPoi(null)}
+      />
     </View>
   );
 }

@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Linking, Platform } from 'react-native';
 import { PointOfInterest } from '../services/LocationService';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import Mapbox from '@rnmapbox/maps';
-import { StorageService } from '../services/StorageService';
 import { useFavorites } from '../contexts/FavoritesContext';
 
 interface PoiDetailSheetProps {
@@ -15,24 +14,7 @@ interface PoiDetailSheetProps {
 
 export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose, cityId }) => {
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
-  const [isBookmarked, setIsBookmarked] = useState(false);
-  const storageService = StorageService.getInstance();
-
-  useEffect(() => {
-    if (poi) {
-      setIsBookmarked(isFavorite(poi));
-    }
-  }, [poi, isFavorite]);
-
-  useEffect(() => {
-    const checkFavoriteStatus = async () => {
-      if (poi) {
-        const status = await storageService.isFavorite(cityId, poi);
-        setIsBookmarked(status);
-      }
-    };
-    checkFavoriteStatus();
-  }, [poi, cityId]);
+  const [localBookmarked, setLocalBookmarked] = useState<boolean | null>(null);
 
   if (!poi) return null;
 
@@ -44,16 +26,15 @@ export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose, ci
     }
   }, [onClose]);
 
-  const handleSave = async () => {
-    try {
-      if (isBookmarked) {
-        await removeFavorite(cityId, poi);
-      } else {
-        await addFavorite(cityId, poi);
-      }
-      setIsBookmarked(!isBookmarked);
-    } catch (error) {
-      console.error('Error toggling favorite:', error);
+  const isBookmarked = localBookmarked ?? isFavorite(poi);
+
+  const handleSave = () => {
+    const newState = !isBookmarked;
+    setLocalBookmarked(newState);
+    if (newState) {
+      addFavorite(cityId, poi);
+    } else {
+      removeFavorite(cityId, poi);
     }
   };
 

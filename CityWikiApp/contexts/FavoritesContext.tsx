@@ -4,9 +4,9 @@ import { StorageService } from '../services/StorageService';
 
 interface FavoritesContextType {
   favorites: PointOfInterest[];
-  addFavorite: (cityId: string, poi: PointOfInterest) => Promise<void>;
-  removeFavorite: (cityId: string, poi: PointOfInterest) => Promise<void>;
-  loadFavorites: (cityId: string) => Promise<void>;
+  addFavorite: (cityId: string, poi: PointOfInterest) => void;
+  removeFavorite: (cityId: string, poi: PointOfInterest) => void;
+  loadFavorites: (cityId: string) => void;
   isFavorite: (poi: PointOfInterest) => boolean;
 }
 
@@ -16,33 +16,32 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [favorites, setFavorites] = useState<PointOfInterest[]>([]);
   const storageService = StorageService.getInstance();
 
-  const loadFavorites = useCallback(async (cityId: string) => {
-    try {
-      const favs = await storageService.getFavorites(cityId);
-      setFavorites(favs);
-    } catch (error) {
-      console.error('Error loading favorites:', error);
-    }
+  const loadFavorites = useCallback((cityId: string) => {
+    storageService.getFavorites(cityId)
+      .then(favs => {
+        setFavorites(favs);
+      })
+      .catch(error => {
+        console.error('Error loading favorites:', error);
+      });
   }, []);
 
-  const addFavorite = useCallback(async (cityId: string, poi: PointOfInterest) => {
-    try {
-      await storageService.addFavorite(cityId, poi);
-      setFavorites(prev => [...prev, poi]);
-    } catch (error) {
+  const addFavorite = useCallback((cityId: string, poi: PointOfInterest) => {
+    setFavorites(prev => [...prev, poi]);
+    storageService.addFavorite(cityId, poi).catch(error => {
       console.error('Error adding favorite:', error);
-    }
+      // Revert state on error
+      setFavorites(prev => prev.filter(fav => !(fav.name === poi.name && fav.district === poi.district)));
+    });
   }, []);
 
-  const removeFavorite = useCallback(async (cityId: string, poi: PointOfInterest) => {
-    try {
-      await storageService.removeFavorite(cityId, poi);
-      setFavorites(prev => 
-        prev.filter(fav => !(fav.name === poi.name && fav.district === poi.district))
-      );
-    } catch (error) {
+  const removeFavorite = useCallback((cityId: string, poi: PointOfInterest) => {
+    setFavorites(prev => prev.filter(fav => !(fav.name === poi.name && fav.district === poi.district)));
+    storageService.removeFavorite(cityId, poi).catch(error => {
       console.error('Error removing favorite:', error);
-    }
+      // Revert state on error
+      setFavorites(prev => [...prev, poi]);
+    });
   }, []);
 
   const isFavorite = useCallback((poi: PointOfInterest) => {

@@ -1,15 +1,22 @@
 import React from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 
-export function SearchBar() {
+interface SearchBarProps {
+  onChangeText: (text: string) => void;
+  value: string;
+}
+
+export function SearchBar({ onChangeText, value }: SearchBarProps) {
   return (
     <View style={styles.container}>
-      <Icon name="search" size={20} color="#666666" style={styles.icon} />
+      <Ionicons name="search" size={20} color="#666666" style={styles.icon} />
       <TextInput
         style={styles.input}
         placeholder="Search"
         placeholderTextColor="#999999"
+        onChangeText={onChangeText}
+        value={value}
       />
     </View>
   );

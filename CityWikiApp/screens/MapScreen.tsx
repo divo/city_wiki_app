@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
 import Mapbox, { UserLocation, Camera, UserLocationRenderMode, Images } from '@rnmapbox/maps';
 import { CategoryTab } from '../components/CategoryTab';
-import { SearchBar } from '../components/SearchBar';
 import { LocationService, PointOfInterest } from '../services/LocationService';
 import { PoiDetailSheet } from '../components/PoiDetailSheet';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -10,6 +9,7 @@ import { PoiListSheet } from '../components/PoiListSheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocation } from '../hooks/useLocation';
+import { SearchBar } from '../components/SearchBar';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
@@ -40,6 +40,13 @@ interface BoundingBox {
   maxLat: number;
 }
 
+// Add this helper function at the top level
+const fuzzyMatch = (text: string, query: string): boolean => {
+  const pattern = query.toLowerCase().split('').join('.*');
+  const regex = new RegExp(pattern);
+  return regex.test(text.toLowerCase());
+};
+
 export default function MapScreen({ initialZoom, onMapStateChange, cityId }: MapScreenProps) {
   const { location } = useLocation();
   const cameraRef = useRef<Camera>(null);
@@ -49,6 +56,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
   const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>([-122.4194, 37.7749]);
   const bottomSheetSnapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Add effect to log state changes
   useEffect(() => {
@@ -121,10 +129,16 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     }
   };
 
+  // Filter POIs based on search query
+  const filteredPois = useMemo(() => {
+    if (!searchQuery.trim()) return locations;
+    return locations.filter(poi => fuzzyMatch(poi.name, searchQuery.trim()));
+  }, [locations, searchQuery]);
+
   // Convert POIs to GeoJSON feature collection
   const poiFeatures = useMemo(() => ({
     type: 'FeatureCollection' as const,
-    features: locations
+    features: filteredPois
       .filter(validateCoordinates)
       .map(poi => ({
         type: 'Feature' as const,
@@ -146,7 +160,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           rank: poi.rank
         }
       }))
-  }), [locations]);
+  }), [filteredPois]);
 
   const handleSymbolPress = useCallback((event: any) => {
     const feature = event.features[0];
@@ -213,6 +227,11 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     }
   };
 
+  // Update the search handler
+  const handleSearch = useCallback((text: string) => {
+    setSearchQuery(text);
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -234,7 +253,10 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           </ScrollView>
 
           <View style={styles.searchContainer}>
-            <SearchBar />
+            <SearchBar
+              onChangeText={handleSearch}
+              value={searchQuery}
+            />
           </View>
         </View>
 
@@ -331,7 +353,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
         </View>
 
         {<PoiListSheet
-          pois={locations}
+          pois={filteredPois}
           onSelectPoi={setSelectedPoi}
           snapPoints={bottomSheetSnapPoints}
           cityId={cityId}
@@ -441,5 +463,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  searchBarContainer: {
+    backgroundColor: 'transparent',
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+    paddingHorizontal: 0,
+    marginTop: 0,
+  },
+  searchBarInputContainer: {
+    backgroundColor: '#f5f5f5',
+    height: 36,
+    borderRadius: 8,
   },
 });

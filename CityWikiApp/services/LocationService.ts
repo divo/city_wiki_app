@@ -49,7 +49,8 @@ class LocationService {
   private static instance: LocationService;
   private pois: PointOfInterest[] = [];
   private cityData?: CityData;
-  private baseUrl = 'http://localhost:8000';
+  private baseUrl = 'http://192.168.1.164:8000';
+  //private baseUrl = 'http://localhost:8000';
   private storageService: StorageService;
 
   private constructor() {
@@ -66,30 +67,56 @@ class LocationService {
   public async loadLocations(cityId: string): Promise<void> {
     try {
       // Try to get data from cache first
+      console.log('Attempting to load data for city:', cityId);
       const cachedData = await this.storageService.getCityData(cityId);
       if (cachedData) {
-        console.log('Using cached data for city:', cityId);
+        console.log('Found cached data for city:', cityId);
         this.cityData = cachedData;
         this.pois = cachedData.points_of_interest;
         return;
       }
 
       // If not in cache, fetch from network
-      console.log('Fetching fresh data for city:', cityId);
-      const response = await fetch(`${this.baseUrl}/city/${cityId}/dump/`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const url = `${this.baseUrl}/city/${cityId}/dump/`;
+      console.log('No cached data found. Fetching from URL:', url);
+      
+      try {
+        const response = await fetch(url);
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        
+        if (!response.ok) {
+          console.error('Server responded with error:', response.status, response.statusText);
+          const text = await response.text();
+          console.error('Response body:', text);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data: CityData = await response.json();
+        console.log('Successfully fetched data. POIs count:', data.points_of_interest?.length);
+        
+        // Store in cache
+        console.log('Storing data in cache for city:', cityId);
+        await this.storageService.storeCityData(cityId, data);
+        
+        // Update local state
+        this.cityData = data;
+        this.pois = data.points_of_interest || [];
+      } catch (error: any) {
+        console.error('Network error details:', {
+          message: error || 'Unknown error',
+          stack: error?.stack || 'No stack trace',
+          baseUrl: this.baseUrl,
+          cityId: cityId
+        });
+        throw error;
       }
-      const data: CityData = await response.json();
-      
-      // Store in cache
-      await this.storageService.storeCityData(cityId, data);
-      
-      // Update local state
-      this.cityData = data;
-      this.pois = data.points_of_interest || [];
-    } catch (error) {
-      console.error('Error loading points of interest:', error);
+    } catch (error: any) {
+      console.error('Error in loadLocations:', {
+        error: error?.message || 'Unknown error',
+        stack: error?.stack || 'No stack trace',
+        cityId: cityId
+      });
       throw error;
     }
   }

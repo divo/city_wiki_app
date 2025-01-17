@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { Button, View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapScreen from './screens/MapScreen';
@@ -15,6 +15,8 @@ import { StorageService } from './services/StorageService';
 import { PoiDetailSheet } from './components/PoiDetailSheet';
 import { FavoritesProvider, useFavorites } from './contexts/FavoritesContext';
 import { PoiListDetailView } from './components/PoiListDetailView';
+import * as Location from "expo-location";
+
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -113,6 +115,8 @@ const TabNavigator = ({ route, navigation }: any) => {
 
 export default function App() {
   const [mapZoom, setMapZoom] = useState(12);
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   const handleMapStateChange = (center: [number, number], zoom: number) => {
     setMapZoom(zoom);
@@ -131,6 +135,23 @@ export default function App() {
       console.error('Error clearing cache:', error);
     }
   };
+
+
+  useEffect(() => {
+    const getLocation = async () => {
+      // Request permission
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      // Get location
+      await Location.getCurrentPositionAsync({});
+    };
+
+    getLocation();
+  }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

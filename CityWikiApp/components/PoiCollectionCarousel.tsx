@@ -18,7 +18,6 @@ export const PoiCollectionCarousel: React.FC<PoiListViewProps> = ({ title, pois,
   const getListImage = (list: PoiList): string | null => {
     // Find the first POI with an image_url
     const poiWithImage = list.pois.find(poi => poi.image_url);
-    console.log('poiWithImage', poiWithImage?.image_url);
     return poiWithImage?.image_url || null;
   };
 

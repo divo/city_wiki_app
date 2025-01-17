@@ -67,17 +67,16 @@ export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose }) 
         <BottomSheetScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color="#000" />
+              <Ionicons name="close" size={24} color="#000" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>{poi.name}</Text>
             <TouchableOpacity onPress={handleShare} style={styles.shareButton}>
-              <Ionicons name="share-outline" size={24} color="#000" />
+              <Ionicons name="bookmark-outline" size={24} color="#000" />
             </TouchableOpacity>
           </View>
 
           <View style={styles.content}>
-            <Text style={styles.category}>{poi.district} · {poi.category.charAt(0).toUpperCase() + poi.category.slice(1)}</Text>
-
+            <Text style={[styles.category, { textAlign: 'center' }]}> {poi.category.charAt(0).toUpperCase() + poi.category.slice(1)} · {poi.district}</Text>
             <Text style={styles.description}>{poi.description}</Text>
 
             {poi.image_url && (
@@ -116,29 +115,41 @@ export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose }) 
             </View>
 
             <View style={styles.detailsSection}>
-              <View style={styles.detailRow}>
-                <Ionicons name="location-outline" size={20} color="#666" />
-                <Text style={styles.detailText}>{poi.address}</Text>
+              <View>
+                <View style={styles.detailRow}>
+                  <Ionicons name="location-outline" size={20} color="#666" />
+                  <Text style={styles.detailText}>{poi.address}</Text>
+                </View>
+                <View style={styles.divider} />
               </View>
 
               {poi.phone && (
-                <TouchableOpacity style={styles.detailRow} onPress={handlePhonePress}>
-                  <Ionicons name="call-outline" size={20} color="#666" />
-                  <Text style={styles.detailText}>{poi.phone}</Text>
-                </TouchableOpacity>
+                <View>
+                  <TouchableOpacity style={styles.detailRow} onPress={handlePhonePress}>
+                    <Ionicons name="call-outline" size={20} color="#666" />
+                    <Text style={styles.detailText}>{poi.phone}</Text>
+                  </TouchableOpacity>
+                  <View style={styles.divider} />
+                </View>
               )}
 
               {poi.website && (
-                <TouchableOpacity style={styles.detailRow} onPress={handleWebsitePress}>
-                  <Ionicons name="globe-outline" size={20} color="#666" />
-                  <Text style={[styles.detailText, styles.link]} numberOfLines={1}>{poi.website}</Text>
-                </TouchableOpacity>
+                <View>
+                  <TouchableOpacity style={styles.detailRow} onPress={handleWebsitePress}>
+                    <Ionicons name="globe-outline" size={20} color="#666" />
+                    <Text style={[styles.detailText, styles.link]} numberOfLines={1}>{poi.website}</Text>
+                  </TouchableOpacity>
+                  <View style={styles.divider} />
+                </View>
               )}
 
               {poi.hours && (
-                <View style={styles.detailRow}>
-                  <Ionicons name="time-outline" size={20} color="#666" />
-                  <Text style={styles.detailText}>{poi.hours}</Text>
+                <View>
+                  <View style={styles.detailRow}>
+                    <Ionicons name="time-outline" size={20} color="#666" />
+                    <Text style={styles.detailText}>{poi.hours}</Text>
+                  </View>
+                  <View style={styles.divider} />
                 </View>
               )}
             </View>
@@ -190,7 +201,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#EEEEEE',
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '600',
     color: '#000',
   },
@@ -237,11 +248,12 @@ const styles = StyleSheet.create({
   },
   detailsSection: {
     marginBottom: 24,
+    backgroundColor: '#fff',
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    paddingVertical: 16,
   },
   detailText: {
     fontSize: 15,
@@ -274,5 +286,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#0066CC',
     borderWidth: 2,
     borderColor: 'white',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#EEEEEE',
+    marginLeft: 32,
   },
 }); 

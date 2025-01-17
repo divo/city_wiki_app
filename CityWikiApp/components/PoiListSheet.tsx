@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { PointOfInterest } from '../services/LocationService';
 import { Ionicons } from '@expo/vector-icons';
+import { LocationObjectCoords } from 'expo-location';
 
 type FilterType = 'name' | 'must-visit' | 'nearby';
 
@@ -12,17 +13,20 @@ interface PoiListProps {
   snapPoints: string[];
   showSegmentedControl?: boolean;
   cityId: string;
+  userLocation?: LocationObjectCoords;
+  sortByDistance?: (pois: PointOfInterest[]) => PointOfInterest[];
 }
 
-// Bottom sheet used to display and filter a list of POIs
 export function PoiListSheet({ 
   pois, 
   onSelectPoi, 
   snapPoints,
   showSegmentedControl = true,
-  cityId 
+  cityId,
+  userLocation,
+  sortByDistance
 }: PoiListProps) {
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>('name');
 
   const handleSheetChange = useCallback((index: number) => {
@@ -40,24 +44,26 @@ export function PoiListSheet({
       case 'must-visit':
         return [...pois].sort((a, b) => (a.rank || 0) - (b.rank || 0));
       case 'nearby':
-        // TODO: Implement nearby sorting based on user location
-        return pois;
+        return sortByDistance ? sortByDistance(pois) : pois;
       default:
         return pois;
     }
-  }, [pois, activeFilter]);
+  }, [pois, activeFilter, sortByDistance]);
 
   const renderSegmentButton = (type: FilterType, label: string) => (
     <TouchableOpacity
       style={[
         styles.segmentButton,
-        activeFilter === type && styles.segmentButtonActive
+        activeFilter === type && styles.segmentButtonActive,
+        type === 'nearby' && !userLocation && styles.segmentButtonDisabled
       ]}
       onPress={() => setActiveFilter(type)}
+      disabled={type === 'nearby' && !userLocation}
     >
       <Text style={[
         styles.segmentButtonText,
-        activeFilter === type && styles.segmentButtonTextActive
+        activeFilter === type && styles.segmentButtonTextActive,
+        type === 'nearby' && !userLocation && styles.segmentButtonTextDisabled
       ]}>
         {label}
       </Text>
@@ -86,7 +92,7 @@ export function PoiListSheet({
       
       <BottomSheetScrollView contentContainerStyle={styles.scrollContent}>
         {filteredPois.map((poi) => (
-          <TouchableOpacity
+          <TouchableOpacity 
             key={`${poi.name}-${poi.latitude}-${poi.longitude}`}
             style={styles.poiItem}
             onPress={() => onSelectPoi(poi)}
@@ -113,6 +119,15 @@ export function PoiListSheet({
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
   bottomSheet: {
     shadowColor: '#000',
     shadowOffset: {
@@ -127,17 +142,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDDDDD',
     width: 40,
   },
-  header: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
-  },
   segmentedControl: {
     flexDirection: 'row',
     backgroundColor: '#F5F5F5',
     borderRadius: 8,
     padding: 2,
     marginBottom: 8,
+    width: '100%',
   },
   segmentButton: {
     flex: 1,
@@ -165,9 +176,16 @@ const styles = StyleSheet.create({
     color: '#007AFF',
     fontWeight: '600',
   },
+  segmentButtonDisabled: {
+    opacity: 0.5,
+  },
+  segmentButtonTextDisabled: {
+    color: '#999999',
+  },
   count: {
     fontSize: 14,
     color: '#666666',
+    marginTop: 4,
   },
   scrollContent: {
     padding: 0,

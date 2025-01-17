@@ -10,6 +10,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocation } from '../hooks/useLocation';
 import { SearchBar } from '../components/SearchBar';
+import * as turf from '@turf/turf';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
@@ -129,10 +130,32 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     }
   };
 
-  // Filter POIs based on search query
+  // Add this function to sort POIs by distance
+  const sortByDistance = useCallback((pois: PointOfInterest[]) => {
+    if (!location) return pois;
+    
+    const userPoint = turf.point([location.coords.longitude, location.coords.latitude]);
+    
+    return [...pois].sort((a, b) => {
+      if (!validateCoordinates(a) || !validateCoordinates(b)) return 0;
+      
+      const pointA = turf.point([a.longitude, a.latitude]);
+      const pointB = turf.point([b.longitude, b.latitude]);
+      
+      const distanceA = turf.distance(userPoint, pointA, { units: 'kilometers' });
+      const distanceB = turf.distance(userPoint, pointB, { units: 'kilometers' });
+      
+      return distanceA - distanceB;
+    });
+  }, [location]);
+
+  // Update the filteredPois to include sorting capability
   const filteredPois = useMemo(() => {
-    if (!searchQuery.trim()) return locations;
-    return locations.filter(poi => fuzzyMatch(poi.name, searchQuery.trim()));
+    let filtered = locations;
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(poi => fuzzyMatch(poi.name, searchQuery.trim()));
+    }
+    return filtered;
   }, [locations, searchQuery]);
 
   // Convert POIs to GeoJSON feature collection
@@ -357,6 +380,8 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           onSelectPoi={setSelectedPoi}
           snapPoints={bottomSheetSnapPoints}
           cityId={cityId}
+          userLocation={location?.coords}
+          sortByDistance={sortByDistance}
         />}
 
 

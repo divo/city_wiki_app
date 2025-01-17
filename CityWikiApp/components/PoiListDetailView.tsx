@@ -21,11 +21,13 @@ interface PoiListDetailViewProps {
     pois: PointOfInterest[];
   } | null;
   cityId: string;
+  onSelectPoi: (poi: PointOfInterest) => void;
 }
 
 export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
   list,
-  cityId
+  cityId,
+  onSelectPoi
 }) => {
   if (!list) return null;
 
@@ -85,10 +87,10 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
         p.district === feature.properties.district
       );
       if (poi) {
-        setSelectedPoi(poi);
+        onSelectPoi(poi);
       }
     }
-  }, [list.pois]);
+  }, [list.pois, onSelectPoi]);
 
   const calculateBounds = useCallback(() => {
     const validPois = list.pois.filter(validateCoordinates);
@@ -201,9 +203,8 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
 
           <PoiListSheet
             pois={list.pois}
-            onSelectPoi={setSelectedPoi}
+            onSelectPoi={onSelectPoi}
             snapPoints={['25%', '50%', '90%']}
-            showSegmentedControl={false}
             cityId={cityId}
           />
         </View>

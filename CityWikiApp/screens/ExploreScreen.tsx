@@ -5,9 +5,9 @@ import Mapbox from '@rnmapbox/maps';
 import { HighlightCard } from '../components/HighlightCard';
 import { VenueHours } from '../components/VenueHours';
 import { LocationService, PointOfInterest } from '../services/LocationService';
-import { PoiListView } from '../components/PoiListView';
+import { PoiCollectionCarousel } from '../components/PoiCollectionCarousel';
 import { PoiListDetailView } from '../components/PoiListDetailView';
-import { PoiListFullView } from '../components/PoiListFullView';
+import { PoiListCarousel } from '../components/PoiListCarousel';
 import POIDetailModal from '../components/PoiDetailView';
 
 interface ExploreScreenProps {
@@ -107,7 +107,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
 
         {/* Must See/Highlights Section */}
         {mustSeeList && (
-          <PoiListFullView
+          <PoiListCarousel
             title={mustSeeList.title}
             pois={mustSeeList.pois}
             onSelectPoi={handlePoiSelect}
@@ -115,7 +115,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         )}
 
         {/* POI Lists */}
-        <PoiListView
+        <PoiCollectionCarousel
           key="collections"
           title="Collections"
           pois={poiLists.filter(list => 

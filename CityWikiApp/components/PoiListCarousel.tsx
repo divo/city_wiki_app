@@ -9,7 +9,8 @@ interface PoiListFullViewProps {
   onSelectPoi: (poi: PointOfInterest) => void;
 }
 
-export const PoiListFullView: React.FC<PoiListFullViewProps> = ({
+// Displays a carousel of POIs, a single list where each POI is displayed in a card
+export const PoiListCarousel: React.FC<PoiListFullViewProps> = ({
   title,
   pois,
   onSelectPoi,

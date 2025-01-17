@@ -13,7 +13,8 @@ interface PoiListViewProps {
   onSelectList?: (list: PoiList) => void;
 }
 
-export const PoiListView: React.FC<PoiListViewProps> = ({ title, pois, onSelectList }) => {
+// Used to display a carousel of PoiLists, a list of lists of POIs
+export const PoiCollectionCarousel: React.FC<PoiListViewProps> = ({ title, pois, onSelectList }) => {
   const getListImage = (list: PoiList): string | null => {
     // Find the first POI with an image_url
     const poiWithImage = list.pois.find(poi => poi.image_url);

@@ -14,14 +14,19 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.CityWikiApp"
+      "bundleIdentifier": "com.anonymous.CityWikiApp",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location to show you where you are on the map and find nearby points of interest.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "We need your location to show you where you are on the map and find nearby points of interest."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.CityWikiApp"
+      "package": "com.anonymous.CityWikiApp",
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"

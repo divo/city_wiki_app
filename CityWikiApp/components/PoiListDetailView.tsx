@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Image } from 'react-native';
-import Mapbox from '@rnmapbox/maps';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import Mapbox, { Images, UserLocation, UserLocationRenderMode } from '@rnmapbox/maps';
 import { PointOfInterest } from '../services/LocationService';
 import { PoiDetailSheet } from './PoiDetailSheet';
 import { PoiListSheet } from './PoiListSheet';
@@ -32,32 +31,6 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
 
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
 
-  // Filter out POIs that are in the "Must See" or "Highlights" list
-  const filteredPois = useMemo(() => {
-    return list.pois.filter(poi => 
-      poi.sub_category?.toLowerCase() !== 'must see' && 
-      poi.sub_category?.toLowerCase() !== 'highlights'
-    );
-  }, [list.pois]);
-
-  const calculateBounds = useCallback(() => {
-    const validPois = list.pois.filter(validateCoordinates);
-    if (validPois.length === 0) {
-      return {
-        ne: [-122.4194, 37.7749],
-        sw: [-122.4194, 37.7749]
-      };
-    }
-
-    const lngs = validPois.map(poi => Number(poi.longitude));
-    const lats = validPois.map(poi => Number(poi.latitude));
-
-    return {
-      sw: [Math.min(...lngs), Math.min(...lats)],
-      ne: [Math.max(...lngs), Math.max(...lats)]
-    };
-  }, [list.pois]);
-
   const validateCoordinates = (poi: PointOfInterest): boolean => {
     if (typeof poi.longitude !== 'number' || typeof poi.latitude !== 'number') {
       return false;
@@ -78,32 +51,66 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
     return true;
   };
 
-  const renderMarkers = () => {
-    return list.pois
+  const poiFeatures = useMemo(() => ({
+    type: 'FeatureCollection' as const,
+    features: list.pois
       .filter(validateCoordinates)
-      .map((poi) => (
-        <Mapbox.MarkerView
-          key={`${poi.name}-${poi.latitude}-${poi.longitude}`}
-          id={poi.name}
-          coordinate={[Number(poi.longitude), Number(poi.latitude)]}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              console.log('POI tapped:', poi.name);
-              setSelectedPoi(poi);
-            }}
-          >
-            <View style={styles.markerContainer}>
-              <Image 
-                source={categoryIcons[poi.category.toLowerCase() as keyof typeof categoryIcons] || categoryIcons.see}
-                style={styles.markerIcon}
-                resizeMode="contain"
-              />
-            </View>
-          </TouchableOpacity>
-        </Mapbox.MarkerView>
-      ));
-  };
+      .map(poi => ({
+        type: 'Feature' as const,
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [Number(poi.longitude), Number(poi.latitude)]
+        },
+        properties: {
+          id: `${poi.name}-${poi.latitude}-${poi.longitude}`,
+          poiName: poi.name,
+          poiCategory: poi.category.toLowerCase(),
+          district: poi.district,
+          description: poi.description,
+          image_url: poi.image_url,
+          website: poi.website,
+          phone: poi.phone,
+          hours: poi.hours,
+          address: poi.address,
+          rank: poi.rank
+        }
+      }))
+  }), [list.pois]);
+
+  const handleSymbolPress = useCallback((event: any) => {
+    const feature = event.features[0];
+    if (feature) {
+      const poi = list.pois.find(p => 
+        p.name === feature.properties.poiName && 
+        p.district === feature.properties.district
+      );
+      if (poi) {
+        setSelectedPoi(poi);
+      }
+    }
+  }, [list.pois]);
+
+  const calculateBounds = useCallback(() => {
+    const validPois = list.pois.filter(validateCoordinates);
+    if (validPois.length === 0) {
+      return {
+        ne: [-122.4194, 37.7749],
+        sw: [-122.4194, 37.7749]
+      };
+    }
+
+    const lngs = validPois.map(poi => Number(poi.longitude));
+    const lats = validPois.map(poi => Number(poi.latitude));
+
+    // Add padding to the bounds (10% of the total span)
+    const lngPadding = (Math.max(...lngs) - Math.min(...lngs)) * 0.1;
+    const latPadding = (Math.max(...lats) - Math.min(...lats)) * 0.1;
+
+    return {
+      sw: [Math.min(...lngs) - lngPadding, Math.min(...lats) - latPadding],
+      ne: [Math.max(...lngs) + lngPadding, Math.max(...lats) + latPadding]
+    };
+  }, [list.pois]);
 
   return (
     <View style={styles.container}>
@@ -122,11 +129,78 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
               padding={{ paddingTop: 50, paddingBottom: 50, paddingLeft: 50, paddingRight: 50 }}
               animationDuration={0}
             />
-            {renderMarkers()}
+
+            <Images
+              images={{
+                see: require('../assets/see.png'),
+                eat: require('../assets/eat.png'),
+                sleep: require('../assets/sleep.png'),
+                shop: require('../assets/shop.png'),
+                drink: require('../assets/drink.png'),
+                play: require('../assets/play.png'),
+              }}
+            />
+
+            <Mapbox.ShapeSource
+              id="poiSource"
+              shape={poiFeatures}
+              onPress={handleSymbolPress}
+            >
+              <Mapbox.SymbolLayer
+                id="poiSymbols"
+                style={{
+                  iconImage: ['get', 'poiCategory'],
+                  iconSize: 0.15,
+                  iconAllowOverlap: true,
+                  symbolSortKey: 1,
+                  iconPadding: 4,
+                  iconOffset: [0, 4],
+                  iconOpacity: [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    12.8, 0,
+                    13, 1
+                  ]
+                }}
+              />
+              <Mapbox.CircleLayer
+                id="poiDots"
+                style={{
+                  circleRadius: 4,
+                  circleColor: [
+                    'match',
+                    ['get', 'poiCategory'],
+                    'see', '#F0B429',
+                    'eat', '#F35627',
+                    'sleep', '#0967D2',
+                    'shop', '#DA127D',
+                    'drink', '#E12D39',
+                    'play', '#6CD410',
+                    '#FFFFFF'
+                  ],
+                  circleStrokeWidth: 1,
+                  circleStrokeColor: 'white',
+                  circleOpacity: [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    12.8, 1,
+                    13, 0
+                  ]
+                }}
+              />
+            </Mapbox.ShapeSource>
+
+            <UserLocation 
+              visible={true}
+              renderMode={UserLocationRenderMode.Native}
+              androidRenderMode="compass"
+            />
           </Mapbox.MapView>
 
           <PoiListSheet
-            pois={filteredPois}
+            pois={list.pois}
             onSelectPoi={setSelectedPoi}
             snapPoints={['25%', '50%', '90%']}
             showSegmentedControl={false}
@@ -174,21 +248,5 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
-  },
-  markerContainer: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 4,
-    borderWidth: 2,
-    borderColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  markerIcon: {
-    width: 24,
-    height: 24,
-  },
+  }
 }); 

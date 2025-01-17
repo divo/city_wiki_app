@@ -8,7 +8,7 @@ import { LocationService, PointOfInterest } from '../services/LocationService';
 import { PoiCollectionCarousel } from '../components/PoiCollectionCarousel';
 import { PoiListDetailView } from '../components/PoiListDetailView';
 import { PoiListCarousel } from '../components/PoiListCarousel';
-import POIDetailModal from '../components/PoiDetailView';
+import POIDetailModal from '../components/PoiDetailModal';
 
 interface ExploreScreenProps {
   route: {

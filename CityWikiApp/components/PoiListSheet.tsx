@@ -13,7 +13,8 @@ interface PoiListProps {
   showSegmentedControl?: boolean;
 }
 
-export function PoiList({ 
+// Bottom sheet used to display and filter a list of POIs
+export function PoiListSheet({ 
   pois, 
   onSelectPoi, 
   snapPoints,

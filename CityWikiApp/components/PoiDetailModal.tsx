@@ -23,6 +23,7 @@ const MAX_TRANSLATE_Y = -SCREEN_HEIGHT * 0.7;
 const MIN_TRANSLATE_Y = -SCREEN_HEIGHT * 0.4;
 const DISMISS_THRESHOLD = -SCREEN_HEIGHT * 0.3;
 
+// View used to display a POI's details
 export default function POIDetailModal({ onClose, onShare, poi }: POIDetailModalProps) {
   const [isSaved, setIsSaved] = React.useState(false);
   const translateY = useSharedValue(0);

@@ -1,9 +1,10 @@
 import React, { useCallback, useState, useMemo } from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Mapbox, { Images, UserLocation, UserLocationRenderMode } from '@rnmapbox/maps';
 import { PointOfInterest } from '../services/LocationService';
 import { PoiDetailSheet } from './PoiDetailSheet';
 import { PoiListSheet } from './PoiListSheet';
+import { Ionicons } from '@expo/vector-icons';
 
 // Add icon imports
 const categoryIcons = {
@@ -22,12 +23,14 @@ interface PoiListDetailViewProps {
   } | null;
   cityId: string;
   onSelectPoi: (poi: PointOfInterest) => void;
+  onClose?: () => void;
 }
 
 export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
   list,
   cityId,
-  onSelectPoi
+  onSelectPoi,
+  onClose
 }) => {
   if (!list) return null;
 
@@ -118,6 +121,15 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
+          {onClose && (
+            <TouchableOpacity 
+              style={styles.closeButton} 
+              onPress={onClose}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons name="close" size={24} color="#000" />
+            </TouchableOpacity>
+          )}
           <Text style={styles.title}>{list.title}</Text>
         </View>
         
@@ -206,6 +218,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
             onSelectPoi={onSelectPoi}
             snapPoints={['25%', '50%', '90%']}
             cityId={cityId}
+            showSegmentedControl={false}
           />
         </View>
 
@@ -233,18 +246,25 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#EEEEEE',
     backgroundColor: 'white',
     zIndex: 1,
+    height: 44,
+  },
+  closeButton: {
+    position: 'absolute',
+    left: 16,
+    zIndex: 1,
   },
   title: {
     fontSize: 17,
     fontWeight: '600',
     color: '#333333',
+    flex: 1,
+    textAlign: 'center',
   },
   map: {
     width: '100%',

@@ -5,6 +5,7 @@ import Mapbox from '@rnmapbox/maps';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { HighlightCard } from '../components/HighlightCard';
 import { VenueHours } from '../components/VenueHours';
+import { Ionicons } from '@expo/vector-icons';
 import { LocationService, PointOfInterest } from '../services/LocationService';
 import { PoiCollectionCarousel } from '../components/PoiCollectionCarousel';
 import { PoiListDetailView } from '../components/PoiListDetailView';
@@ -139,13 +140,9 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
           <PoiListDetailView
             list={selectedList}
             cityId={cityId}
+            onSelectPoi={handlePoiSelect}
+            onClose={() => setIsListModalVisible(false)}
           />
-          <TouchableOpacity 
-            style={styles.closeButton} 
-            onPress={() => setIsListModalVisible(false)}
-          >
-            <Text style={styles.closeButtonText}>Done</Text>
-          </TouchableOpacity>
         </GestureHandlerRootView>
       </Modal>
 
@@ -255,17 +252,6 @@ const styles = StyleSheet.create({
   },
   bottomSpacing: {
     height: 24,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 50,
-    left: 16,
-    padding: 8,
-    zIndex: 1,
-  },
-  closeButtonText: {
-    fontSize: 17,
-    color: '#007AFF',
   },
 });
  

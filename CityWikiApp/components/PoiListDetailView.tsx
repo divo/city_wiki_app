@@ -22,14 +22,12 @@ interface PoiListDetailViewProps {
     pois: PointOfInterest[];
   } | null;
   cityId: string;
-  onSelectPoi: (poi: PointOfInterest) => void;
   onClose?: () => void;
 }
 
 export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
   list,
   cityId,
-  onSelectPoi,
   onClose
 }) => {
   if (!list) return null;
@@ -90,10 +88,10 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
         p.district === feature.properties.district
       );
       if (poi) {
-        onSelectPoi(poi);
+        setSelectedPoi(poi);
       }
     }
-  }, [list.pois, onSelectPoi]);
+  }, [list.pois]);
 
   const calculateBounds = useCallback(() => {
     const validPois = list.pois.filter(validateCoordinates);
@@ -168,40 +166,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
                   iconAllowOverlap: true,
                   symbolSortKey: 1,
                   iconPadding: 4,
-                  iconOffset: [0, 4],
-                  iconOpacity: [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    12.8, 0,
-                    13, 1
-                  ]
-                }}
-              />
-              <Mapbox.CircleLayer
-                id="poiDots"
-                style={{
-                  circleRadius: 4,
-                  circleColor: [
-                    'match',
-                    ['get', 'poiCategory'],
-                    'see', '#F0B429',
-                    'eat', '#F35627',
-                    'sleep', '#0967D2',
-                    'shop', '#DA127D',
-                    'drink', '#E12D39',
-                    'play', '#6CD410',
-                    '#FFFFFF'
-                  ],
-                  circleStrokeWidth: 1,
-                  circleStrokeColor: 'white',
-                  circleOpacity: [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    12.8, 1,
-                    13, 0
-                  ]
+                  iconOffset: [0, 4]
                 }}
               />
             </Mapbox.ShapeSource>
@@ -215,7 +180,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
 
           <PoiListSheet
             pois={list.pois}
-            onSelectPoi={onSelectPoi}
+            onSelectPoi={setSelectedPoi}
             snapPoints={['25%', '50%', '90%']}
             cityId={cityId}
             showSegmentedControl={false}

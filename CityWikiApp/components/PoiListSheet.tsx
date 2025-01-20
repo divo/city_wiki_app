@@ -87,7 +87,6 @@ export function PoiListSheet({
             {renderSegmentButton('nearby', 'Nearby')}
           </View>
         ) : null}
-        <Text style={styles.count}>{filteredPois.length} places</Text>
       </View>
       
       <BottomSheetScrollView contentContainerStyle={styles.scrollContent}>

@@ -82,8 +82,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
 
   const mustSeeList = useMemo(() => {
     return poiLists.find(list => 
-      list.title.toLowerCase() === 'must see' || 
-      list.title.toLowerCase() === 'highlights'
+      list.title.toLowerCase() === 'must see'
     );
   }, [poiLists]);
 
@@ -121,8 +120,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
           key="collections"
           title="Collections"
           pois={poiLists.filter(list => 
-            list.title.toLowerCase() !== 'must see' && 
-            list.title.toLowerCase() !== 'highlights'
+            list.title.toLowerCase() !== 'must see'
           )}
           onSelectList={handleListSelect}
         />

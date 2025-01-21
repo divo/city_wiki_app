@@ -242,6 +242,11 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     };
   }, [locations]);
 
+  const coordinateBounds = useMemo(() => {
+    if (!cameraBounds) return null;
+    return [cameraBounds.sw, cameraBounds.ne];
+  }, [cameraBounds]);
+
   const handleLocationPress = () => {
     if (location && cameraRef.current) {
       cameraRef.current.setCamera({
@@ -305,6 +310,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
               }}
               bounds={cameraBounds || undefined}
               animationDuration={1000}
+              maxBounds={cameraBounds || undefined}
             />
 
             <Images

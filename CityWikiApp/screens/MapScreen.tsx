@@ -15,6 +15,8 @@ import * as turf from '@turf/turf';
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
 
+export const MAP_STYLE_URL = 'mapbox://styles/divodivenson/cm6718g0f00gw01r8ev759xtp';
+
 const categories = ['All', 'See', 'Eat', 'Sleep', 'Shop', 'Drink', 'Play'];
 
 interface MapScreenProps {
@@ -286,7 +288,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
         <View style={styles.mapContainer}>
           <Mapbox.MapView
             style={styles.map}
-            styleURL={Mapbox.StyleURL.Street}
+            styleURL={MAP_STYLE_URL}
             onCameraChanged={event => {
               setZoomLevel(event.properties.zoom);
               if (onMapStateChange) {

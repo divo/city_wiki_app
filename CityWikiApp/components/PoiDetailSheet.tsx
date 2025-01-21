@@ -5,6 +5,7 @@ import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import Mapbox from '@rnmapbox/maps';
 import { useFavorites } from '../contexts/FavoritesContext';
+import { MAP_STYLE_URL } from '../screens/MapScreen';
 
 interface PoiDetailSheetProps {
   poi: PointOfInterest | null;
@@ -106,7 +107,7 @@ export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose, ci
             <View style={styles.mapPreview} pointerEvents="none">
               <Mapbox.MapView
                 style={styles.map}
-                styleURL={Mapbox.StyleURL.Street}
+                styleURL={MAP_STYLE_URL}
                 scrollEnabled={false}
                 pitchEnabled={false}
                 rotateEnabled={false}

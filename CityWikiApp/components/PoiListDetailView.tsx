@@ -5,6 +5,7 @@ import { PointOfInterest } from '../services/LocationService';
 import { PoiDetailSheet } from './PoiDetailSheet';
 import { PoiListSheet } from './PoiListSheet';
 import { Ionicons } from '@expo/vector-icons';
+import { MAP_STYLE_URL } from '../screens/MapScreen';
 
 // Add icon imports
 const categoryIcons = {
@@ -134,7 +135,8 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
         <View style={styles.contentContainer}>
           <Mapbox.MapView
             style={styles.map}
-            styleURL={Mapbox.StyleURL.Street}
+            styleURL={MAP_STYLE_URL}
+            onPress={handleSymbolPress}
           >
             <Mapbox.Camera
               bounds={calculateBounds()}
@@ -156,7 +158,6 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
             <Mapbox.ShapeSource
               id="poiSource"
               shape={poiFeatures}
-              onPress={handleSymbolPress}
             >
               <Mapbox.SymbolLayer
                 id="poiSymbols"

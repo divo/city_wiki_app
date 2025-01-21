@@ -3,21 +3,25 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import { PointOfInterest } from '../services/LocationService';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-interface PoiListFullViewProps {
+interface PoiListCarouselProps {
   title: string;
   pois: PointOfInterest[];
   onSelectPoi: (poi: PointOfInterest) => void;
+  onViewAll?: () => void;
 }
 
 // Displays a carousel of POIs, a single list where each POI is displayed in a card
-export const PoiListCarousel: React.FC<PoiListFullViewProps> = ({
-  title,
-  pois,
-  onSelectPoi,
-}) => {
+export function PoiListCarousel({ title, pois, onSelectPoi, onViewAll }: PoiListCarouselProps) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{title}</Text>
+        {onViewAll && (
+          <TouchableOpacity onPress={onViewAll}>
+            <Text style={styles.viewAllButton}>View All</Text>
+          </TouchableOpacity>
+        )}
+      </View>
       
       <ScrollView 
         horizontal 
@@ -48,18 +52,23 @@ export const PoiListCarousel: React.FC<PoiListFullViewProps> = ({
       </ScrollView>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 16,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
   title: {
     fontSize: 24,
     fontWeight: '600',
     color: '#333333',
-    marginBottom: 16,
-    paddingHorizontal: 16,
   },
   scrollContent: {
     paddingHorizontal: 16,
@@ -92,5 +101,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333333',
     lineHeight: 20,
+  },
+  viewAllButton: {
+    color: '#007AFF',
+    fontSize: 16,
+    fontWeight: '500',
   },
 }); 

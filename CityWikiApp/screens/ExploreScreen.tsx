@@ -112,6 +112,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
             title={mustSeeList.title}
             pois={mustSeeList.pois}
             onSelectPoi={handlePoiSelect}
+            onViewAll={() => handleListSelect(mustSeeList)}
           />
         )}
 
@@ -138,7 +139,6 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
           <PoiListDetailView
             list={selectedList}
             cityId={cityId}
-            onSelectPoi={handlePoiSelect}
             onClose={() => setIsListModalVisible(false)}
           />
         </GestureHandlerRootView>

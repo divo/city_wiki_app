@@ -296,9 +296,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   mapMarker: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 16,
+    height: 16,
+    borderRadius: 10,
     backgroundColor: '#0066CC',
     borderWidth: 2,
     borderColor: 'white',

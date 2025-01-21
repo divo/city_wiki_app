@@ -208,13 +208,11 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 16,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   countryName: {
     fontSize: 16,
-    fontFamily: 'Montserrat_500Medium',
+    fontFamily: 'Montserrat_500SemiBold',
     color: '#FFFFFF',
-    opacity: 0.8,
     marginBottom: 4,
   },
   cityName: {

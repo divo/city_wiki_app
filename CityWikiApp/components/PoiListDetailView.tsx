@@ -138,7 +138,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
           >
             <Mapbox.Camera
               bounds={calculateBounds()}
-              padding={{ paddingTop: 50, paddingBottom: 50, paddingLeft: 50, paddingRight: 50 }}
+              padding={{ paddingTop: 50, paddingBottom: 300, paddingLeft: 50, paddingRight: 50 }}
               animationDuration={0}
             />
 

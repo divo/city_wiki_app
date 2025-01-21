@@ -115,10 +115,6 @@ export function CitySelect({ onCitySelect }: CitySelectProps) {
         <Text style={styles.title}>City Guides</Text>
       </View>
 
-      <View style={styles.searchContainer}>
-        <SearchBar />
-      </View>
-
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}

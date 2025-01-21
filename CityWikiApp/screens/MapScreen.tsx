@@ -13,7 +13,7 @@ import { SearchBar } from '../components/SearchBar';
 import * as turf from '@turf/turf';
 
 // Initialize Mapbox with your access token
-Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNWI5emtqbDFmejkybHI3ZHJicGZjeTIifQ.r-F49IgRf5oLrtQEzMppmA');
+Mapbox.setAccessToken('pk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNsZHJvMDBvZjFvajYzcW4wcjQwaWkxYXUifQ.RN_xpS8ablCQJdcNyEje6Q');
 
 export const MAP_STYLE_URL = 'mapbox://styles/divodivenson/cm6718g0f00gw01r8ev759xtp';
 

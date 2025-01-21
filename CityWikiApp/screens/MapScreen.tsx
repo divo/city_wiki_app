@@ -327,7 +327,13 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
                   iconImage: ['get', 'poiCategory'],
                   iconSize: 0.15,
                   iconAllowOverlap: true,
-                  symbolSortKey: 1,
+                  symbolSortKey: [
+                    'match',
+                    ['get', 'poiCategory'],
+                    'see', 2,    // See POIs will render on top
+                    'sleep', 0,  // Sleep POIs will render underneath
+                    1           // All other POIs will render in the middle
+                  ],
                   iconPadding: 4,
                   iconOffset: [0, 4],
                   iconOpacity: [
@@ -353,6 +359,13 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
                     'drink', '#E12D39',
                     'play', '#6CD410',
                     '#FFFFFF'
+                  ],
+                  circleSortKey: [
+                    'match',
+                    ['get', 'poiCategory'],
+                    'see', 2,    // See POIs will render on top
+                    'sleep', 0,  // Sleep POIs will render underneath
+                    1           // All other POIs will render in the middle
                   ],
                   circleStrokeWidth: 1,
                   circleStrokeColor: 'white',

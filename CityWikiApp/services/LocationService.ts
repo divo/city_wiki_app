@@ -1,6 +1,8 @@
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 import { StorageService } from './StorageService';
+import RNFS from 'react-native-fs';
+import { Platform } from 'react-native';
 
 interface PointOfInterest {
   district: string;
@@ -113,6 +115,77 @@ class LocationService {
       }
     } catch (error: any) {
       console.error('Error in loadLocations:', {
+        error: error?.message || 'Unknown error',
+        stack: error?.stack || 'No stack trace',
+        cityId: cityId
+      });
+      throw error;
+    }
+  }
+
+  public async loadLocationFromAssets(cityId: string): Promise<void> {
+    try {
+      // Try to get data from cache first
+      console.log('Attempting to load data for city:', cityId);
+      const cachedData = await this.storageService.getCityData(cityId);
+      if (cachedData) {
+        console.log('Found cached data for city:', cityId);
+        this.cityData = cachedData;
+        this.pois = cachedData.points_of_interest;
+        return;
+      }
+
+      // Define paths
+      const cityDirPath = `${RNFS.DocumentDirectoryPath}/assets/${cityId}`;
+      const filePath = `${cityDirPath}/${cityId}.json`;
+      
+      // Ensure directory exists
+      await RNFS.mkdir(cityDirPath);
+      
+      // Check if file exists, if not copy from app bundle
+      const fileExists = await RNFS.exists(filePath);
+      if (!fileExists) {
+        console.log('File not found in documents directory, copying from bundle');
+        const bundlePath = Platform.select({
+          ios: `${RNFS.MainBundlePath}/assets/${cityId}/${cityId}.json`,
+          android: `assets/${cityId}/${cityId}.json`
+        });
+        
+        if (!bundlePath) {
+          throw new Error('Platform not supported');
+        }
+
+        if (Platform.OS === 'android') {
+          await RNFS.copyFileAssets(bundlePath, filePath);
+        } else {
+          await RNFS.copyFile(bundlePath, filePath);
+        }
+      }
+      
+      console.log('Loading from assets:', filePath);
+      try {
+        const fileContents = await RNFS.readFile(filePath, 'utf8');
+        console.log('File contents loaded, attempting to parse');
+        const data: CityData = JSON.parse(fileContents);
+        console.log('Successfully loaded data. POIs count:', data.points_of_interest?.length);
+        
+        // Store in cache
+        console.log('Storing data in cache for city:', cityId);
+        await this.storageService.storeCityData(cityId, data);
+        
+        // Update local state
+        this.cityData = data;
+        this.pois = data.points_of_interest || [];
+      } catch (error: any) {
+        console.error('Error loading from assets:', {
+          message: error?.message || 'Unknown error',
+          stack: error?.stack || 'No stack trace',
+          filePath: filePath
+        });
+        throw error;
+      }
+    } catch (error: any) {
+      console.error('Error in loadLocationFromAssets:', {
         error: error?.message || 'Unknown error',
         stack: error?.stack || 'No stack trace',
         cityId: cityId

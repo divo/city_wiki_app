@@ -26,7 +26,10 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.CityWikiApp",
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
     },
     "assetBundlePatterns": [
       "**/*"
@@ -44,6 +47,11 @@
       ],
       "expo-asset",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e4a563a7-c296-4f7c-af28-803bc5b3c4ae"
+      }
+    }
   }
 }

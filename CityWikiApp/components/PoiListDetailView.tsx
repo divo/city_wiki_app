@@ -82,8 +82,10 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
   }), [list.pois]);
 
   const handleSymbolPress = useCallback((event: any) => {
+    if (!event.features || event.features.length === 0) return;
+    
     const feature = event.features[0];
-    if (feature) {
+    if (feature && feature.properties) {
       const poi = list.pois.find(p => 
         p.name === feature.properties.poiName && 
         p.district === feature.properties.district
@@ -136,7 +138,6 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
           <Mapbox.MapView
             style={styles.map}
             styleURL={MAP_STYLE_URL}
-            onPress={handleSymbolPress}
           >
             <Mapbox.Camera
               bounds={calculateBounds()}
@@ -158,6 +159,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
             <Mapbox.ShapeSource
               id="poiSource"
               shape={poiFeatures}
+              onPress={handleSymbolPress}
             >
               <Mapbox.SymbolLayer
                 id="poiSymbols"

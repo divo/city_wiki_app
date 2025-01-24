@@ -24,13 +24,13 @@ const jsonFiles = [
   'assets/Paris/Paris.json',
 ];
 
-async function resolveJsonAssets(fileList) {
+async function resolveJsonAssets(fileList: string[]) {
   const resolvedAssets = [];
 
   for (const file of fileList) {
     try {
       // Resolve the asset and ensure it's available
-      const asset = Asset.fromModule(require(`./assets/${file}`));
+      const asset = Asset.fromURI(FileSystem.documentDirectory + file);
       await asset.downloadAsync();
 
       // Push resolved asset details to the result

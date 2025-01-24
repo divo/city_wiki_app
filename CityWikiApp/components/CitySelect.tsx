@@ -34,6 +34,7 @@ const cityImages = {
   'paris_cover.png': require('../assets/paris_cover.png'),
   'rome_cover.png': require('../assets/rome_cover.png'),
   'san_francisco_cover.png': require('../assets/san_francisco_cover.png'),
+  //'test.jpg': require('../assets/test.jpg'),
   'tokyo_cover.png': require('../assets/tokyo_cover.png'),
 };
 

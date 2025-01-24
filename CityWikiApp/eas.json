@@ -8,6 +8,17 @@
       "developmentClient": true,
       "distribution": "internal"
     },
+    "production": {
+      "ios": {
+        "cache": {
+          "disabled": true
+        },
+        "buildArtifactPaths": "./eas-build", // Save artifacts here for inspection
+        "env": {
+          "EAS_LOCAL_BUILD_KEEP_FILES": "1" // Prevent cleanup
+        }
+      }
+    },
     "preview": {
       "distribution": "internal"
     },

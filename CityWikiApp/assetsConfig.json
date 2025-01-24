@@ -1,6 +1,7 @@
 {
   "assets": [
     "assets/.DS_Store",
+    "assets/Paris/Paris.json",
     "assets/Paris/media/cities/images/paris.jpg",
     "assets/Paris/media/cities/images/pois/arc_de_triomphe_de_létoile.jpg",
     "assets/Paris/media/cities/images/pois/arènes_de_lutèce.jpg",
@@ -72,7 +73,6 @@
     "assets/shop.png",
     "assets/sleep.png",
     "assets/splash-icon.png",
-    "assets/test.jpg",
     "assets/tokyo_cover.png"
   ]
 }

@@ -18,6 +18,39 @@ import { PoiListDetailView } from './components/PoiListDetailView';
 import * as Location from "expo-location";
 import { Asset } from 'expo-asset';
 
+import * as FileSystem from 'expo-file-system';
+
+const jsonFiles = [
+  'assets/Paris/Paris.json',
+];
+
+async function resolveJsonAssets(fileList) {
+  const resolvedAssets = [];
+
+  for (const file of fileList) {
+    try {
+      // Resolve the asset and ensure it's available
+      const asset = Asset.fromModule(require(`./assets/${file}`));
+      await asset.downloadAsync();
+
+      // Push resolved asset details to the result
+      resolvedAssets.push({
+        file,
+        localUri: asset.localUri, // File location in the filesystem
+      });
+    } catch (error) {
+      console.error(`Error resolving JSON asset: ${file}`, error);
+    }
+  }
+
+  return resolvedAssets;
+}
+
+resolveJsonAssets(jsonFiles).then((resolvedAssets) => {
+  resolvedAssets.forEach(({ file, localUri }) => {
+    console.log(`Resolved JSON asset: ${file}, located at: ${localUri}`);
+  });
+});
 
 type RootStackParamList = {
   CitySelect: undefined;

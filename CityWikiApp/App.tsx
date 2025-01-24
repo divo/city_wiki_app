@@ -16,7 +16,6 @@ import { PoiDetailSheet } from './components/PoiDetailSheet';
 import { FavoritesProvider, useFavorites } from './contexts/FavoritesContext';
 import { PoiListDetailView } from './components/PoiListDetailView';
 import * as Location from "expo-location";
-//import city_assets from './assetsMap'; city_assets; // Load assets for build to pickup
 import { Asset } from 'expo-asset';
 
 

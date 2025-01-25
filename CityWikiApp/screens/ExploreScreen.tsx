@@ -92,7 +92,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         {/* Hero Image with City Name Overlay */}
         <View style={styles.heroContainer}>
           <Image
-            source={{ uri: heroImageUrl || "" }}
+            source={require('../assets/Paris/media/cities/images/paris.jpg')} // This works if the asset is bundled
             style={styles.heroImage}
             resizeMode="cover"
           />

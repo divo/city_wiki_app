@@ -11,6 +11,7 @@ import { PoiCollectionCarousel } from '../components/PoiCollectionCarousel';
 import { PoiListDetailView } from '../components/PoiListDetailView';
 import { PoiListCarousel } from '../components/PoiListCarousel';
 import { PoiDetailSheet } from '../components/PoiDetailSheet';
+import { getImageSource } from '../utils/imageUtils';
 
 interface ExploreScreenProps {
   route: {
@@ -57,7 +58,6 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
 
         // Get POI lists
         const lists = locationService.getPoiLists();
-        console.log('POI Lists:', JSON.stringify(lists, null, 2));
         setPoiLists(lists);
       } catch (error) {
         console.error('Error loading locations:', error);
@@ -92,7 +92,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
         {/* Hero Image with City Name Overlay */}
         <View style={styles.heroContainer}>
           <Image
-            source={require('../assets/Paris/media/cities/images/paris.jpg')} // This works if the asset is bundled
+            source={getImageSource(heroImageUrl)} // This works if the asset is bundled
             style={styles.heroImage}
             resizeMode="cover"
           />

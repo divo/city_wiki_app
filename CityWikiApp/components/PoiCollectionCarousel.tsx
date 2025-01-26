@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { PointOfInterest } from '../services/LocationService';
+import { getImageSource } from '../utils/imageUtils';
 
 interface PoiList {
   title: string;
@@ -39,7 +40,7 @@ export const PoiCollectionCarousel: React.FC<PoiListViewProps> = ({ title, pois,
             >
               {imageUrl && (
                 <Image
-                  source={{ uri: imageUrl }}
+                  source={getImageSource(imageUrl)}
                   style={styles.listImage}
                   resizeMode="cover"
                 />

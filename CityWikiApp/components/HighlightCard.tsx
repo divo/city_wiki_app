@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+import { getImageSource } from '../utils/imageUtils';
 
 interface HighlightCardProps {
   title: string;
@@ -10,7 +11,7 @@ export function HighlightCard({ title, imageUrl }: HighlightCardProps) {
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: imageUrl }}
+        source={getImageSource(imageUrl)}
         style={styles.image}
         resizeMode="cover"
       />

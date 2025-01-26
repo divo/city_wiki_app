@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import Mapbox from '@rnmapbox/maps';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { MAP_STYLE_URL } from '../screens/MapScreen';
+import { getImageSource } from '../utils/imageUtils';
 
 interface PoiDetailSheetProps {
   poi: PointOfInterest | null;
@@ -95,10 +96,9 @@ export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose, ci
           <View style={styles.content}>
             <Text style={[styles.category, { textAlign: 'center' }]}> {poi.category.charAt(0).toUpperCase() + poi.category.slice(1)} · {poi.district}</Text>
             <Text style={styles.description}>{poi.description}</Text>
-
             {poi.image_url && (
               <Image
-                source={{ uri: poi.image_url }}
+                source={getImageSource(poi.image_url)}
                 style={styles.image}
                 resizeMode="cover"
               />

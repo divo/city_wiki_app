@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { PointOfInterest } from '../services/LocationService';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { getImageSource } from '../utils/imageUtils';
 
 interface PoiListCarouselProps {
   title: string;
@@ -35,7 +36,7 @@ export function PoiListCarousel({ title, pois, onSelectPoi, onViewAll }: PoiList
             onPress={() => onSelectPoi(poi)}
           >
             <Image 
-              source={{ uri: poi.image_url }} 
+              source={getImageSource(poi.image_url)} // This works if the asset is bundled
               style={styles.poiImage}
               resizeMode="cover"
             />

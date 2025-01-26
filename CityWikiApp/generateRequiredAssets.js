@@ -20,7 +20,7 @@ const generateRequiredAssets = (assets) => {
   const requiredAssets = assets
     .filter((filePath) => !filePath.endsWith('.DS_Store')) // Filter out unwanted files
     .map((filePath) => {
-      const key = path.basename(filePath); // Use the file name as the key
+      const key = filePath.replace('assets/', '');
       return `'${key}': require('./${filePath}')`;
     });
 

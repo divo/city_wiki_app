@@ -7,7 +7,7 @@
     "longitude": -95.55631,
     "about": "Paris, the cosmopolitan capital of France, has the reputation of being the most beautiful and romantic of all cities, brimming with historic associations and remaining vastly influential in the realms of culture, art, fashion, food and design.\n\nDubbed the City of Light (la ville lumi\u00e8re) and the City of Love (la ville de l'amour), Paris is home to some of the world's finest and most luxurious fashion designers and cosmetics, such as Chanel, Christian Dior, Yves Saint-Laurent, Guerlain, Lanc\u00f4me, L'Or\u00e9al, and Clarins. A large part of the city, including the banks of the River Seine, is a UNESCO World Heritage Site. \n\nThe city has the second highest number of Michelin-starred restaurants in the world (after Tokyo, which is much larger) and contains numerous iconic landmarks such as the Eiffel Tower, the Arc de Triomphe, Notre-Dame de Paris, the Louvre, the Moulin Rouge and the Basilique du Sacr\u00e9-C\u0153ur, making it one of the most popular international tourist destinations in the world, with around 14 million visitors annually",
     "wikivoyage_url": "",
-    "image_url": "/media/cities/images/paris.jpg"
+    "image_url": "Paris/media/cities/images/paris.jpg"
   },
   "districts": [
     {
@@ -3659,7 +3659,7 @@
       "hours": null,
       "rank": 18,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/bois_de_boulogne.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/bois_de_boulogne.jpg"
     },
     {
       "id": 90742,
@@ -3829,7 +3829,7 @@
       "hours": null,
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/avenue_des_champs-elys%C3%A9es.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/avenue_des_champs-elys%C3%A9es.jpg"
     },
     {
       "id": 90197,
@@ -3863,7 +3863,7 @@
       "hours": "09:30-23:45; Jun 21-Sep 02: 09:00-00:45; Jul 14,Jul 15 off",
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/eiffel_tower.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/eiffel_tower.jpg"
     },
     {
       "id": 90260,
@@ -3880,7 +3880,7 @@
       "hours": "Nov-Mar: Tu-Su 09:00-1730, Apr-Oct: Tu-Su 09:00-18:30; closed Jan 1, May 1 and Dec 25",
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/ch%C3%A2teau_de_versailles.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/ch%C3%A2teau_de_versailles.jpg"
     },
     {
       "id": 90288,
@@ -3897,7 +3897,7 @@
       "hours": "Open 16 Mar-5 Nov: M-F, 08:00-18:00, Sa 08:30-18:00, Su & holidays, 09:00-18:00; 5 Nov-15 Mar: M-F, 08:00-17:30, Sa 08:30-17:30, Su & holidays 09:00-17:30",
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/p%C3%A8re-lachaise_cemetery.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/p%C3%A8re-lachaise_cemetery.jpg"
     },
     {
       "id": 90302,
@@ -3931,7 +3931,7 @@
       "hours": null,
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/le_marais.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/le_marais.jpg"
     },
     {
       "id": 90369,
@@ -3948,7 +3948,7 @@
       "hours": null,
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/cirque_dhiver.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/cirque_dhiver.jpg"
     },
     {
       "id": 90469,
@@ -3999,7 +3999,7 @@
       "hours": null,
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/les_archives_nationales.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/les_archives_nationales.jpg"
     },
     {
       "id": 90600,
@@ -4033,7 +4033,7 @@
       "hours": "Daily, 06:00-23:00",
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
     },
     {
       "id": 90684,
@@ -4050,7 +4050,7 @@
       "hours": "Daily 08:00-19:30",
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_delacroix.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_delacroix.jpg"
     },
     {
       "id": 90724,
@@ -4067,7 +4067,7 @@
       "hours": null,
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/palais_de_chaillot.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/palais_de_chaillot.jpg"
     },
     {
       "id": 90799,
@@ -4084,7 +4084,7 @@
       "hours": "Reading rooms, M-F, 09:00-18:00; Sa, 09:00-17:00; exhibitions, Tu-Sa, 10:00-19:00",
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/la_biblioth%C3%A8que_nationale_de_france.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/la_biblioth%C3%A8que_nationale_de_france.jpg"
     },
     {
       "id": 90855,
@@ -4118,7 +4118,7 @@
       "hours": "08\u02d000-17\u02d030 (winter), 08\u02d000-22\u02d000 (summer)",
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/ar%C3%A8nes_de_lut%C3%A8ce.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/ar%C3%A8nes_de_lut%C3%A8ce.jpg"
     },
     {
       "id": 90967,
@@ -4135,7 +4135,7 @@
       "hours": null,
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/colonne_vend%C3%B4me.png"
+      "image_url": "Paris/media/cities/images/pois/paris/colonne_vend%C3%B4me.png"
     },
     {
       "id": 91034,
@@ -4152,7 +4152,7 @@
       "hours": "Tu-Su 9:45-20:30; last admission 19:30; closed Mo and public holidays",
       "rank": 1,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/les_catacombes_de_paris.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/les_catacombes_de_paris.jpg"
     },
     {
       "id": 90198,
@@ -4186,7 +4186,7 @@
       "hours": "M F Sa 08:40-11:40 and 14:00-17:00",
       "rank": 2,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/lassembl%C3%A9e_nationale.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/lassembl%C3%A9e_nationale.jpg"
     },
     {
       "id": 90261,
@@ -4254,7 +4254,7 @@
       "hours": "M-Th 13:00-18:00 (by ''appointment only'')",
       "rank": 2,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_edith_piaf.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_edith_piaf.jpg"
     },
     {
       "id": 90411,
@@ -4271,7 +4271,7 @@
       "hours": null,
       "rank": 2,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/place_de_la_concorde.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/place_de_la_concorde.jpg"
     },
     {
       "id": 90470,
@@ -4288,7 +4288,7 @@
       "hours": null,
       "rank": 2,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/grande_arche_de_la_defense.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/grande_arche_de_la_defense.jpg"
     },
     {
       "id": 90510,
@@ -4339,7 +4339,7 @@
       "hours": "W-M, 10\u02d000-12.45 and 14\u02d000-17\u02d015",
       "rank": 2,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_gustave_moreau.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_gustave_moreau.jpg"
     },
     {
       "id": 90634,
@@ -4373,7 +4373,7 @@
       "hours": "10:3-14:30",
       "rank": 2,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/palais_du_luxembourg.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/palais_du_luxembourg.jpg"
     },
     {
       "id": 90725,
@@ -4390,7 +4390,7 @@
       "hours": "Tu W F-Su 10:00-18:00; Th 10:00-21:00; last entry 30 min before closing",
       "rank": 2,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_marmottan-monet.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_marmottan-monet.jpg"
     },
     {
       "id": 90800,
@@ -4424,7 +4424,7 @@
       "hours": null,
       "rank": 2,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/bercy_village.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/bercy_village.jpg"
     },
     {
       "id": 90921,
@@ -4458,7 +4458,7 @@
       "hours": "Apr-Sep: daily 09:30-18:30; Oct- Mar: daily 10:00-17:00",
       "rank": 2,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/la_conciergerie.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/la_conciergerie.jpg"
     },
     {
       "id": 91035,
@@ -4509,7 +4509,7 @@
       "hours": null,
       "rank": 3,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/les_invalides.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/les_invalides.jpg"
     },
     {
       "id": 90262,
@@ -4577,7 +4577,7 @@
       "hours": null,
       "rank": 3,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/place_de_la_bastille.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/place_de_la_bastille.jpg"
     },
     {
       "id": 90412,
@@ -4594,7 +4594,7 @@
       "hours": null,
       "rank": 3,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/arc_de_triomphe_de_l%C3%A9toile.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/arc_de_triomphe_de_l%C3%A9toile.jpg"
     },
     {
       "id": 90471,
@@ -4645,7 +4645,7 @@
       "hours": null,
       "rank": 3,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/carnavalet.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/carnavalet.jpg"
     },
     {
       "id": 90602,
@@ -4662,7 +4662,7 @@
       "hours": "Daily, 10\u02d000-16:30",
       "rank": 3,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/opera_garnier.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/opera_garnier.jpg"
     },
     {
       "id": 90635,
@@ -4764,7 +4764,7 @@
       "hours": null,
       "rank": 3,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/cit%C3%A9_des_sciences_et_de_lindustrie.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/cit%C3%A9_des_sciences_et_de_lindustrie.jpg"
     },
     {
       "id": 90857,
@@ -4798,7 +4798,7 @@
       "hours": "Daily, April-September 10:00-18:30, October-March: 10:00-18:00, Last admission 45 mins before closing",
       "rank": 3,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/panth%C3%A9on.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/panth%C3%A9on.jpg"
     },
     {
       "id": 90969,
@@ -4815,7 +4815,7 @@
       "hours": null,
       "rank": 3,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/%C3%A9glise_saint-eustache.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/%C3%A9glise_saint-eustache.jpg"
     },
     {
       "id": 91036,
@@ -4849,7 +4849,7 @@
       "hours": null,
       "rank": 4,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/manufacture_des_gobelins.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/manufacture_des_gobelins.jpg"
     },
     {
       "id": 90228,
@@ -4934,7 +4934,7 @@
       "hours": "7:45 \u2014 18:45",
       "rank": 4,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
     },
     {
       "id": 90372,
@@ -5155,7 +5155,7 @@
       "hours": null,
       "rank": 4,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/jardin_des_tuileries.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/jardin_des_tuileries.jpg"
     },
     {
       "id": 91037,
@@ -5206,7 +5206,7 @@
       "hours": null,
       "rank": 5,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_dorsay.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_dorsay.jpg"
     },
     {
       "id": 90264,
@@ -5376,7 +5376,7 @@
       "hours": "Tu-Su 10\u02d000-18\u02d000, closed M and 1 May",
       "rank": 5,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_de_linstitut_du_monde_arabe.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_de_linstitut_du_monde_arabe.jpg"
     },
     {
       "id": 90971,
@@ -5393,7 +5393,7 @@
       "hours": "07:00-23:00 during the summer and 07:00-20:30 in the winter with hours varying spring and autumn",
       "rank": 5,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/le_palais_royal.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/le_palais_royal.jpg"
     },
     {
       "id": 91038,
@@ -5546,7 +5546,7 @@
       "hours": "09:30-18:00, W-M & 09:30-20:00 on Th, except during winter when closing time is always 17:30",
       "rank": 6,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/picasso_museum.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/picasso_museum.jpg"
     },
     {
       "id": 90638,
@@ -5614,7 +5614,7 @@
       "hours": "Daily 09:15-17:15",
       "rank": 6,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_national_du_moyen_%C3%A2ge.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_national_du_moyen_%C3%A2ge.jpg"
     },
     {
       "id": 90972,
@@ -5665,7 +5665,7 @@
       "hours": "Tu-Su: museum: 10:00-17:45, park: till 18:00; ticket office: till 17:15. Closed M",
       "rank": 7,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/rodin_museum.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/rodin_museum.jpg"
     },
     {
       "id": 90266,
@@ -5716,7 +5716,7 @@
       "hours": null,
       "rank": 7,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/le_grand_palais.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/le_grand_palais.jpg"
     },
     {
       "id": 90475,
@@ -5801,7 +5801,7 @@
       "hours": null,
       "rank": 7,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/fondation_louis_vuitton.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/fondation_louis_vuitton.jpg"
     },
     {
       "id": 90861,
@@ -5852,7 +5852,7 @@
       "hours": null,
       "rank": 7,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/sainte-chapelle.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/sainte-chapelle.jpg"
     },
     {
       "id": 91040,
@@ -6005,7 +6005,7 @@
       "hours": null,
       "rank": 8,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_de_montmartre.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_de_montmartre.jpg"
     },
     {
       "id": 90731,
@@ -6107,7 +6107,7 @@
       "hours": null,
       "rank": 9,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/hall_of_mirrors.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/hall_of_mirrors.jpg"
     },
     {
       "id": 90320,
@@ -6124,7 +6124,7 @@
       "hours": "Su-W,F 10:00-18:00; Th 10:00-22:00",
       "rank": 9,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/m%C3%A9morial_de_la_shoah.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/m%C3%A9morial_de_la_shoah.jpg"
     },
     {
       "id": 90418,
@@ -6209,7 +6209,7 @@
       "hours": null,
       "rank": 9,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/i_love_you_wall.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/i_love_you_wall.jpg"
     },
     {
       "id": 90732,
@@ -6243,7 +6243,7 @@
       "hours": null,
       "rank": 9,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/ch%C3%A2teau_de_vincennes.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/ch%C3%A2teau_de_vincennes.jpg"
     },
     {
       "id": 90928,
@@ -6277,7 +6277,7 @@
       "hours": "W-M 09:00-18:00, closed public holidays; evening openings W and F until 21:45",
       "rank": 9,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/the_louvre.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/the_louvre.jpg"
     },
     {
       "id": 91042,
@@ -6328,7 +6328,7 @@
       "hours": "W-M, 11:00-22:00",
       "rank": 10,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/centre_georges_pompidou.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/centre_georges_pompidou.jpg"
     },
     {
       "id": 90419,
@@ -6464,7 +6464,7 @@
       "hours": "W-M (closed Christmas Day and 1 May) individuals 12:30-19:00, Th till 21:00; groups, 09:30-12:30;",
       "rank": 10,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_de_lorangerie.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_de_lorangerie.jpg"
     },
     {
       "id": 91043,
@@ -6685,7 +6685,7 @@
       "hours": null,
       "rank": 12,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/jacquemart-andre_museum.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/jacquemart-andre_museum.jpg"
     },
     {
       "id": 90520,
@@ -6736,7 +6736,7 @@
       "hours": null,
       "rank": 12,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/guimet_museum.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/guimet_museum.jpg"
     },
     {
       "id": 90866,
@@ -6770,7 +6770,7 @@
       "hours": null,
       "rank": 12,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/%C3%A9glise_saint-jacques-du-haut-pas.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/%C3%A9glise_saint-jacques-du-haut-pas.jpg"
     },
     {
       "id": 90978,
@@ -6787,7 +6787,7 @@
       "hours": null,
       "rank": 12,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_des_arts_d%C3%A9coratifs.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_des_arts_d%C3%A9coratifs.jpg"
     },
     {
       "id": 90272,
@@ -6974,7 +6974,7 @@
       "hours": "W-Mo 11:00-19:00. Closed Tu. Fr and first Sa of month late opening until 21:00",
       "rank": 14,
       "osm_id": null,
-      "image_url": "/media/cities/images/pois/paris/bourse_de_commerce_-_pinault_collection.jpg"
+      "image_url": "Paris/media/cities/images/pois/paris/bourse_de_commerce_-_pinault_collection.jpg"
     },
     {
       "id": 90274,
@@ -11078,7 +11078,7 @@
           "hours": null,
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/avenue_des_champs-elys%C3%A9es.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/avenue_des_champs-elys%C3%A9es.jpg"
         },
         {
           "id": 90225,
@@ -11095,7 +11095,7 @@
           "hours": "09:30-23:45; Jun 21-Sep 02: 09:00-00:45; Jul 14,Jul 15 off",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/eiffel_tower.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/eiffel_tower.jpg"
         },
         {
           "id": 90260,
@@ -11112,7 +11112,7 @@
           "hours": "Nov-Mar: Tu-Su 09:00-1730, Apr-Oct: Tu-Su 09:00-18:30; closed Jan 1, May 1 and Dec 25",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/ch%C3%A2teau_de_versailles.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/ch%C3%A2teau_de_versailles.jpg"
         },
         {
           "id": 90288,
@@ -11129,7 +11129,7 @@
           "hours": "Open 16 Mar-5 Nov: M-F, 08:00-18:00, Sa 08:30-18:00, Su & holidays, 09:00-18:00; 5 Nov-15 Mar: M-F, 08:00-17:30, Sa 08:30-17:30, Su & holidays 09:00-17:30",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/p%C3%A8re-lachaise_cemetery.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/p%C3%A8re-lachaise_cemetery.jpg"
         },
         {
           "id": 90312,
@@ -11146,7 +11146,7 @@
           "hours": null,
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/le_marais.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/le_marais.jpg"
         },
         {
           "id": 90369,
@@ -11163,7 +11163,7 @@
           "hours": null,
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/cirque_dhiver.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/cirque_dhiver.jpg"
         },
         {
           "id": 90572,
@@ -11180,7 +11180,7 @@
           "hours": null,
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/les_archives_nationales.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/les_archives_nationales.jpg"
         },
         {
           "id": 90633,
@@ -11197,7 +11197,7 @@
           "hours": "Daily, 06:00-23:00",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
         },
         {
           "id": 90724,
@@ -11214,7 +11214,7 @@
           "hours": null,
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/palais_de_chaillot.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/palais_de_chaillot.jpg"
         },
         {
           "id": 90799,
@@ -11231,7 +11231,7 @@
           "hours": "Reading rooms, M-F, 09:00-18:00; Sa, 09:00-17:00; exhibitions, Tu-Sa, 10:00-19:00",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/la_biblioth%C3%A8que_nationale_de_france.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/la_biblioth%C3%A8que_nationale_de_france.jpg"
         },
         {
           "id": 90920,
@@ -11248,7 +11248,7 @@
           "hours": "08\u02d000-17\u02d030 (winter), 08\u02d000-22\u02d000 (summer)",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/ar%C3%A8nes_de_lut%C3%A8ce.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/ar%C3%A8nes_de_lut%C3%A8ce.jpg"
         },
         {
           "id": 90967,
@@ -11265,7 +11265,7 @@
           "hours": null,
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/colonne_vend%C3%B4me.png"
+          "image_url": "Paris/media/cities/images/pois/paris/colonne_vend%C3%B4me.png"
         },
         {
           "id": 91034,
@@ -11282,7 +11282,7 @@
           "hours": "Tu-Su 9:45-20:30; last admission 19:30; closed Mo and public holidays",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/les_catacombes_de_paris.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/les_catacombes_de_paris.jpg"
         },
         {
           "id": 90370,
@@ -11299,7 +11299,7 @@
           "hours": "M-Th 13:00-18:00 (by ''appointment only'')",
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_edith_piaf.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_edith_piaf.jpg"
         },
         {
           "id": 90411,
@@ -11316,7 +11316,7 @@
           "hours": null,
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/place_de_la_concorde.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/place_de_la_concorde.jpg"
         },
         {
           "id": 90470,
@@ -11333,7 +11333,7 @@
           "hours": null,
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/grande_arche_de_la_defense.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/grande_arche_de_la_defense.jpg"
         },
         {
           "id": 90601,
@@ -11350,7 +11350,7 @@
           "hours": "W-M, 10\u02d000-12.45 and 14\u02d000-17\u02d015",
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_gustave_moreau.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_gustave_moreau.jpg"
         },
         {
           "id": 90685,
@@ -11367,7 +11367,7 @@
           "hours": "10:3-14:30",
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/palais_du_luxembourg.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/palais_du_luxembourg.jpg"
         },
         {
           "id": 90856,
@@ -11384,7 +11384,7 @@
           "hours": null,
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/bercy_village.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/bercy_village.jpg"
         },
         {
           "id": 90968,
@@ -11401,7 +11401,7 @@
           "hours": "Apr-Sep: daily 09:30-18:30; Oct- Mar: daily 10:00-17:00",
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/la_conciergerie.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/la_conciergerie.jpg"
         },
         {
           "id": 90227,
@@ -11418,7 +11418,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/les_invalides.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/les_invalides.jpg"
         },
         {
           "id": 90371,
@@ -11435,7 +11435,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/place_de_la_bastille.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/place_de_la_bastille.jpg"
         },
         {
           "id": 90412,
@@ -11452,7 +11452,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/arc_de_triomphe_de_l%C3%A9toile.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/arc_de_triomphe_de_l%C3%A9toile.jpg"
         },
         {
           "id": 90602,
@@ -11469,7 +11469,7 @@
           "hours": "Daily, 10\u02d000-16:30",
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/opera_garnier.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/opera_garnier.jpg"
         },
         {
           "id": 90838,
@@ -11486,7 +11486,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/cit%C3%A9_des_sciences_et_de_lindustrie.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/cit%C3%A9_des_sciences_et_de_lindustrie.jpg"
         },
         {
           "id": 90922,
@@ -11503,7 +11503,7 @@
           "hours": "Daily, April-September 10:00-18:30, October-March: 10:00-18:00, Last admission 45 mins before closing",
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/panth%C3%A9on.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/panth%C3%A9on.jpg"
         },
         {
           "id": 90969,
@@ -11520,7 +11520,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/%C3%A9glise_saint-eustache.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/%C3%A9glise_saint-eustache.jpg"
         },
         {
           "id": 90200,
@@ -11537,7 +11537,7 @@
           "hours": null,
           "rank": 4,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/manufacture_des_gobelins.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/manufacture_des_gobelins.jpg"
         },
         {
           "id": 90316,
@@ -11554,7 +11554,7 @@
           "hours": "7:45 \u2014 18:45",
           "rank": 4,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
         },
         {
           "id": 90970,
@@ -11571,7 +11571,7 @@
           "hours": null,
           "rank": 4,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/jardin_des_tuileries.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/jardin_des_tuileries.jpg"
         },
         {
           "id": 90229,
@@ -11588,7 +11588,7 @@
           "hours": null,
           "rank": 5,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_dorsay.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_dorsay.jpg"
         },
         {
           "id": 90924,
@@ -11605,7 +11605,7 @@
           "hours": "Tu-Su 10\u02d000-18\u02d000, closed M and 1 May",
           "rank": 5,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_de_linstitut_du_monde_arabe.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_de_linstitut_du_monde_arabe.jpg"
         },
         {
           "id": 90971,
@@ -11622,7 +11622,7 @@
           "hours": "07:00-23:00 during the summer and 07:00-20:30 in the winter with hours varying spring and autumn",
           "rank": 5,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/le_palais_royal.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/le_palais_royal.jpg"
         },
         {
           "id": 90577,
@@ -11639,7 +11639,7 @@
           "hours": "09:30-18:00, W-M & 09:30-20:00 on Th, except during winter when closing time is always 17:30",
           "rank": 6,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/picasso_museum.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/picasso_museum.jpg"
         },
         {
           "id": 90925,
@@ -11656,7 +11656,7 @@
           "hours": "Daily 09:15-17:15",
           "rank": 6,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_national_du_moyen_%C3%A2ge.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_national_du_moyen_%C3%A2ge.jpg"
         },
         {
           "id": 90231,
@@ -11673,7 +11673,7 @@
           "hours": "Tu-Su: museum: 10:00-17:45, park: till 18:00; ticket office: till 17:15. Closed M",
           "rank": 7,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/rodin_museum.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/rodin_museum.jpg"
         },
         {
           "id": 90416,
@@ -11690,7 +11690,7 @@
           "hours": null,
           "rank": 7,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/le_grand_palais.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/le_grand_palais.jpg"
         },
         {
           "id": 90730,
@@ -11707,7 +11707,7 @@
           "hours": null,
           "rank": 7,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/fondation_louis_vuitton.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/fondation_louis_vuitton.jpg"
         },
         {
           "id": 90640,
@@ -11724,7 +11724,7 @@
           "hours": null,
           "rank": 8,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_de_montmartre.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_de_montmartre.jpg"
         },
         {
           "id": 90268,
@@ -11741,7 +11741,7 @@
           "hours": null,
           "rank": 9,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/hall_of_mirrors.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/hall_of_mirrors.jpg"
         },
         {
           "id": 90641,
@@ -11758,7 +11758,7 @@
           "hours": null,
           "rank": 9,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/i_love_you_wall.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/i_love_you_wall.jpg"
         },
         {
           "id": 90863,
@@ -11775,7 +11775,7 @@
           "hours": null,
           "rank": 9,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/ch%C3%A2teau_de_vincennes.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/ch%C3%A2teau_de_vincennes.jpg"
         },
         {
           "id": 90975,
@@ -11792,7 +11792,7 @@
           "hours": "W-M 09:00-18:00, closed public holidays; evening openings W and F until 21:45",
           "rank": 9,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/the_louvre.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/the_louvre.jpg"
         },
         {
           "id": 90321,
@@ -11809,7 +11809,7 @@
           "hours": "W-M, 11:00-22:00",
           "rank": 10,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/centre_georges_pompidou.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/centre_georges_pompidou.jpg"
         },
         {
           "id": 90976,
@@ -11826,7 +11826,7 @@
           "hours": "W-M (closed Christmas Day and 1 May) individuals 12:30-19:00, Th till 21:00; groups, 09:30-12:30;",
           "rank": 10,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_de_lorangerie.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_de_lorangerie.jpg"
         },
         {
           "id": 90421,
@@ -11843,7 +11843,7 @@
           "hours": null,
           "rank": 12,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/jacquemart-andre_museum.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/jacquemart-andre_museum.jpg"
         },
         {
           "id": 90931,
@@ -11860,7 +11860,7 @@
           "hours": null,
           "rank": 12,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/%C3%A9glise_saint-jacques-du-haut-pas.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/%C3%A9glise_saint-jacques-du-haut-pas.jpg"
         },
         {
           "id": 90980,
@@ -11877,7 +11877,7 @@
           "hours": "W-Mo 11:00-19:00. Closed Tu. Fr and first Sa of month late opening until 21:00",
           "rank": 14,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/bourse_de_commerce_-_pinault_collection.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/bourse_de_commerce_-_pinault_collection.jpg"
         }
       ]
     },
@@ -11901,7 +11901,7 @@
           "hours": null,
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/avenue_des_champs-elys%C3%A9es.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/avenue_des_champs-elys%C3%A9es.jpg"
         },
         {
           "id": 90225,
@@ -11918,7 +11918,7 @@
           "hours": "09:30-23:45; Jun 21-Sep 02: 09:00-00:45; Jul 14,Jul 15 off",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/eiffel_tower.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/eiffel_tower.jpg"
         },
         {
           "id": 90288,
@@ -11935,7 +11935,7 @@
           "hours": "Open 16 Mar-5 Nov: M-F, 08:00-18:00, Sa 08:30-18:00, Su & holidays, 09:00-18:00; 5 Nov-15 Mar: M-F, 08:00-17:30, Sa 08:30-17:30, Su & holidays 09:00-17:30",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/p%C3%A8re-lachaise_cemetery.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/p%C3%A8re-lachaise_cemetery.jpg"
         },
         {
           "id": 90633,
@@ -11952,7 +11952,7 @@
           "hours": "Daily, 06:00-23:00",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
         },
         {
           "id": 90684,
@@ -11969,7 +11969,7 @@
           "hours": "Daily 08:00-19:30",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_delacroix.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_delacroix.jpg"
         },
         {
           "id": 91034,
@@ -11986,7 +11986,7 @@
           "hours": "Tu-Su 9:45-20:30; last admission 19:30; closed Mo and public holidays",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/les_catacombes_de_paris.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/les_catacombes_de_paris.jpg"
         },
         {
           "id": 90470,
@@ -12003,7 +12003,7 @@
           "hours": null,
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/grande_arche_de_la_defense.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/grande_arche_de_la_defense.jpg"
         },
         {
           "id": 90725,
@@ -12020,7 +12020,7 @@
           "hours": "Tu W F-Su 10:00-18:00; Th 10:00-21:00; last entry 30 min before closing",
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_marmottan-monet.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_marmottan-monet.jpg"
         },
         {
           "id": 90227,
@@ -12037,7 +12037,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/les_invalides.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/les_invalides.jpg"
         },
         {
           "id": 90412,
@@ -12054,7 +12054,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/arc_de_triomphe_de_l%C3%A9toile.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/arc_de_triomphe_de_l%C3%A9toile.jpg"
         },
         {
           "id": 90574,
@@ -12071,7 +12071,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/carnavalet.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/carnavalet.jpg"
         },
         {
           "id": 90602,
@@ -12088,7 +12088,7 @@
           "hours": "Daily, 10\u02d000-16:30",
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/opera_garnier.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/opera_garnier.jpg"
         },
         {
           "id": 90838,
@@ -12105,7 +12105,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/cit%C3%A9_des_sciences_et_de_lindustrie.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/cit%C3%A9_des_sciences_et_de_lindustrie.jpg"
         },
         {
           "id": 90922,
@@ -12122,7 +12122,7 @@
           "hours": "Daily, April-September 10:00-18:30, October-March: 10:00-18:00, Last admission 45 mins before closing",
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/panth%C3%A9on.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/panth%C3%A9on.jpg"
         },
         {
           "id": 90316,
@@ -12139,7 +12139,7 @@
           "hours": "7:45 \u2014 18:45",
           "rank": 4,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
         },
         {
           "id": 90229,
@@ -12156,7 +12156,7 @@
           "hours": null,
           "rank": 5,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_dorsay.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_dorsay.jpg"
         },
         {
           "id": 90577,
@@ -12173,7 +12173,7 @@
           "hours": "09:30-18:00, W-M & 09:30-20:00 on Th, except during winter when closing time is always 17:30",
           "rank": 6,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/picasso_museum.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/picasso_museum.jpg"
         },
         {
           "id": 90925,
@@ -12190,7 +12190,7 @@
           "hours": "Daily 09:15-17:15",
           "rank": 6,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_national_du_moyen_%C3%A2ge.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_national_du_moyen_%C3%A2ge.jpg"
         },
         {
           "id": 90231,
@@ -12207,7 +12207,7 @@
           "hours": "Tu-Su: museum: 10:00-17:45, park: till 18:00; ticket office: till 17:15. Closed M",
           "rank": 7,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/rodin_museum.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/rodin_museum.jpg"
         },
         {
           "id": 90973,
@@ -12224,7 +12224,7 @@
           "hours": null,
           "rank": 7,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/sainte-chapelle.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/sainte-chapelle.jpg"
         },
         {
           "id": 90320,
@@ -12241,7 +12241,7 @@
           "hours": "Su-W,F 10:00-18:00; Th 10:00-22:00",
           "rank": 9,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/m%C3%A9morial_de_la_shoah.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/m%C3%A9morial_de_la_shoah.jpg"
         },
         {
           "id": 90975,
@@ -12258,7 +12258,7 @@
           "hours": "W-M 09:00-18:00, closed public holidays; evening openings W and F until 21:45",
           "rank": 9,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/the_louvre.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/the_louvre.jpg"
         },
         {
           "id": 90321,
@@ -12275,7 +12275,7 @@
           "hours": "W-M, 11:00-22:00",
           "rank": 10,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/centre_georges_pompidou.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/centre_georges_pompidou.jpg"
         },
         {
           "id": 90976,
@@ -12292,7 +12292,7 @@
           "hours": "W-M (closed Christmas Day and 1 May) individuals 12:30-19:00, Th till 21:00; groups, 09:30-12:30;",
           "rank": 10,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_de_lorangerie.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_de_lorangerie.jpg"
         },
         {
           "id": 90421,
@@ -12309,7 +12309,7 @@
           "hours": null,
           "rank": 12,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/jacquemart-andre_museum.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/jacquemart-andre_museum.jpg"
         },
         {
           "id": 90735,
@@ -12326,7 +12326,7 @@
           "hours": null,
           "rank": 12,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/guimet_museum.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/guimet_museum.jpg"
         },
         {
           "id": 90978,
@@ -12343,7 +12343,7 @@
           "hours": null,
           "rank": 12,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_des_arts_d%C3%A9coratifs.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_des_arts_d%C3%A9coratifs.jpg"
         }
       ]
     },
@@ -12384,7 +12384,7 @@
           "hours": "Daily, April-September 10:00-18:30, October-March: 10:00-18:00, Last admission 45 mins before closing",
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/panth%C3%A9on.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/panth%C3%A9on.jpg"
         },
         {
           "id": 90969,
@@ -12401,7 +12401,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/%C3%A9glise_saint-eustache.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/%C3%A9glise_saint-eustache.jpg"
         },
         {
           "id": 90316,
@@ -12418,7 +12418,7 @@
           "hours": "7:45 \u2014 18:45",
           "rank": 4,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
         },
         {
           "id": 90972,
@@ -12469,7 +12469,7 @@
           "hours": null,
           "rank": 7,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/sainte-chapelle.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/sainte-chapelle.jpg"
         },
         {
           "id": 90927,
@@ -12527,7 +12527,7 @@
           "hours": null,
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/bercy_village.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/bercy_village.jpg"
         },
         {
           "id": 90771,
@@ -12670,7 +12670,7 @@
           "hours": null,
           "rank": 18,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/bois_de_boulogne.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/bois_de_boulogne.jpg"
         },
         {
           "id": 90168,
@@ -12687,7 +12687,7 @@
           "hours": null,
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/avenue_des_champs-elys%C3%A9es.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/avenue_des_champs-elys%C3%A9es.jpg"
         },
         {
           "id": 90225,
@@ -12704,7 +12704,7 @@
           "hours": "09:30-23:45; Jun 21-Sep 02: 09:00-00:45; Jul 14,Jul 15 off",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/eiffel_tower.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/eiffel_tower.jpg"
         },
         {
           "id": 90260,
@@ -12721,7 +12721,7 @@
           "hours": "Nov-Mar: Tu-Su 09:00-1730, Apr-Oct: Tu-Su 09:00-18:30; closed Jan 1, May 1 and Dec 25",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/ch%C3%A2teau_de_versailles.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/ch%C3%A2teau_de_versailles.jpg"
         },
         {
           "id": 90633,
@@ -12738,7 +12738,7 @@
           "hours": "Daily, 06:00-23:00",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
         },
         {
           "id": 90724,
@@ -12755,7 +12755,7 @@
           "hours": null,
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/palais_de_chaillot.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/palais_de_chaillot.jpg"
         },
         {
           "id": 90470,
@@ -12772,7 +12772,7 @@
           "hours": null,
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/grande_arche_de_la_defense.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/grande_arche_de_la_defense.jpg"
         },
         {
           "id": 90412,
@@ -12789,7 +12789,7 @@
           "hours": null,
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/arc_de_triomphe_de_l%C3%A9toile.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/arc_de_triomphe_de_l%C3%A9toile.jpg"
         },
         {
           "id": 90922,
@@ -12806,7 +12806,7 @@
           "hours": "Daily, April-September 10:00-18:30, October-March: 10:00-18:00, Last admission 45 mins before closing",
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/panth%C3%A9on.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/panth%C3%A9on.jpg"
         },
         {
           "id": 90316,
@@ -12823,7 +12823,7 @@
           "hours": "7:45 \u2014 18:45",
           "rank": 4,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
         },
         {
           "id": 90229,
@@ -12840,7 +12840,7 @@
           "hours": null,
           "rank": 5,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_dorsay.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_dorsay.jpg"
         },
         {
           "id": 90973,
@@ -12857,7 +12857,7 @@
           "hours": null,
           "rank": 7,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/sainte-chapelle.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/sainte-chapelle.jpg"
         },
         {
           "id": 90975,
@@ -12874,7 +12874,7 @@
           "hours": "W-M 09:00-18:00, closed public holidays; evening openings W and F until 21:45",
           "rank": 9,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/the_louvre.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/the_louvre.jpg"
         },
         {
           "id": 90980,
@@ -12891,7 +12891,7 @@
           "hours": "W-Mo 11:00-19:00. Closed Tu. Fr and first Sa of month late opening until 21:00",
           "rank": 14,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/bourse_de_commerce_-_pinault_collection.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/bourse_de_commerce_-_pinault_collection.jpg"
         }
       ]
     },
@@ -12915,7 +12915,7 @@
           "hours": "09:30-23:45; Jun 21-Sep 02: 09:00-00:45; Jul 14,Jul 15 off",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/eiffel_tower.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/eiffel_tower.jpg"
         },
         {
           "id": 90260,
@@ -12932,7 +12932,7 @@
           "hours": "Nov-Mar: Tu-Su 09:00-1730, Apr-Oct: Tu-Su 09:00-18:30; closed Jan 1, May 1 and Dec 25",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/ch%C3%A2teau_de_versailles.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/ch%C3%A2teau_de_versailles.jpg"
         },
         {
           "id": 90633,
@@ -12949,7 +12949,7 @@
           "hours": "Daily, 06:00-23:00",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
         },
         {
           "id": 90470,
@@ -12966,7 +12966,7 @@
           "hours": null,
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/grande_arche_de_la_defense.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/grande_arche_de_la_defense.jpg"
         },
         {
           "id": 90231,
@@ -12983,7 +12983,7 @@
           "hours": "Tu-Su: museum: 10:00-17:45, park: till 18:00; ticket office: till 17:15. Closed M",
           "rank": 7,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/rodin_museum.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/rodin_museum.jpg"
         }
       ]
     },
@@ -13007,7 +13007,7 @@
           "hours": "Daily, 06:00-23:00",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/sacr%C3%A9_coeur.jpg"
         },
         {
           "id": 90686,
@@ -13041,7 +13041,7 @@
           "hours": "7:45 \u2014 18:45",
           "rank": 4,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/notre_dame_cathedral.jpg"
         },
         {
           "id": 90926,
@@ -13075,7 +13075,7 @@
           "hours": null,
           "rank": 7,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/sainte-chapelle.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/sainte-chapelle.jpg"
         }
       ]
     },
@@ -13099,7 +13099,7 @@
           "hours": null,
           "rank": 18,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/bois_de_boulogne.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/bois_de_boulogne.jpg"
         },
         {
           "id": 90861,
@@ -13191,7 +13191,7 @@
           "hours": "Nov-Mar: Tu-Su 09:00-1730, Apr-Oct: Tu-Su 09:00-18:30; closed Jan 1, May 1 and Dec 25",
           "rank": 1,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/ch%C3%A2teau_de_versailles.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/ch%C3%A2teau_de_versailles.jpg"
         },
         {
           "id": 90725,
@@ -13208,7 +13208,7 @@
           "hours": "Tu W F-Su 10:00-18:00; Th 10:00-21:00; last entry 30 min before closing",
           "rank": 2,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_marmottan-monet.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_marmottan-monet.jpg"
         },
         {
           "id": 90922,
@@ -13225,7 +13225,7 @@
           "hours": "Daily, April-September 10:00-18:30, October-March: 10:00-18:00, Last admission 45 mins before closing",
           "rank": 3,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/panth%C3%A9on.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/panth%C3%A9on.jpg"
         },
         {
           "id": 90924,
@@ -13242,7 +13242,7 @@
           "hours": "Tu-Su 10\u02d000-18\u02d000, closed M and 1 May",
           "rank": 5,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/mus%C3%A9e_de_linstitut_du_monde_arabe.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/mus%C3%A9e_de_linstitut_du_monde_arabe.jpg"
         },
         {
           "id": 90975,
@@ -13259,7 +13259,7 @@
           "hours": "W-M 09:00-18:00, closed public holidays; evening openings W and F until 21:45",
           "rank": 9,
           "osm_id": null,
-          "image_url": "/media/cities/images/pois/paris/the_louvre.jpg"
+          "image_url": "Paris/media/cities/images/pois/paris/the_louvre.jpg"
         }
       ]
     }

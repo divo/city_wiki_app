@@ -1,8 +1,19 @@
 import { StorageService } from './StorageService';
+import { requiredAssets } from '../requiredAssets';
+
+// This forces Expo to include the assets in the bundle
+Object.keys(requiredAssets).forEach((key) => {
+  requiredAssets[key]; // Access each require() to ensure it's processed
+});
+
+console.log('Assets included in the bundle.');
 
 // For now, only include Paris as we're testing
 type CityId = 'Paris';
 
+
+// Simply require the JSON file from the assets folder
+// This is because expo-asset doesn't support loading JSON files from the assets folde
 const cityAssets: Record<CityId, any> = {
   'Paris': require('../assets/Paris/Paris.json'),
 };

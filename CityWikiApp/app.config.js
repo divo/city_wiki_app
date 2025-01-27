@@ -40,8 +40,7 @@ export default {
         "@rnmapbox/maps",
         {
           RNMapboxMapsVersion: "11.8.0",
-          RNMapboxMapsDownloadToken:
-            "sk.eyJ1IjoiZGl2b2RpdmVuc29uIiwiYSI6ImNtNXY5MWl6NjAzcnAyaXNnbjRubjAya28ifQ.XWemoR3l3hRrkyT8gsZ6ew",
+          RNMapboxMapsDownloadToken: process.env.EXPO_PUBLIC_MAPBOX_DOWNLOAD_TOKEN,
         },
       ],
       [
@@ -55,6 +54,7 @@ export default {
     extra: {
       eas: {
         projectId: "e4a563a7-c296-4f7c-af28-803bc5b3c4ae",
+        mapbox_token: process.env.EXPO_PUBLIC_MAPBOX_TOKEN
       },
     },
   },

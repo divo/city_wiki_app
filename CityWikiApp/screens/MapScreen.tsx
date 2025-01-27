@@ -329,30 +329,6 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
               shape={poiFeatures}
               onPress={handleSymbolPress}
             >
-              <Mapbox.SymbolLayer
-                id="poiSymbols"
-                style={{
-                  iconImage: ['get', 'poiCategory'],
-                  iconSize: 0.15,
-                  iconAllowOverlap: true,
-                  symbolSortKey: [
-                    'match',
-                    ['get', 'poiCategory'],
-                    'see', 2,    // See POIs will render on top
-                    'sleep', 0,  // Sleep POIs will render underneath
-                    1           // All other POIs will render in the middle
-                  ],
-                  iconPadding: 4,
-                  iconOffset: [0, 4],
-                  iconOpacity: [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    12.8, 0,
-                    13, 1
-                  ]
-                }}
-              />
               <Mapbox.CircleLayer
                 id="poiDots"
                 style={{
@@ -383,6 +359,30 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
                     ['zoom'],
                     12.8, 1,
                     13, 0
+                  ]
+                }}
+              />
+              <Mapbox.SymbolLayer
+                id="poiSymbols"
+                style={{
+                  iconImage: ['get', 'poiCategory'],
+                  iconSize: 0.15,
+                  iconAllowOverlap: true,
+                  symbolSortKey: [
+                    'match',
+                    ['get', 'poiCategory'],
+                    'see', 2,    // See POIs will render on top
+                    'sleep', 0,  // Sleep POIs will render underneath
+                    1           // All other POIs will render in the middle
+                  ],
+                  iconPadding: 4,
+                  iconOffset: [0, 4],
+                  iconOpacity: [
+                    'interpolate',
+                    ['linear'],
+                    ['zoom'],
+                    12.8, 0,
+                    13, 1
                   ]
                 }}
               />

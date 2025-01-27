@@ -229,7 +229,8 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   };
 
   const cameraBounds = useMemo(() => {
-    const bounds = calculateBoundingBox(locations);
+    const allLocations = LocationService.getInstance().getAllPois();
+    const bounds = calculateBoundingBox(allLocations);
     if (!bounds) return null;
 
     // Add padding to the bounds (10% of the total span)
@@ -240,7 +241,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
       ne: [bounds.maxLng + lngPadding, bounds.maxLat + latPadding],
       sw: [bounds.minLng - lngPadding, bounds.minLat - latPadding],
     };
-  }, [locations]);
+  }, []);
 
   const coordinateBounds = useMemo(() => {
     if (!cameraBounds) return null;

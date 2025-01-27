@@ -19,7 +19,7 @@ export function PoiListCarousel({ title, pois, onSelectPoi, onViewAll }: PoiList
         <Text style={styles.title}>{title}</Text>
         {onViewAll && (
           <TouchableOpacity onPress={onViewAll}>
-            <Text style={styles.viewAllButton}>View All</Text>
+            <Text style={styles.viewAllButton}>Show Map</Text>
           </TouchableOpacity>
         )}
       </View>

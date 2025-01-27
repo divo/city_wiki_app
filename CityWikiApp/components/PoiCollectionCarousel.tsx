@@ -101,10 +101,16 @@ const styles = StyleSheet.create({
     color: 'white',
     marginBottom: 8,
     textAlign: 'center',
+    textShadowColor: 'black',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 1,
   },
   listCount: {
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
+    textShadowColor: 'black',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 1,
   },
 }); 

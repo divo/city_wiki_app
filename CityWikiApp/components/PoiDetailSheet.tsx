@@ -1,5 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Linking, Platform } from 'react-native';
+import React, { useCallback, useMemo, useState, useRef } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Linking, Platform, Animated } from 'react-native';
 import { PointOfInterest } from '../services/LocationService';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import Mapbox from '@rnmapbox/maps';
 import { useFavorites } from '../contexts/FavoritesContext';
 import { MAP_STYLE_URL } from '../screens/MapScreen';
 import { getImageSource } from '../utils/imageUtils';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface PoiDetailSheetProps {
   poi: PointOfInterest | null;
@@ -14,9 +15,11 @@ interface PoiDetailSheetProps {
   cityId: string;
 }
 
-export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose, cityId }) => {
+export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const [localBookmarked, setLocalBookmarked] = useState<boolean | null>(null);
+  const [isTextExpanded, setIsTextExpanded] = useState(false);
+  const animatedHeight = useRef(new Animated.Value(0)).current;
 
   if (!poi) return null;
 
@@ -68,6 +71,16 @@ export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose, ci
     }
   };
 
+  const toggleDescription = () => {
+    setIsTextExpanded(!isTextExpanded);
+    Animated.spring(animatedHeight, {
+      toValue: isTextExpanded ? 0 : 1,
+      useNativeDriver: false,
+      friction: 10,
+      tension: 40
+    }).start();
+  };
+
   return (
     <View style={styles.container}>
       <BottomSheet
@@ -94,8 +107,43 @@ export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose, ci
           </View>
 
           <View style={styles.content}>
-            <Text style={[styles.category, { textAlign: 'center' }]}> {poi.category.charAt(0).toUpperCase() + poi.category.slice(1)} · {poi.district}</Text>
-            <Text style={styles.description}>{poi.description}</Text>
+            <Text style={[styles.category, { textAlign: 'center' }]}>
+              {poi.category.charAt(0).toUpperCase() + poi.category.slice(1)} · {poi.district}
+            </Text>
+            
+            <View style={styles.descriptionContainer}>
+              <Animated.View style={{
+                maxHeight: animatedHeight.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [150, 1000]
+                }),
+                overflow: 'hidden'
+              }}>
+                <Text style={styles.description}>
+                  {poi.description}
+                </Text>
+              </Animated.View>
+
+              {!isTextExpanded && poi.description.length > 200 && (
+                <LinearGradient
+                  colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.9)', 'rgba(255,255,255,1)']}
+                  style={styles.gradient}
+                  pointerEvents="none"
+                />
+              )}
+
+              {poi.description.length > 200 && (
+                <TouchableOpacity 
+                  style={styles.expandButton}
+                  onPress={toggleDescription}
+                >
+                  <Text style={styles.expandButtonText}>
+                    {isTextExpanded ? 'Show Less' : 'Read More'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
             {poi.image_url && (
               <Image
                 source={getImageSource(poi.image_url)}
@@ -180,7 +228,7 @@ export const PoiDetailSheet: React.FC<PoiDetailSheetProps> = ({ poi, onClose, ci
       </BottomSheet>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -243,16 +291,16 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   description: {
-    fontSize: 16,
+    fontSize: 15,
+    lineHeight: 22,
     color: '#333333',
-    lineHeight: 24,
-    marginBottom: 16,
   },
   image: {
     width: '100%',
     height: 200,
     borderRadius: 12,
     marginBottom: 16,
+    marginTop: 16,
   },
   mapPreview: {
     height: 200,
@@ -308,5 +356,24 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#EEEEEE',
     marginLeft: 32,
+  },
+  expandButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+  },
+  expandButtonText: {
+    color: '#007AFF',
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  descriptionContainer: {
+    position: 'relative',
+  },
+  gradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 120,
   },
 }); 

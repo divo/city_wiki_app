@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useMemo } from 'react';
+import React, { useCallback, useState, useMemo, useRef } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Mapbox, { Images, UserLocation, UserLocationRenderMode } from '@rnmapbox/maps';
 import { PointOfInterest } from '../services/LocationService';
@@ -34,6 +34,8 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
   if (!list) return null;
 
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
+  const cameraRef = useRef<Mapbox.Camera>(null);
+  const [listSheetIndex, setListSheetIndex] = useState(1); // Default to middle position
 
   const validateCoordinates = (poi: PointOfInterest): boolean => {
     if (typeof poi.longitude !== 'number' || typeof poi.latitude !== 'number') {
@@ -118,6 +120,21 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
     };
   }, [list.pois]);
 
+  const handleZoomToPoi = useCallback((poi: PointOfInterest) => {
+    if (cameraRef.current) {
+      cameraRef.current.setCamera({
+        centerCoordinate: [poi.longitude, poi.latitude],
+        zoomLevel: 16,
+        animationDuration: 1000,
+      });
+      setListSheetIndex(0); // Collapse list sheet to lowest point
+    }
+  }, []);
+
+  const sortByDistance = useCallback((pois: PointOfInterest[]) => {
+    return pois; // No sorting needed in this view
+  }, []);
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
@@ -140,6 +157,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
             styleURL={MAP_STYLE_URL}
           >
             <Mapbox.Camera
+              ref={cameraRef}
               bounds={calculateBounds()}
               padding={{ paddingTop: 50, paddingBottom: 300, paddingLeft: 50, paddingRight: 50 }}
               animationDuration={0}
@@ -187,6 +205,9 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
             snapPoints={['25%', '50%', '90%']}
             cityId={cityId}
             showSegmentedControl={false}
+            sortByDistance={sortByDistance}
+            index={listSheetIndex}
+            onIndexChange={setListSheetIndex}
           />
         </View>
 
@@ -195,6 +216,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
             poi={selectedPoi} 
             onClose={() => setSelectedPoi(null)}
             cityId={cityId}
+            onMapPress={handleZoomToPoi}
           />
         )}
       </SafeAreaView>

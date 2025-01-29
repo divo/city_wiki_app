@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity, Keyboard, Platform, Dimensions } from 'react-native';
-import Mapbox, { UserLocation, Camera, UserLocationRenderMode, Images } from '@rnmapbox/maps';
+import MapLibreRN, { MapView, Camera, PointAnnotation, UserLocation, ShapeSource, Images, SymbolLayer, CircleLayer } from "@maplibre/maplibre-react-native";
 import { CategoryTab } from '../components/CategoryTab';
 import { LocationService, PointOfInterest } from '../services/LocationService';
 import { PoiDetailSheet } from '../components/PoiDetailSheet';
@@ -13,7 +13,7 @@ import { SearchBar } from '../components/SearchBar';
 import * as turf from '@turf/turf';
 
 // Initialize Mapbox with your access token
-Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
+// Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
 
 export const MAP_STYLE_URL = 'mapbox://styles/divodivenson/cm6718g0f00gw01r8ev759xtp';
 
@@ -311,9 +311,9 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
         </View>
 
         <View style={styles.mapContainer}>
-          <Mapbox.MapView
+          <MapView
             style={styles.map}
-            styleURL={MAP_STYLE_URL}
+            mapStyle="https://americanamap.org/style.json"
             onPress={handleMapPress}
             onTouchStart={() => Keyboard.dismiss()}
             onRegionIsChanging={() => Keyboard.dismiss()}
@@ -325,7 +325,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
               }
             }}
           >
-            <Mapbox.Camera
+            <Camera
               ref={cameraRef}
               defaultSettings={{
                 centerCoordinate: centerCoordinate,
@@ -348,12 +348,12 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
               }}
             />
 
-            <Mapbox.ShapeSource
+            <ShapeSource
               id="poiSource"
               shape={poiFeatures}
               onPress={handleSymbolPress}
             >
-              <Mapbox.CircleLayer
+              <CircleLayer
                 id="poiDots"
                 style={{
                   circleRadius: 4,
@@ -386,7 +386,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
                   ]
                 }}
               />
-              <Mapbox.SymbolLayer
+              <SymbolLayer
                 id="poiSymbols"
                 style={{
                   iconImage: ['get', 'poiCategory'],
@@ -410,14 +410,13 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
                   ]
                 }}
               />
-            </Mapbox.ShapeSource>
+            </ShapeSource>
 
             <UserLocation 
               visible={true}
-              renderMode={UserLocationRenderMode.Native}
               androidRenderMode="compass"
             />
-          </Mapbox.MapView>
+          </MapView>
         </View>
 
         {<PoiListSheet

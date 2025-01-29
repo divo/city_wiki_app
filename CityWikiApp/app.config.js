@@ -44,6 +44,9 @@ export default {
         },
       ],
       [
+        "@maplibre/maplibre-react-native",
+      ],
+      [
         "expo-asset",
         {
           assets: assetsConfig.assets, // Dynamically include assets

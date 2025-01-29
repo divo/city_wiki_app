@@ -152,7 +152,11 @@ export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
               />
             )}
 
-            <View style={styles.mapPreview} pointerEvents="none">
+            <TouchableOpacity 
+              style={styles.mapPreview} 
+              onPress={openMaps}
+              activeOpacity={0.9}
+            >
               <Mapbox.MapView
                 style={styles.map}
                 styleURL={MAP_STYLE_URL}
@@ -177,7 +181,14 @@ export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
                   <View style={styles.mapMarker} />
                 </Mapbox.PointAnnotation>
               </Mapbox.MapView>
-            </View>
+              
+              <View style={styles.mapOverlay}>
+                <View style={styles.mapOverlayContent}>
+                  <Ionicons name="navigate-outline" size={20} color="#fff" />
+                  <Text style={styles.mapOverlayText}>Open in Maps</Text>
+                </View>
+              </View>
+            </TouchableOpacity>
 
             <View style={styles.detailsSection}>
               <View>
@@ -218,11 +229,6 @@ export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
                 </View>
               )}
             </View>
-
-            <TouchableOpacity style={styles.directionsButton} onPress={openMaps}>
-              <Ionicons name="navigate-outline" size={20} color="#fff" />
-              <Text style={styles.directionsButtonText}>Get directions</Text>
-            </TouchableOpacity>
           </View>
         </BottomSheetScrollView>
       </BottomSheet>
@@ -375,5 +381,25 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 120,
+  },
+  mapOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mapOverlayContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  mapOverlayText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 8,
   },
 }); 

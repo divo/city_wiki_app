@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useMemo, useRef } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import Mapbox, { Images, UserLocation, UserLocationRenderMode } from '@rnmapbox/maps';
+import MapLibreRN, { MapView, Camera, PointAnnotation, UserLocation, ShapeSource, Images, SymbolLayer } from "@maplibre/maplibre-react-native";
 import { PointOfInterest, LocationService } from '../services/LocationService';
 import { PoiDetailSheet } from './PoiDetailSheet';
 import { PoiListSheet } from './PoiListSheet';
@@ -34,7 +34,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
   if (!list) return null;
 
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
-  const cameraRef = useRef<Mapbox.Camera>(null);
+  const cameraRef = useRef<MapLibreRN.Camera>(null);
   const [listSheetIndex, setListSheetIndex] = useState(1); // Default to middle position
 
   const validateCoordinates = (poi: PointOfInterest): boolean => {
@@ -175,11 +175,11 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
         </View>
         
         <View style={styles.contentContainer}>
-          <Mapbox.MapView
+          <MapView
             style={styles.map}
-            styleURL={MAP_STYLE_URL}
+            mapStyle="https://americanamap.org/style.json"
           >
-            <Mapbox.Camera
+            <Camera
               ref={cameraRef}
               bounds={cameraBounds || undefined}
               maxBounds={cameraBounds || undefined}
@@ -198,12 +198,12 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
               }}
             />
 
-            <Mapbox.ShapeSource
+            <ShapeSource
               id="poiSource"
               shape={poiFeatures}
               onPress={handleSymbolPress}
             >
-              <Mapbox.SymbolLayer
+              <SymbolLayer
                 id="poiSymbols"
                 style={{
                   iconImage: ['get', 'poiCategory'],
@@ -214,14 +214,13 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
                   iconOffset: [0, 4]
                 }}
               />
-            </Mapbox.ShapeSource>
+            </ShapeSource>
 
             <UserLocation 
               visible={true}
-              renderMode={UserLocationRenderMode.Native}
               androidRenderMode="compass"
             />
-          </Mapbox.MapView>
+          </MapView>
 
           <PoiListSheet
             pois={list.pois}

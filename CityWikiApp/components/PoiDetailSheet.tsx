@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
   },
   expandButton: {
     alignSelf: 'flex-start',
-    paddingVertical: 8,
+    paddingTop: 4,
   },
   expandButtonText: {
     color: '#007AFF',
@@ -399,6 +399,7 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     position: 'relative',
+    paddingBottom: 12,
   },
   gradient: {
     position: 'absolute',

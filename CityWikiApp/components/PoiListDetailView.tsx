@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useMemo, useRef } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import Mapbox, { Images, UserLocation, UserLocationRenderMode } from '@rnmapbox/maps';
-import { PointOfInterest } from '../services/LocationService';
+import { PointOfInterest, LocationService } from '../services/LocationService';
 import { PoiDetailSheet } from './PoiDetailSheet';
 import { PoiListSheet } from './PoiListSheet';
 import { Ionicons } from '@expo/vector-icons';
@@ -98,27 +98,50 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
     }
   }, [list.pois]);
 
-  const calculateBounds = useCallback(() => {
-    const validPois = list.pois.filter(validateCoordinates);
-    if (validPois.length === 0) {
-      return {
-        ne: [-122.4194, 37.7749],
-        sw: [-122.4194, 37.7749]
-      };
-    }
+  const calculateBoundingBox = useCallback(() => {
+    const allPois = LocationService.getInstance().getAllPois();
+    const validPois = allPois.filter(validateCoordinates);
+    
+    if (!validPois.length) return null;
 
-    const lngs = validPois.map(poi => Number(poi.longitude));
-    const lats = validPois.map(poi => Number(poi.latitude));
+    return validPois.reduce((bounds, poi) => {
+      const lng = Number(poi.longitude);
+      const lat = Number(poi.latitude);
+      
+      if (isNaN(lng) || isNaN(lat)) return bounds;
+      
+      return {
+        minLng: Math.min(bounds.minLng, lng),
+        maxLng: Math.max(bounds.maxLng, lng),
+        minLat: Math.min(bounds.minLat, lat),
+        maxLat: Math.max(bounds.maxLat, lat),
+      };
+    }, {
+      minLng: Number(validPois[0].longitude),
+      maxLng: Number(validPois[0].longitude),
+      minLat: Number(validPois[0].latitude),
+      maxLat: Number(validPois[0].latitude),
+    });
+  }, []);
+
+  const cameraBounds = useMemo(() => {
+    const bounds = calculateBoundingBox();
+    if (!bounds) return null;
 
     // Add padding to the bounds (10% of the total span)
-    const lngPadding = (Math.max(...lngs) - Math.min(...lngs)) * 0.1;
-    const latPadding = (Math.max(...lats) - Math.min(...lats)) * 0.1;
+    const lngPadding = (bounds.maxLng - bounds.minLng) * 0.1;
+    const latPadding = (bounds.maxLat - bounds.minLat) * 0.1;
 
     return {
-      sw: [Math.min(...lngs) - lngPadding, Math.min(...lats) - latPadding],
-      ne: [Math.max(...lngs) + lngPadding, Math.max(...lats) + latPadding]
+      ne: [bounds.maxLng + lngPadding, bounds.maxLat + latPadding],
+      sw: [bounds.minLng - lngPadding, bounds.minLat - latPadding],
     };
-  }, [list.pois]);
+  }, [calculateBoundingBox]);
+
+  const coordinateBounds = useMemo(() => {
+    if (!cameraBounds) return null;
+    return [cameraBounds.sw, cameraBounds.ne];
+  }, [cameraBounds]);
 
   const handleZoomToPoi = useCallback((poi: PointOfInterest) => {
     if (cameraRef.current) {
@@ -133,7 +156,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
 
   const sortByDistance = useCallback((pois: PointOfInterest[]) => {
     return pois; // No sorting needed in this view
-  }, []);
+  }, [list.pois]);
 
   return (
     <View style={styles.container}>
@@ -158,7 +181,8 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
           >
             <Mapbox.Camera
               ref={cameraRef}
-              bounds={calculateBounds()}
+              bounds={cameraBounds || undefined}
+              maxBounds={cameraBounds || undefined}
               padding={{ paddingTop: 50, paddingBottom: 300, paddingLeft: 50, paddingRight: 50 }}
               animationDuration={0}
             />

@@ -399,7 +399,6 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
                     'sleep', 0,  // Sleep POIs will render underneath
                     1           // All other POIs will render in the middle
                   ],
-                  iconPadding: 4,
                   iconOffset: [0, 4],
                   iconOpacity: [
                     'interpolate',

@@ -157,30 +157,32 @@ export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
               onPress={openMaps}
               activeOpacity={0.9}
             >
-              <Mapbox.MapView
-                style={styles.map}
-                styleURL={MAP_STYLE_URL}
-                scrollEnabled={false}
-                pitchEnabled={false}
-                rotateEnabled={false}
-                zoomEnabled={false}
-                attributionEnabled={false}
-                logoEnabled={false}
-                compassEnabled={false}
-              >
-                <Mapbox.Camera
-                  defaultSettings={{
-                    centerCoordinate: [Number(poi.longitude), Number(poi.latitude)],
-                    zoomLevel: 14,
-                  }}
-                />
-                <Mapbox.PointAnnotation
-                  id={poi.name}
-                  coordinate={[poi.longitude, poi.latitude]}
+              <View style={StyleSheet.absoluteFill} pointerEvents="none">
+                <Mapbox.MapView
+                  style={styles.map}
+                  styleURL={MAP_STYLE_URL}
+                  scrollEnabled={false}
+                  pitchEnabled={false}
+                  rotateEnabled={false}
+                  zoomEnabled={false}
+                  attributionEnabled={false}
+                  logoEnabled={false}
+                  compassEnabled={false}
                 >
-                  <View style={styles.mapMarker} />
-                </Mapbox.PointAnnotation>
-              </Mapbox.MapView>
+                  <Mapbox.Camera
+                    defaultSettings={{
+                      centerCoordinate: [Number(poi.longitude), Number(poi.latitude)],
+                      zoomLevel: 14,
+                    }}
+                  />
+                  <Mapbox.PointAnnotation
+                    id={poi.name}
+                    coordinate={[poi.longitude, poi.latitude]}
+                  >
+                    <View style={styles.mapMarker} />
+                  </Mapbox.PointAnnotation>
+                </Mapbox.MapView>
+              </View>
               
               <View style={styles.mapOverlay}>
                 <View style={styles.mapOverlayContent}>

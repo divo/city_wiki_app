@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 interface SearchBarProps {
@@ -18,6 +18,15 @@ export function SearchBar({ onChangeText, value }: SearchBarProps) {
         onChangeText={onChangeText}
         value={value}
       />
+      {value.length > 0 && (
+        <TouchableOpacity 
+          onPress={() => onChangeText('')}
+          style={styles.clearButton}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Ionicons name="close-circle" size={18} color="#999999" />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -40,6 +49,10 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#333333',
+  },
+  clearButton: {
+    padding: 4,
+    marginLeft: 4,
   },
 });
 

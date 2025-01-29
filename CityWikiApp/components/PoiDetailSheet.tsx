@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Linking, Platform, Ani
 import { PointOfInterest } from '../services/LocationService';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
-import Mapbox from '@rnmapbox/maps';
+import { MapView } from "@maplibre/maplibre-react-native";
 import { useFavorites } from '../contexts/FavoritesContext';
 import { MAP_STYLE_URL } from '../screens/MapScreen';
 import { getImageSource } from '../utils/imageUtils';
@@ -175,30 +175,7 @@ export function PoiDetailSheet({ poi, onClose, cityId, onMapPress, snapIndex }: 
               activeOpacity={0.9}
             >
               <View style={StyleSheet.absoluteFill} pointerEvents="none">
-                <Mapbox.MapView
-                  style={styles.map}
-                  styleURL={MAP_STYLE_URL}
-                  scrollEnabled={false}
-                  pitchEnabled={false}
-                  rotateEnabled={false}
-                  zoomEnabled={false}
-                  attributionEnabled={false}
-                  logoEnabled={false}
-                  compassEnabled={false}
-                >
-                  <Mapbox.Camera
-                    defaultSettings={{
-                      centerCoordinate: [Number(poi.longitude), Number(poi.latitude)],
-                      zoomLevel: 14,
-                    }}
-                  />
-                  <Mapbox.PointAnnotation
-                    id={poi.name}
-                    coordinate={[poi.longitude, poi.latitude]}
-                  >
-                    <View style={styles.mapMarker} />
-                  </Mapbox.PointAnnotation>
-                </Mapbox.MapView>
+                <MapView style={styles.map} />
               </View>
               
               <View style={styles.mapOverlay}>
@@ -375,18 +352,25 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginLeft: 8,
   },
-  mapMarker: {
-    width: 16,
-    height: 16,
-    borderRadius: 10,
-    backgroundColor: '#0066CC',
-    borderWidth: 2,
-    borderColor: 'white',
+  mapOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  divider: {
-    height: 1,
-    backgroundColor: '#EEEEEE',
-    marginLeft: 32,
+  mapOverlayContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  mapOverlayText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '500',
+    marginLeft: 8,
   },
   expandButton: {
     alignSelf: 'flex-start',
@@ -408,24 +392,9 @@ const styles = StyleSheet.create({
     right: 0,
     height: 120,
   },
-  mapOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 40,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  mapOverlayContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  mapOverlayText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '500',
-    marginLeft: 8,
+  divider: {
+    height: 1,
+    backgroundColor: '#EEEEEE',
+    marginLeft: 32,
   },
 }); 

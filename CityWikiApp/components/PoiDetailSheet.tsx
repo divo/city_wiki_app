@@ -13,13 +13,17 @@ interface PoiDetailSheetProps {
   poi: PointOfInterest | null;
   onClose: () => void;
   cityId: string;
+  onMapPress?: (poi: PointOfInterest) => void;
+  snapIndex?: number;
 }
 
-export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
+export function PoiDetailSheet({ poi, onClose, cityId, onMapPress, snapIndex }: PoiDetailSheetProps) {
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const [localBookmarked, setLocalBookmarked] = useState<boolean | null>(null);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
   const animatedHeight = useRef(new Animated.Value(0)).current;
+  const [currentIndex, setCurrentIndex] = useState(1); // Start at 75%
+  const scrollViewRef = useRef<any>(null);
 
   if (!poi) return null;
 
@@ -29,6 +33,7 @@ export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
     if (index === -1) {
       onClose();
     }
+    setCurrentIndex(index);
   }, [onClose]);
 
   const isBookmarked = localBookmarked ?? isFavorite(poi);
@@ -40,6 +45,15 @@ export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
       addFavorite(cityId, poi);
     } else {
       removeFavorite(cityId, poi);
+    }
+  };
+
+  const handleMapPress = () => {
+    if (onMapPress && poi) {
+      onMapPress(poi);
+      setCurrentIndex(0);
+      // Scroll to top with animation
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
     }
   };
 
@@ -87,11 +101,14 @@ export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
         snapPoints={snapPoints}
         onChange={handleSheetChange}
         enablePanDownToClose
-        index={1}
+        index={snapIndex ?? currentIndex}
         handleIndicatorStyle={styles.handle}
         style={styles.bottomSheet}
       >
-        <BottomSheetScrollView contentContainerStyle={styles.scrollContent}>
+        <BottomSheetScrollView 
+          ref={scrollViewRef}
+          contentContainerStyle={styles.scrollContent}
+        >
           <View style={styles.header}>
             <TouchableOpacity onPress={onClose} style={styles.backButton}>
               <Ionicons name="close" size={24} color="#000" />
@@ -154,7 +171,7 @@ export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
 
             <TouchableOpacity 
               style={styles.mapPreview} 
-              onPress={openMaps}
+              onPress={handleMapPress}
               activeOpacity={0.9}
             >
               <View style={StyleSheet.absoluteFill} pointerEvents="none">
@@ -186,10 +203,15 @@ export function PoiDetailSheet({ poi, onClose, cityId }: PoiDetailSheetProps) {
               
               <View style={styles.mapOverlay}>
                 <View style={styles.mapOverlayContent}>
-                  <Ionicons name="navigate-outline" size={20} color="#fff" />
-                  <Text style={styles.mapOverlayText}>Open in Maps</Text>
+                  <Ionicons name="map-outline" size={20} color="#fff" />
+                  <Text style={styles.mapOverlayText}>Show on Map</Text>
                 </View>
               </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.directionsButton} onPress={openMaps}>
+              <Ionicons name="navigate-outline" size={20} color="#fff" />
+              <Text style={styles.directionsButtonText}>Get Directions</Text>
             </TouchableOpacity>
 
             <View style={styles.detailsSection}>
@@ -344,7 +366,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 16,
     borderRadius: 12,
-    marginTop: 8,
+    marginTop: 12,
+    marginBottom: 16,
   },
   directionsButtonText: {
     color: '#FFFFFF',

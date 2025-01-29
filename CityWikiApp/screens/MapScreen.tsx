@@ -63,6 +63,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     return ['15%', '50%', `${90 - (tabBarHeight / Dimensions.get('window').height * 100)}%`];
   }, []);
   const [searchQuery, setSearchQuery] = useState('');
+  const [poiListSheetIndex, setPoiListSheetIndex] = useState(1); // Default to middle position
 
   // Add effect to log state changes
   useEffect(() => {
@@ -261,6 +262,17 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     }
   };
 
+  const handleZoomToPoi = useCallback((poi: PointOfInterest) => {
+    if (cameraRef.current) {
+      cameraRef.current.setCamera({
+        centerCoordinate: [poi.longitude, poi.latitude],
+        zoomLevel: 15,
+        animationDuration: 1000,
+      });
+      setPoiListSheetIndex(0); // Collapse list sheet to lowest point
+    }
+  }, []);
+
   // Update the search handler
   const handleSearch = useCallback((text: string) => {
     setSearchQuery(text);
@@ -415,14 +427,16 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           cityId={cityId}
           userLocation={location?.coords}
           sortByDistance={sortByDistance}
+          index={poiListSheetIndex}
+          onIndexChange={setPoiListSheetIndex}
         />}
-
 
         {selectedPoi && (
           <PoiDetailSheet 
             poi={selectedPoi} 
             onClose={() => setSelectedPoi(null)} 
             cityId={cityId}
+            onMapPress={handleZoomToPoi}
           />
         )}
 

@@ -14,7 +14,9 @@ interface PoiListProps {
   showSegmentedControl?: boolean;
   cityId: string;
   userLocation?: LocationObjectCoords;
-  sortByDistance?: (pois: PointOfInterest[]) => PointOfInterest[];
+  sortByDistance: (pois: PointOfInterest[]) => PointOfInterest[];
+  index?: number;
+  onIndexChange?: (index: number) => void;
 }
 
 export function PoiListSheet({ 
@@ -24,18 +26,21 @@ export function PoiListSheet({
   showSegmentedControl = true,
   cityId,
   userLocation,
-  sortByDistance
+  sortByDistance,
+  index = 1,
+  onIndexChange
 }: PoiListProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterType>('name');
 
   const handleSheetChange = useCallback((index: number) => {
+    onIndexChange?.(index);
     if (index === 0) {
       setIsCollapsed(true);
     } else if (isCollapsed) {
       setIsCollapsed(false);
     }
-  }, [isCollapsed]);
+  }, [onIndexChange, isCollapsed]);
 
   const filteredPois = React.useMemo(() => {
     switch (activeFilter) {
@@ -73,7 +78,8 @@ export function PoiListSheet({
   return (
     <BottomSheet
       snapPoints={snapPoints}
-      index={0}
+      onChange={handleSheetChange}
+      index={index}
       style={styles.bottomSheet}
       handleIndicatorStyle={styles.handle}
       enablePanDownToClose={false}

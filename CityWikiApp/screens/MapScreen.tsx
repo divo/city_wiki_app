@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity, Keyboard } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity, Keyboard, Platform, Dimensions } from 'react-native';
 import Mapbox, { UserLocation, Camera, UserLocationRenderMode, Images } from '@rnmapbox/maps';
 import { CategoryTab } from '../components/CategoryTab';
 import { LocationService, PointOfInterest } from '../services/LocationService';
@@ -58,7 +58,10 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   const [zoomLevel, setZoomLevel] = useState(initialZoom);
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
   const [centerCoordinate, setCenterCoordinate] = useState<[number, number]>([-122.4194, 37.7749]);
-  const bottomSheetSnapPoints = useMemo(() => ['25%', '50%', '90%'], []);
+  const bottomSheetSnapPoints = useMemo(() => {
+    const tabBarHeight = Platform.OS === 'ios' ? 85 : 65;
+    return ['15%', '50%', `${90 - (tabBarHeight / Dimensions.get('window').height * 100)}%`];
+  }, []);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Add effect to log state changes

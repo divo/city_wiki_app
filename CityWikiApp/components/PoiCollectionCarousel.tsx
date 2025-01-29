@@ -35,7 +35,7 @@ export const PoiCollectionCarousel: React.FC<PoiListViewProps> = ({ title, pois,
           return (
             <TouchableOpacity
               key={`${list.title}-${index}`}
-              style={styles.listTile}
+              style={styles.collectionItem}
               onPress={() => onSelectList?.(list)}
             >
               {imageUrl && (
@@ -75,18 +75,24 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
   },
-  listTile: {
+  collectionItem: {
     width: 260,
     height: 200,
-    marginRight: 12,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 1,
-    overflow: 'hidden',
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    elevation: 2,
+    marginVertical: 2,
+    marginHorizontal: 2,
+    borderRadius: 2,
   },
   listImage: {
     position: 'absolute',
     width: '100%',
     height: '100%',
+    borderRadius: 2,
   },
   listContent: {
     flex: 1,

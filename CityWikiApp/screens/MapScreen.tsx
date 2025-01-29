@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity, Keyboard } from 'react-native';
 import Mapbox, { UserLocation, Camera, UserLocationRenderMode, Images } from '@rnmapbox/maps';
 import { CategoryTab } from '../components/CategoryTab';
 import { LocationService, PointOfInterest } from '../services/LocationService';
@@ -263,6 +263,10 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     setSearchQuery(text);
   }, []);
 
+  const handleMapPress = () => {
+    Keyboard.dismiss();
+  };
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -295,6 +299,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           <Mapbox.MapView
             style={styles.map}
             styleURL={MAP_STYLE_URL}
+            onPress={handleMapPress}
             onCameraChanged={event => {
               setZoomLevel(event.properties.zoom);
               if (onMapStateChange) {

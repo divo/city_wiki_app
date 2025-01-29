@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Linking, Platform, Ani
 import { PointOfInterest } from '../services/LocationService';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
-import { MapView } from "@maplibre/maplibre-react-native";
+import { MapView, Camera, PointAnnotation } from "@maplibre/maplibre-react-native";
 import { useFavorites } from '../contexts/FavoritesContext';
 import { MAP_STYLE_URL } from '../screens/MapScreen';
 import { getImageSource } from '../utils/imageUtils';
@@ -175,7 +175,21 @@ export function PoiDetailSheet({ poi, onClose, cityId, onMapPress, snapIndex }: 
               activeOpacity={0.9}
             >
               <View style={StyleSheet.absoluteFill} pointerEvents="none">
-                <MapView style={styles.map} />
+                <MapView 
+                  style={styles.map}
+                  mapStyle="https://americanamap.org/style.json"
+                >
+                  <Camera
+                    centerCoordinate={[Number(poi.longitude), Number(poi.latitude)]}
+                    zoomLevel={14}
+                  />
+                  <PointAnnotation
+                    id={poi.name}
+                    coordinate={[Number(poi.longitude), Number(poi.latitude)]}
+                  >
+                    <View style={styles.mapMarker} />
+                  </PointAnnotation>
+                </MapView>
               </View>
               
               <View style={styles.mapOverlay}>
@@ -396,5 +410,13 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#EEEEEE',
     marginLeft: 32,
+  },
+  mapMarker: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#0066CC',
+    borderWidth: 2,
+    borderColor: 'white',
   },
 }); 

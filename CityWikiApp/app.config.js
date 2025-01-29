@@ -16,7 +16,7 @@ export default {
     },
     ios: {
       supportsTablet: true,
-      bundleIdentifier: "com.anonymous.CityWikiApp",
+      bundleIdentifier: "com.halfspud.CityWikiApp",
       infoPlist: {
         NSLocationWhenInUseUsageDescription:
           "We need your location to show you where you are on the map and find nearby points of interest.",
@@ -29,7 +29,7 @@ export default {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff",
       },
-      package: "com.anonymous.CityWikiApp",
+      package: "com.halfspud.CityWikiApp",
       permissions: ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"],
     },
     web: {

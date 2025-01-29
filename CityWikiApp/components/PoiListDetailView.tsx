@@ -165,7 +165,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
                 id="poiSymbols"
                 style={{
                   iconImage: ['get', 'poiCategory'],
-                  iconSize: 0.15,
+                  iconSize: 0.10,
                   iconAllowOverlap: true,
                   symbolSortKey: 1,
                   iconPadding: 4,

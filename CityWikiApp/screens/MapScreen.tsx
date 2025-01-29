@@ -375,7 +375,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
                 id="poiSymbols"
                 style={{
                   iconImage: ['get', 'poiCategory'],
-                  iconSize: 0.15,
+                  iconSize: 0.10,
                   iconAllowOverlap: true,
                   symbolSortKey: [
                     'match',

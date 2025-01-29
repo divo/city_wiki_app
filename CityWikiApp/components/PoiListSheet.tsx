@@ -72,12 +72,14 @@ export function PoiListSheet({
 
   return (
     <BottomSheet
-      snapPoints={isCollapsed ? ['5%', '50%', '90%'] : ['15%', '50%', '90%']}
-      index={isCollapsed ? 0 : 1}
+      snapPoints={snapPoints}
+      index={0}
       style={styles.bottomSheet}
       handleIndicatorStyle={styles.handle}
-      onChange={handleSheetChange}
       enablePanDownToClose={false}
+      enableContentPanningGesture={true}
+      enableOverDrag={false}
+      animateOnMount={true}
     >
       <View style={styles.header}>
         {showSegmentedControl ? (

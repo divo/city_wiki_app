@@ -300,7 +300,10 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
             style={styles.map}
             styleURL={MAP_STYLE_URL}
             onPress={handleMapPress}
+            onTouchStart={() => Keyboard.dismiss()}
+            onRegionIsChanging={() => Keyboard.dismiss()}
             onCameraChanged={event => {
+              Keyboard.dismiss();
               setZoomLevel(event.properties.zoom);
               if (onMapStateChange) {
                 onMapStateChange([event.properties.center[0], event.properties.center[1]], event.properties.zoom);

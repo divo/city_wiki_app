@@ -36,6 +36,7 @@ const cityImages = {
   'san_francisco_cover.png': require('../assets/san_francisco_cover.png'),
   //'test.jpg': require('../assets/test.jpg'),
   'tokyo_cover.png': require('../assets/tokyo_cover.png'),
+  'title_image.png': require('../assets/title_image.png'),
 };
 
 const cities: City[] = [
@@ -117,65 +118,92 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>City Guides</Text>
-      </View>
-
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsHorizontalScrollIndicator={false}
-      >
-        <View style={styles.tilesContainer}>
-          {cities.map(city => (
-            <TouchableOpacity
-              key={city.id}
-              style={styles.cityTile}
-              onPress={() => handleCitySelect(city.id)}
-              disabled={loadingCity !== null}
-            >
-              <Image
-                source={
-                  city.imageUrl.startsWith('http')
-                    ? { uri: city.imageUrl }
-                    : cityImages[city.imageUrl as keyof typeof cityImages]
-                }
-                style={styles.cityImage}
-              />
-              <View style={styles.cityInfo}>
-                <Text style={styles.countryName}>{city.country}</Text>
-                <Text style={styles.cityName} numberOfLines={2}>
-                  {city.name.replace(' ', '\n')}
-                </Text>
-              </View>
-              {loadingCity === city.id && (
-                <View style={styles.loadingOverlay}>
-                  <ActivityIndicator size="large" color="#FFFFFF" />
-                </View>
-              )}
-            </TouchableOpacity>
-          ))}
+    <View style={styles.outerContainer}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Image 
+            source={cityImages['title_image.png']}
+            style={styles.titleImage}
+            resizeMode="contain"
+          />
+          <View style={styles.titleOverlay}>
+            <Text style={styles.titleText}>City Wandr</Text>
+          </View>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsHorizontalScrollIndicator={false}
+        >
+          <View style={styles.tilesContainer}>
+            {cities.map(city => (
+              <TouchableOpacity
+                key={city.id}
+                style={styles.cityTile}
+                onPress={() => handleCitySelect(city.id)}
+                disabled={loadingCity !== null}
+              >
+                <Image
+                  source={
+                    city.imageUrl.startsWith('http')
+                      ? { uri: city.imageUrl }
+                      : cityImages[city.imageUrl as keyof typeof cityImages]
+                  }
+                  style={styles.cityImage}
+                />
+                <View style={styles.cityInfo}>
+                  <Text style={styles.countryName}>{city.country}</Text>
+                  <Text style={styles.cityName} numberOfLines={2}>
+                    {city.name.replace(' ', '\n')}
+                  </Text>
+                </View>
+                {loadingCity === city.id && (
+                  <View style={styles.loadingOverlay}>
+                    <ActivityIndicator size="large" color="#FFFFFF" />
+                  </View>
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+    backgroundColor: '#88A9AA',
+  },
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   header: {
-    paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 8,
+    paddingBottom: 0,
+    height: 60,
+    backgroundColor: '#88A9AA',
+    position: 'relative',
   },
-  title: {
+  titleImage: {
+    width: SCREEN_WIDTH,
+    height: '100%',
+  },
+  titleOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleText: {
+    color: 'white',
     fontSize: 32,
     fontFamily: 'Montserrat_600SemiBold',
-    color: '#333333',
   },
   searchContainer: {
     paddingHorizontal: 16,
@@ -183,6 +211,8 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    paddingTop: 16,
+    backgroundColor: 'white',
   },
   scrollContent: {
     padding: TILE_MARGIN,

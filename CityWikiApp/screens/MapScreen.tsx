@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity, Keyboard, Platform, Dimensions } from 'react-native';
-import MapLibreRN, { MapView, Camera, PointAnnotation, UserLocation, ShapeSource, Images, SymbolLayer, CircleLayer } from "@maplibre/maplibre-react-native";
+import MapLibreRN, { MapView, Camera, PointAnnotation, UserLocation, ShapeSource, Images, SymbolLayer, CircleLayer, CameraRef } from "@maplibre/maplibre-react-native";
 import { CategoryTab } from '../components/CategoryTab';
 import { LocationService, PointOfInterest } from '../services/LocationService';
 import { PoiDetailSheet } from '../components/PoiDetailSheet';
@@ -52,7 +52,7 @@ const fuzzyMatch = (text: string, query: string): boolean => {
 
 export default function MapScreen({ initialZoom, onMapStateChange, cityId }: MapScreenProps) {
   const { location } = useLocation();
-  const cameraRef = useRef<Camera>(null);
+  const cameraRef = useRef<CameraRef>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [locations, setLocations] = useState<PointOfInterest[]>([]);
   const [zoomLevel, setZoomLevel] = useState(initialZoom);
@@ -311,111 +311,118 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
         </View>
 
         <View style={styles.mapContainer}>
-          <MapView
-            style={styles.map}
-            mapStyle="https://americanamap.org/style.json"
-            onPress={handleMapPress}
-            onTouchStart={() => Keyboard.dismiss()}
-            onRegionIsChanging={() => Keyboard.dismiss()}
-            onCameraChanged={event => {
-              Keyboard.dismiss();
-              setZoomLevel(event.properties.zoom);
-              if (onMapStateChange) {
-                onMapStateChange([event.properties.center[0], event.properties.center[1]], event.properties.zoom);
-              }
-            }}
+          <TouchableOpacity 
+            style={StyleSheet.absoluteFill} 
+            onPressIn={() => Keyboard.dismiss()}
+            activeOpacity={1}
           >
-            <Camera
-              ref={cameraRef}
-              defaultSettings={{
-                centerCoordinate: centerCoordinate,
-                zoomLevel: zoomLevel,
-                animationDuration: 0
+            <MapView
+              style={styles.map}
+              mapStyle="https://americanamap.org/style.json"
+              onPress={handleMapPress}
+              onRegionIsChanging={() => Keyboard.dismiss()}
+              onRegionDidChange={event => {
+                Keyboard.dismiss();
+                const [longitude, latitude] = event.geometry.coordinates;
+                const zoom = event.properties?.zoom || zoomLevel;
+                setZoomLevel(zoom);
+                if (onMapStateChange) {
+                  onMapStateChange([longitude, latitude], zoom);
+                }
               }}
-              bounds={cameraBounds || undefined}
-              animationDuration={1000}
-              maxBounds={cameraBounds || undefined}
-            />
-
-            <Images
-              images={{
-                see: require('../assets/see.png'),
-                eat: require('../assets/eat.png'),
-                sleep: require('../assets/sleep.png'),
-                shop: require('../assets/shop.png'),
-                drink: require('../assets/drink.png'),
-                play: require('../assets/play.png'),
-              }}
-            />
-
-            <ShapeSource
-              id="poiSource"
-              shape={poiFeatures}
-              onPress={handleSymbolPress}
             >
-              <CircleLayer
-                id="poiDots"
-                style={{
-                  circleRadius: 4,
-                  circleColor: [
-                    'match',
-                    ['get', 'poiCategory'],
-                    'see', '#F0B429',
-                    'eat', '#F35627',
-                    'sleep', '#0967D2',
-                    'shop', '#DA127D',
-                    'drink', '#E12D39',
-                    'play', '#6CD410',
-                    '#FFFFFF'
-                  ],
-                  circleSortKey: [
-                    'match',
-                    ['get', 'poiCategory'],
-                    'see', 2,    // See POIs will render on top
-                    'sleep', 0,  // Sleep POIs will render underneath
-                    1           // All other POIs will render in the middle
-                  ],
-                  circleStrokeWidth: 1,
-                  circleStrokeColor: 'white',
-                  circleOpacity: [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    12.8, 1,
-                    13, 0
-                  ]
+              <Camera
+                ref={cameraRef}
+                defaultSettings={{
+                  centerCoordinate: centerCoordinate,
+                  zoomLevel: zoomLevel,
+                  animationDuration: 0
                 }}
+                bounds={cameraBounds || undefined}
+                animationDuration={1000}
+                maxBounds={cameraBounds || undefined}
               />
-              <SymbolLayer
-                id="poiSymbols"
-                style={{
-                  iconImage: ['get', 'poiCategory'],
-                  iconSize: 0.10,
-                  iconAllowOverlap: true,
-                  symbolSortKey: [
-                    'match',
-                    ['get', 'poiCategory'],
-                    'see', 2,    // See POIs will render on top
-                    'sleep', 0,  // Sleep POIs will render underneath
-                    1           // All other POIs will render in the middle
-                  ],
-                  iconOffset: [0, 4],
-                  iconOpacity: [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    12.8, 0,
-                    13, 1
-                  ]
-                }}
-              />
-            </ShapeSource>
 
-            <UserLocation 
-              visible={true}
-              androidRenderMode="compass"
-            />
-          </MapView>
+              <Images
+                images={{
+                  see: require('../assets/see.png'),
+                  eat: require('../assets/eat.png'),
+                  sleep: require('../assets/sleep.png'),
+                  shop: require('../assets/shop.png'),
+                  drink: require('../assets/drink.png'),
+                  play: require('../assets/play.png'),
+                }}
+              />
+
+              <ShapeSource
+                id="poiSource"
+                shape={poiFeatures}
+                onPress={handleSymbolPress}
+              >
+                <CircleLayer
+                  id="poiDots"
+                  style={{
+                    circleRadius: 4,
+                    circleColor: [
+                      'match',
+                      ['get', 'poiCategory'],
+                      'see', '#F0B429',
+                      'eat', '#F35627',
+                      'sleep', '#0967D2',
+                      'shop', '#DA127D',
+                      'drink', '#E12D39',
+                      'play', '#6CD410',
+                      '#FFFFFF'
+                    ],
+                    circleSortKey: [
+                      'match',
+                      ['get', 'poiCategory'],
+                      'see', 2,    // See POIs will render on top
+                      'sleep', 0,  // Sleep POIs will render underneath
+                      1           // All other POIs will render in the middle
+                    ],
+                    circleStrokeWidth: 1,
+                    circleStrokeColor: 'white',
+                    circleOpacity: [
+                      'interpolate',
+                      ['linear'],
+                      ['zoom'],
+                      12.8, 1,
+                      13, 0
+                    ]
+                  }}
+                />
+                <SymbolLayer
+                  id="poiSymbols"
+                  style={{
+                    iconImage: ['get', 'poiCategory'],
+                    iconSize: 0.10,
+                    iconAllowOverlap: true,
+                    symbolSortKey: [
+                      'match',
+                      ['get', 'poiCategory'],
+                      'see', 2,    // See POIs will render on top
+                      'sleep', 0,  // Sleep POIs will render underneath
+                      1           // All other POIs will render in the middle
+                    ],
+                    iconOffset: [0, 4],
+                    iconOpacity: [
+                      'interpolate',
+                      ['linear'],
+                      ['zoom'],
+                      12.8, 0,
+                      13, 1
+                    ]
+                  }}
+                />
+              </ShapeSource>
+
+              <UserLocation 
+                visible={true}
+                androidRenderMode="compass"
+              />
+            </MapView>
+          </TouchableOpacity>
         </View>
 
         {<PoiListSheet

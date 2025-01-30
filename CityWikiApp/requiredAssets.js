@@ -71,5 +71,7 @@ export const requiredAssets = {
   'shop.png': require('./assets/shop.png'),
   'sleep.png': require('./assets/sleep.png'),
   'splash-icon.png': require('./assets/splash-icon.png'),
+  'title_icon.png': require('./assets/title_icon.png'),
+  'title_image.png': require('./assets/title_image.png'),
   'tokyo_cover.png': require('./assets/tokyo_cover.png')
 };

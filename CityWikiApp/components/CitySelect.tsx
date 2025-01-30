@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator, Switch } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { SearchBar } from './SearchBar';
 import { 
   useFonts,
@@ -72,12 +72,12 @@ const TILE_HEIGHT = TILE_WIDTH * 1.5;
 
 interface CitySelectProps {
   onCitySelect: (cityId: string) => Promise<void>;
+  useLocalData: boolean;
 }
 
-export function CitySelect({ onCitySelect }: CitySelectProps) {
+export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   const navigation = useNavigation<CitySelectScreenNavigationProp>();
   const [loadingCity, setLoadingCity] = useState<string | null>(null);
-  const [useLocalAssets, setUseLocalAssets] = useState(false);
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_500Medium,
@@ -92,7 +92,7 @@ export function CitySelect({ onCitySelect }: CitySelectProps) {
       setLoadingCity(cityId);
       const locationService = LocationService.getInstance();
       
-      if (useLocalAssets) {
+      if (useLocalData) {
         await locationService.loadLocationFromAssets(cityId);
       } else {
         await locationService.loadLocations(cityId);
@@ -111,7 +111,6 @@ export function CitySelect({ onCitySelect }: CitySelectProps) {
       });
     } catch (error) {
       console.error('Error loading city data:', error);
-      // You might want to show an error message to the user here
     } finally {
       setLoadingCity(null);
     }
@@ -121,15 +120,6 @@ export function CitySelect({ onCitySelect }: CitySelectProps) {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>City Guides</Text>
-        <View style={styles.dataSourceToggle}>
-          <Text style={styles.toggleLabel}>Use Local Data</Text>
-          <Switch
-            value={useLocalAssets}
-            onValueChange={setUseLocalAssets}
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
-            thumbColor={useLocalAssets ? "#007AFF" : "#f4f3f4"}
-          />
-        </View>
       </View>
 
       <ScrollView 
@@ -239,16 +229,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  dataSourceToggle: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 8,
-  },
-  toggleLabel: {
-    fontSize: 14,
-    color: '#666666',
-    marginRight: 8,
-    fontFamily: 'Montserrat_500Medium',
   },
 });

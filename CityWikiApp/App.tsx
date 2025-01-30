@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -17,6 +17,7 @@ import { FavoritesProvider, useFavorites } from './contexts/FavoritesContext';
 import { PoiListDetailView } from './components/PoiListDetailView';
 import * as Location from "expo-location";
 import { Asset } from 'expo-asset';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import * as FileSystem from 'expo-file-system';
 
@@ -151,6 +152,7 @@ export default function App() {
   const [mapZoom, setMapZoom] = useState(12);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [useLocalData, setUseLocalData] = useState(false);
 
   const handleMapStateChange = (center: [number, number], zoom: number) => {
     setMapZoom(zoom);
@@ -160,16 +162,14 @@ export default function App() {
     return Promise.resolve();
   };
 
-  const handleClearCache = async () => {
-    try {
-      const locationService = LocationService.getInstance();
-      await locationService.clearData();
-      console.log('Successfully cleared cache');
-    } catch (error) {
-      console.error('Error clearing cache:', error);
-    }
-  };
+  const handleClearCache = useCallback(async () => {
+    await AsyncStorage.clear();
+    LocationService.getInstance().clearData();
+  }, []);
 
+  const toggleLocalData = useCallback(() => {
+    setUseLocalData(prev => !prev);
+  }, []);
 
   useEffect(() => {
     const getLocation = async () => {
@@ -198,13 +198,24 @@ export default function App() {
             >
               {() => (
                 <View style={styles.container}>
-                  <CitySelect onCitySelect={handleCitySelect} />
-                  <TouchableOpacity 
-                    style={styles.clearCacheButton}
-                    onPress={handleClearCache}
-                  >
-                    <Text style={styles.clearCacheText}>Clear Cache</Text>
-                  </TouchableOpacity>
+                  <CitySelect 
+                    onCitySelect={handleCitySelect} 
+                    useLocalData={useLocalData}
+                  />
+                  <View style={styles.debugContainer}>
+                    <TouchableOpacity 
+                      style={styles.debugButton} 
+                      onPress={handleClearCache}
+                    >
+                      <Text style={styles.debugButtonText}>Clear Cache</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={[styles.debugButton, useLocalData && styles.debugButtonActive]} 
+                      onPress={toggleLocalData}
+                    >
+                      <Text style={styles.debugButtonText}>Use Local Data</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               )}
             </Stack.Screen>
@@ -224,18 +235,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  clearCacheButton: {
-    position: 'absolute',
-    bottom: 20,
-    alignSelf: 'center',
-    backgroundColor: '#FF3B30',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+  debugContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    padding: 8,
+    gap: 8,
   },
-  clearCacheText: {
+  debugButton: {
+    backgroundColor: '#333',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  debugButtonActive: {
+    backgroundColor: '#007AFF',
+  },
+  debugButtonText: {
     color: 'white',
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 12,
   },
 });

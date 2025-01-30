@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity, Modal } from 'react-native';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { View, Text, ScrollView, Image, StyleSheet, SafeAreaView, TouchableOpacity, Modal, Platform, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Mapbox from '@rnmapbox/maps';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -21,6 +21,10 @@ interface ExploreScreenProps {
     };
   };
 }
+
+//const { height: screenHeight } = Dimensions.get('window');
+//const TAB_BAR_HEIGHT = Platform.OS === 'ios' ? 85 : 65;
+//const NAV_BAR_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
 
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
   const { mapZoom, cityId } = route.params;
@@ -181,6 +185,7 @@ const styles = StyleSheet.create({
   heroContainer: {
     position: 'relative',
     width: '100%',
+    //height: screenHeight - TAB_BAR_HEIGHT - NAV_BAR_HEIGHT,
     height: 240,
   },
   heroImage: {
@@ -194,14 +199,18 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-start',
+    paddingLeft: 10,
   },
   cityNameOverlay: {
     color: 'white',
-    fontSize: 36,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontSize: 78,
+    fontWeight: '700',
+    textAlign: 'left',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 10,
   },
   description: {
     fontSize: 15,

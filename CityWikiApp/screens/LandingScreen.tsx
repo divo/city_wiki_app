@@ -1,12 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import { useFonts, Montserrat_600SemiBold } from '@expo-google-fonts/montserrat';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { useFonts, Montserrat_600SemiBold, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 import { useNavigation } from '@react-navigation/native';
 
 export function LandingScreen() {
   const navigation = useNavigation();
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
+    Montserrat_400Regular,
   });
 
   if (!fontsLoaded) {
@@ -15,13 +16,28 @@ export function LandingScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.topBackground} />
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome to City Wandr</Text>
+        <View style={styles.imageContainer}>
+          <Image 
+            source={require('../assets/onboarding_hero.png')} 
+            style={styles.image}
+            resizeMode="contain"
+          />
+        </View>
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>Weclome to City Wandr</Text>
+          <Text style={styles.subtitle}>
+            Discover new places and experiences in the city that you love.
+          </Text>
+        </View>
+      </View>
+      <View style={styles.bottomContainer}>
         <TouchableOpacity 
           style={styles.button}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.buttonText}>Get Started</Text>
+          <Text style={styles.buttonText}>Get your first guide for free</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -31,30 +47,79 @@ export function LandingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#81AF9D',
+    backgroundColor: '#F8F9FA',
+  },
+  topBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '40%',
+    backgroundColor: '#FEF6E1',
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 20,
+  },
+  bottomContainer: {
     padding: 20,
+    width: '100%',
+    backgroundColor: '#F8F9FA',
+  },
+  imageContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    maxHeight: '50%',
+    width: '100%',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  textContainer: {
+    alignItems: 'center',
+    marginBottom: 24,
+    paddingHorizontal: 20,
   },
   title: {
-    fontSize: 32,
-    color: 'white',
+    fontSize: 28,
+    color: '#1A1A1A',
     fontFamily: 'Montserrat_600SemiBold',
+    marginBottom: 12,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666666',
+    fontFamily: 'Montserrat_400Regular',
     textAlign: 'center',
-    marginBottom: 30,
+    lineHeight: 24,
+  },
+  paginationDots: {
+    flexDirection: 'row',
+    marginBottom: 32,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#DDD',
+    marginHorizontal: 4,
+  },
+  activeDot: {
+    backgroundColor: '#007AFF',
   },
   button: {
-    backgroundColor: 'white',
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-    borderRadius: 25,
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 8,
+    width: '100%',
   },
   buttonText: {
-    color: '#81AF9D',
-    fontSize: 18,
+    color: 'white',
+    fontSize: 16,
     fontFamily: 'Montserrat_600SemiBold',
+    textAlign: 'center',
   },
 }); 

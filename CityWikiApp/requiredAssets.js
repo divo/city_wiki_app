@@ -63,6 +63,7 @@ export const requiredAssets = {
   'eat.png': require('./assets/eat.png'),
   'favicon.png': require('./assets/favicon.png'),
   'icon.png': require('./assets/icon.png'),
+  'onboarding_hero.png': require('./assets/onboarding_hero.png'),
   'paris_cover.png': require('./assets/paris_cover.png'),
   'play.png': require('./assets/play.png'),
   'rome_cover.png': require('./assets/rome_cover.png'),

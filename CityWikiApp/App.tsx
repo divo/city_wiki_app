@@ -163,7 +163,7 @@ export default function App() {
 
   const checkFirstLaunch = async () => {
     const isFirstLaunch = await StorageService.getInstance().checkFirstLaunch();
-    setShowLanding(isFirstLaunch);
+    setShowLanding(true);
   };
 
   const handleMapStateChange = (center: [number, number], zoom: number) => {

@@ -78,7 +78,7 @@ const getRotationForCity = (cityName: string) => {
   // Sum the character codes to get a deterministic number
   const sum = cityName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   // Use modulo to get an angle between -20 and 20 degrees
-  return ((sum % 41) - 20);
+  return ((sum % 41) - 30);
 };
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -149,7 +149,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
       const city = { ...selectedCity, isOwned: true };
       await StorageService.getInstance().markCityAsOwned(city.id);
       setOwnedCities(prev => [...prev, city.id]);
-      setSelectedCity(null);
+      //setSelectedCity(null);
     }
   };
 
@@ -338,9 +338,23 @@ const styles = StyleSheet.create({
   },
   stampOverlay: {
     position: 'absolute',
-    top: '5%',
-    right: '5%',
-    width: '30%',
-    height: '30%',
+    top: '8%',
+    right: '8%',
+    width: '40%',
+    height: '40%',
+    opacity: 0.95,
+    transform: [
+      { scale: 1.1 },
+      { translateX: -5 },
+      { translateY: 5 },
+    ],
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });

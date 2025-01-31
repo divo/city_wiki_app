@@ -100,7 +100,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
 
   const handleCitySelect = async (city: City) => {
     const isOwned = ownedCities.includes(city.id);
-    if (!isOwned) {
+    if (!isOwned && !city.isOwned) {
       setSelectedCity(city);
       return;
     }
@@ -123,7 +123,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
       navigation.navigate('CityGuide', {
         cityId: city.id,
         mapZoom: 12,
-        onMapStateChange: () => {}, // This will be overridden by App.tsx
+        onMapStateChange: () => {},
         headerTitle: cityInfo?.name || city.id,
       });
     } catch (error) {
@@ -135,10 +135,11 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
 
   const handlePurchase = async () => {
     if (selectedCity) {
-      await StorageService.getInstance().markCityAsOwned(selectedCity.id);
-      setOwnedCities(prev => [...prev, selectedCity.id]);
+      const city = { ...selectedCity, isOwned: true };
+      await StorageService.getInstance().markCityAsOwned(city.id);
+      setOwnedCities(prev => [...prev, city.id]);
       setSelectedCity(null);
-      await handleCitySelect({ ...selectedCity, isOwned: true });
+      await handleCitySelect(city);
     }
   };
 

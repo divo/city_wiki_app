@@ -35,6 +35,7 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
     try {
       await StorageService.getInstance().markCityAsOwned(city.id);
       onPurchase();
+      onClose();
     } catch (error) {
       console.error('Error purchasing city:', error);
     }

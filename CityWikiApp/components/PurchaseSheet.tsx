@@ -2,6 +2,7 @@ import React, { useRef, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import BottomSheet, { BottomSheetView, BottomSheetBackgroundProps } from '@gorhom/bottom-sheet';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import { StorageService } from '../services/StorageService';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_WIDTH = SCREEN_WIDTH * 0.4;
@@ -11,6 +12,7 @@ interface PurchaseSheetProps {
   city: {
     name: string;
     country: string;
+    id: string;
   };
   onClose: () => void;
   onPurchase: () => void;
@@ -29,9 +31,17 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
   const snapPoints = React.useMemo(() => ['45%'], []);
   const bottomSheetRef = useRef<BottomSheet>(null);
 
+  const handlePurchase = async () => {
+    try {
+      await StorageService.getInstance().markCityAsOwned(city.id);
+      onPurchase();
+    } catch (error) {
+      console.error('Error purchasing city:', error);
+    }
+  };
+
   return (
     <View style={styles.container}>
-
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
@@ -41,18 +51,16 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
         handleIndicatorStyle={styles.handle}
         backgroundComponent={CustomBackground}
       >
-        <BottomSheetView style={styles.contentContainer}>
-          <View style={styles.content}>
-            <Text style={styles.title}>Get {city.name} Guide</Text>
+        <BottomSheetView style={styles.content}>
+          <Text style={styles.title}>Get {city.name} Guide</Text>
 
-            <Text style={styles.description}>
-              Unlock the complete city guide to discover the best places to eat, drink, and explore in {city.name}.
-            </Text>
+          <Text style={styles.description}>
+            Unlock the complete city guide to discover the best places to eat, drink, and explore in {city.name}.
+          </Text>
 
-            <TouchableOpacity style={styles.purchaseButton} onPress={onPurchase}>
-              <Text style={styles.purchaseButtonText}>Get Free Access</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={styles.purchaseButton} onPress={handlePurchase}>
+            <Text style={styles.purchaseButtonText}>Get Free Access</Text>
+          </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>
     </View>

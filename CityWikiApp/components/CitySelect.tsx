@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { SearchBar } from './SearchBar';
 import { 
@@ -10,6 +10,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LocationService } from '../services/LocationService';
+import { StorageService } from '../services/StorageService';
 import { PurchaseSheet } from './PurchaseSheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
@@ -48,28 +49,24 @@ const cities: City[] = [
     name: 'Paris',
     country: 'France',
     imageUrl: 'paris_cover.png',
-    isOwned: true
   },
   {
     id: 'Rome',
     name: 'Rome',
     country: 'Italy',
     imageUrl: 'rome_cover.png',
-    isOwned: false
   },
   {
     id: 'San Francisco',
     name: 'San Francisco',
     country: 'United States',
     imageUrl: 'san_francisco_cover.png',
-    isOwned: false
   },
   {
     id: 'Tokyo',
     name: 'Tokyo',
     country: 'Japan',
     imageUrl: 'tokyo_cover.png',
-    isOwned: false
   }
 ];
 
@@ -87,13 +84,23 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   const navigation = useNavigation<CitySelectScreenNavigationProp>();
   const [loadingCity, setLoadingCity] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const [ownedCities, setOwnedCities] = useState<string[]>([]);
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_500Medium,
   });
 
+  useEffect(() => {
+    const loadOwnedCities = async () => {
+      const owned = await StorageService.getInstance().getOwnedCities();
+      setOwnedCities(owned);
+    };
+    loadOwnedCities();
+  }, []);
+
   const handleCitySelect = async (city: City) => {
-    if (!city.isOwned) {
+    const isOwned = ownedCities.includes(city.id);
+    if (!isOwned) {
       setSelectedCity(city);
       return;
     }
@@ -128,9 +135,10 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
 
   const handlePurchase = async () => {
     if (selectedCity) {
-      const city = { ...selectedCity, isOwned: true };
+      await StorageService.getInstance().markCityAsOwned(selectedCity.id);
+      setOwnedCities(prev => [...prev, selectedCity.id]);
       setSelectedCity(null);
-      await handleCitySelect(city);
+      await handleCitySelect({ ...selectedCity, isOwned: true });
     }
   };
 
@@ -175,10 +183,10 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
                       ? { uri: city.imageUrl }
                       : cityImages[city.imageUrl as keyof typeof cityImages]
                   }
-                  style={[styles.cityImage, !city.isOwned && styles.unownedImage]}
+                  style={[styles.cityImage, !ownedCities.includes(city.id) && styles.unownedImage]}
                   resizeMode="cover"
                 />
-                {!city.isOwned && <View style={styles.greyTint} />}
+                {!ownedCities.includes(city.id) && <View style={styles.greyTint} />}
                 <View style={styles.cityInfo}>
                   <Text style={styles.countryName}>{city.country}</Text>
                   <Text style={styles.cityName} numberOfLines={2}>

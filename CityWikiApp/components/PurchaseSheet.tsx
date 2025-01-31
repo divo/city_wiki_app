@@ -31,6 +31,7 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
 
   return (
     <View style={styles.container}>
+
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
@@ -40,18 +41,19 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
         handleIndicatorStyle={styles.handle}
         backgroundComponent={CustomBackground}
       >
-        <View style={styles.content}>
-          <Text style={styles.title}>Get {city.name}{'\n'}Guide</Text>
-          <Text style={styles.subtitle}>{city.country}</Text>
+        <BottomSheetView style={styles.contentContainer}>
+          <View style={styles.content}>
+            <Text style={styles.title}>Get {city.name} Guide</Text>
 
-          <Text style={styles.description}>
-            Unlock the complete city guide to discover the best places to eat, drink, and explore in {city.name}.
-          </Text>
+            <Text style={styles.description}>
+              Unlock the complete city guide to discover the best places to eat, drink, and explore in {city.name}.
+            </Text>
 
-          <TouchableOpacity style={styles.purchaseButton} onPress={onPurchase}>
-            <Text style={styles.purchaseButtonText}>Get Free Access</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity style={styles.purchaseButton} onPress={onPurchase}>
+              <Text style={styles.purchaseButtonText}>Get Free Access</Text>
+            </TouchableOpacity>
+          </View>
+        </BottomSheetView>
       </BottomSheet>
     </View>
   );
@@ -67,9 +69,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   sheetContainer: {
-    marginHorizontal: 16,
+    marginHorizontal: 24,
     backgroundColor: 'white',
-    borderRadius: 32,
+    borderRadius: 24,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -96,16 +98,16 @@ const styles = StyleSheet.create({
     borderRadius: 1,
   },
   content: {
-    padding: 32,
+    padding: 24,
+    paddingBottom: 32,
     backgroundColor: 'white',
-    borderRadius: 32,
+    borderRadius: 24,
   },
   title: {
     fontSize: 40,
     fontFamily: 'Montserrat_600SemiBold',
     color: '#1A1A1A',
     marginBottom: 8,
-    lineHeight: 48,
   },
   subtitle: {
     fontSize: 24,

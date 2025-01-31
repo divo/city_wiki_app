@@ -41,6 +41,10 @@ const cityImages = {
   //'test.jpg': require('../assets/test.jpg'),
   'tokyo_cover.png': require('../assets/tokyo_cover.png'),
   'title_image.png': require('../assets/title_image.png'),
+  'paris_stamp.png': require('../assets/paris_stamp.png'),
+  'rome_stamp.png': require('../assets/rome_stamp.png'),
+  'san_francisco_stamp.png': require('../assets/san_francisco_stamp.png'),
+  'tokyo_stamp.png': require('../assets/tokyo_stamp.png'),
 };
 
 const cities: City[] = [
@@ -69,6 +73,13 @@ const cities: City[] = [
     imageUrl: 'tokyo_cover.png',
   }
 ];
+
+const getRotationForCity = (cityName: string) => {
+  // Sum the character codes to get a deterministic number
+  const sum = cityName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  // Use modulo to get an angle between -20 and 20 degrees
+  return ((sum % 41) - 20);
+};
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TILE_MARGIN = 8;
@@ -187,6 +198,16 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
                   resizeMode="cover"
                 />
                 {!ownedCities.includes(city.id) && <View style={styles.greyTint} />}
+                {ownedCities.includes(city.id) && (
+                  <Image
+                    source={cityImages[`${city.id.toLowerCase().replace(' ', '_')}_stamp.png` as keyof typeof cityImages]}
+                    style={[
+                      styles.stampOverlay,
+                      { transform: [{ rotate: `${getRotationForCity(city.name)}deg` }] }
+                    ]}
+                    resizeMode="contain"
+                  />
+                )}
                 <View style={styles.cityInfo}>
                   <Text style={styles.countryName}>{city.country}</Text>
                   <Text style={styles.cityName} numberOfLines={2}>
@@ -314,5 +335,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  stampOverlay: {
+    position: 'absolute',
+    top: '5%',
+    right: '5%',
+    width: '30%',
+    height: '30%',
   },
 });

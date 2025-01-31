@@ -113,13 +113,13 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   title: {
-    fontSize: 40,
+    fontSize: 24,
     fontFamily: 'Montserrat_600SemiBold',
     color: '#1A1A1A',
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 24,
+    fontSize: 14,
     fontFamily: 'Montserrat_500Medium',
     color: '#666666',
     marginBottom: 32,

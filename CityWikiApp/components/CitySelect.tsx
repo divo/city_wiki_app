@@ -24,10 +24,11 @@ type RootStackParamList = {
 type CitySelectScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CitySelect'>;
 
 interface City {
-  id: string;
+  id: 'Paris' | 'Rome' | 'San Francisco' | 'Tokyo';
   name: string;
   country: string;
   imageUrl: string;
+  isOwned?: boolean;
 }
 
 const cityImages = {
@@ -44,25 +45,29 @@ const cities: City[] = [
     id: 'Paris',
     name: 'Paris',
     country: 'France',
-    imageUrl: 'paris_cover.png'
+    imageUrl: 'paris_cover.png',
+    isOwned: false
   },
   {
     id: 'Rome',
     name: 'Rome',
     country: 'Italy',
-    imageUrl: 'rome_cover.png'
+    imageUrl: 'rome_cover.png',
+    isOwned: false
   },
   {
     id: 'San Francisco',
     name: 'San Francisco',
     country: 'United States',
-    imageUrl: 'san_francisco_cover.png'
+    imageUrl: 'san_francisco_cover.png',
+    isOwned: false
   },
   {
     id: 'Tokyo',
     name: 'Tokyo',
     country: 'Japan',
-    imageUrl: 'tokyo_cover.png'
+    imageUrl: 'tokyo_cover.png',
+    isOwned: false
   }
 ];
 
@@ -72,7 +77,7 @@ const TILE_WIDTH = (SCREEN_WIDTH - (TILE_MARGIN * 4)) / 2;
 const TILE_HEIGHT = TILE_WIDTH * 1.5;
 
 interface CitySelectProps {
-  onCitySelect: (cityId: string) => Promise<void>;
+  onCitySelect: (cityId: City['id']) => Promise<void>;
   useLocalData: boolean;
 }
 
@@ -88,7 +93,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
     return null;
   }
 
-  const handleCitySelect = async (cityId: string) => {
+  const handleCitySelect = async (cityId: City['id']) => {
     try {
       setLoadingCity(cityId);
       const locationService = LocationService.getInstance();
@@ -150,8 +155,10 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
                       ? { uri: city.imageUrl }
                       : cityImages[city.imageUrl as keyof typeof cityImages]
                   }
-                  style={styles.cityImage}
+                  style={[styles.cityImage, !city.isOwned && styles.unownedImage]}
+                  resizeMode="cover"
                 />
+                {!city.isOwned && <View style={styles.greyTint} />}
                 <View style={styles.cityInfo}>
                   <Text style={styles.countryName}>{city.country}</Text>
                   <Text style={styles.cityName} numberOfLines={2}>
@@ -229,11 +236,23 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     overflow: 'hidden',
     backgroundColor: '#F5F5F5',
+    position: 'relative',
   },
   cityImage: {
     width: '100%',
     height: '100%',
     position: 'absolute',
+  },
+  unownedImage: {
+    transform: [{ scale: 0.95 }],
+  },
+  greyTint: {
+    position: 'absolute',
+    top: '2.5%',
+    left: '2.5%',
+    right: '2.5%',
+    bottom: '2.5%',
+    backgroundColor: 'rgba(180, 180, 180, 0.4)',
   },
   cityInfo: {
     position: 'absolute',

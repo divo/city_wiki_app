@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Button, View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import MapScreen from './screens/MapScreen';
 import ExploreScreen from './screens/ExploreScreen';
 import { CitySelect } from './components/CitySelect';
@@ -242,41 +243,43 @@ export default function App() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <FavoritesProvider>
-        <NavigationContainer>
-          <Stack.Navigator 
-            screenOptions={{ 
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="CitySelect">
-              {() => (
-                <CitySelectScreen 
-                  onCitySelect={handleCitySelect}
-                  useLocalData={useLocalData}
-                  handleClearCache={handleClearCache}
-                  toggleLocalData={toggleLocalData}
-                />
-              )}
-            </Stack.Screen>
-            <Stack.Screen
-              name="CityGuide"
-              component={TabNavigator}
-            />
-            <Stack.Screen
-              name="Landing"
-              options={{
-                presentation: 'modal',
-                animation: 'slide_from_bottom',
+      <BottomSheetModalProvider>
+        <FavoritesProvider>
+          <NavigationContainer>
+            <Stack.Navigator 
+              screenOptions={{ 
                 headerShown: false,
-                contentStyle: { backgroundColor: 'transparent' }
               }}
             >
-              {(props) => <LandingScreen onDismiss={() => props.navigation.goBack()} />}
-            </Stack.Screen>
-          </Stack.Navigator>
-        </NavigationContainer>
-      </FavoritesProvider>
+              <Stack.Screen name="CitySelect">
+                {() => (
+                  <CitySelectScreen 
+                    onCitySelect={handleCitySelect}
+                    useLocalData={useLocalData}
+                    handleClearCache={handleClearCache}
+                    toggleLocalData={toggleLocalData}
+                  />
+                )}
+              </Stack.Screen>
+              <Stack.Screen
+                name="CityGuide"
+                component={TabNavigator}
+              />
+              <Stack.Screen
+                name="Landing"
+                options={{
+                  presentation: 'modal',
+                  animation: 'slide_from_bottom',
+                  headerShown: false,
+                  contentStyle: { backgroundColor: 'transparent' }
+                }}
+              >
+                {(props) => <LandingScreen onDismiss={() => props.navigation.goBack()} />}
+              </Stack.Screen>
+            </Stack.Navigator>
+          </NavigationContainer>
+        </FavoritesProvider>
+      </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native';
 import { SearchBar } from './SearchBar';
 import { 
@@ -10,6 +10,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LocationService } from '../services/LocationService';
+import { PurchaseSheet } from './PurchaseSheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -46,7 +48,7 @@ const cities: City[] = [
     name: 'Paris',
     country: 'France',
     imageUrl: 'paris_cover.png',
-    isOwned: false
+    isOwned: true
   },
   {
     id: 'Rome',
@@ -84,36 +86,38 @@ interface CitySelectProps {
 export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   const navigation = useNavigation<CitySelectScreenNavigationProp>();
   const [loadingCity, setLoadingCity] = useState<string | null>(null);
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_500Medium,
   });
 
-  if (!fontsLoaded) {
-    return null;
-  }
+  const handleCitySelect = async (city: City) => {
+    if (!city.isOwned) {
+      setSelectedCity(city);
+      return;
+    }
 
-  const handleCitySelect = async (cityId: City['id']) => {
     try {
-      setLoadingCity(cityId);
+      setLoadingCity(city.id);
       const locationService = LocationService.getInstance();
       
       if (useLocalData) {
-        await locationService.loadLocationFromAssets(cityId);
+        await locationService.loadLocationFromAssets(city.id);
       } else {
-        await locationService.loadLocations(cityId);
+        await locationService.loadLocations(city.id);
       }
       
-      await onCitySelect(cityId);
+      await onCitySelect(city.id);
       
       const cityInfo = locationService.getCityInfo();
       const centerCoords = locationService.getCenterCoordinates();
       
       navigation.navigate('CityGuide', {
-        cityId,
+        cityId: city.id,
         mapZoom: 12,
         onMapStateChange: () => {}, // This will be overridden by App.tsx
-        headerTitle: cityInfo?.name || cityId,
+        headerTitle: cityInfo?.name || city.id,
       });
     } catch (error) {
       console.error('Error loading city data:', error);
@@ -121,6 +125,22 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
       setLoadingCity(null);
     }
   };
+
+  const handlePurchase = async () => {
+    if (selectedCity) {
+      const city = { ...selectedCity, isOwned: true };
+      setSelectedCity(null);
+      await handleCitySelect(city);
+    }
+  };
+
+  const handleDismiss = () => {
+    setSelectedCity(null);
+  };
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
     <View style={styles.outerContainer}>
@@ -146,7 +166,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
               <TouchableOpacity
                 key={city.id}
                 style={styles.cityTile}
-                onPress={() => handleCitySelect(city.id)}
+                onPress={() => handleCitySelect(city)}
                 disabled={loadingCity !== null}
               >
                 <Image
@@ -175,6 +195,14 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
           </View>
         </ScrollView>
       </SafeAreaView>
+
+      {selectedCity && (
+        <PurchaseSheet
+          city={selectedCity}
+          onClose={handleDismiss}
+          onPurchase={handlePurchase}
+        />
+      )}
     </View>
   );
 }

@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image } from 'react-native';
 import { useFonts, Montserrat_600SemiBold, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
-import { useNavigation } from '@react-navigation/native';
 
-export function LandingScreen() {
-  const navigation = useNavigation();
+interface LandingScreenProps {
+  onDismiss: () => void;
+}
+
+export function LandingScreen({ onDismiss }: LandingScreenProps) {
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_400Regular,
@@ -26,16 +28,16 @@ export function LandingScreen() {
           />
         </View>
         <View style={styles.textContainer}>
-          <Text style={styles.title}>Weclome to City Wandr</Text>
+          <Text style={styles.title}>Welcome to City Wandr</Text>
           <Text style={styles.subtitle}>
-            Discover new places and experiences in the city that you love.
+            Discover new places and experiences in the cities you love.
           </Text>
         </View>
       </View>
       <View style={styles.bottomContainer}>
         <TouchableOpacity 
           style={styles.button}
-          onPress={() => navigation.goBack()}
+          onPress={onDismiss}
         >
           <Text style={styles.buttonText}>Get your first guide for free</Text>
         </TouchableOpacity>

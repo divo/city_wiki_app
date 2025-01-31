@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Button, View, TouchableOpacity, Text, StyleSheet } from 'react-native';
@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LandingScreen } from './screens/LandingScreen';
 
 import * as FileSystem from 'expo-file-system';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const jsonFiles = [
   'assets/Paris/Paris.json',
@@ -150,6 +151,46 @@ const TabNavigator = ({ route, navigation }: any) => {
   );
 };
 
+type CitySelectScreenProps = {
+  onCitySelect: (cityId: string) => Promise<void>;
+  useLocalData: boolean;
+  handleClearCache: () => void;
+  toggleLocalData: () => void;
+};
+
+const CitySelectScreen = ({ onCitySelect, useLocalData, handleClearCache, toggleLocalData }: CitySelectScreenProps) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  
+  return (
+    <View style={styles.container}>
+      <CitySelect 
+        onCitySelect={onCitySelect} 
+        useLocalData={useLocalData}
+      />
+      <View style={styles.debugContainer}>
+        <TouchableOpacity 
+          style={styles.debugButton} 
+          onPress={handleClearCache}
+        >
+          <Text style={styles.debugButtonText}>Clear Cache</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.debugButton, useLocalData && styles.debugButtonActive]} 
+          onPress={toggleLocalData}
+        >
+          <Text style={styles.debugButtonText}>Use Local Data</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.debugButton} 
+          onPress={() => navigation.navigate('Landing')}
+        >
+          <Text style={styles.debugButtonText}>Show Landing</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
 export default function App() {
   const [mapZoom, setMapZoom] = useState(12);
   const [location, setLocation] = useState(null);
@@ -163,7 +204,7 @@ export default function App() {
 
   const checkFirstLaunch = async () => {
     const isFirstLaunch = await StorageService.getInstance().checkFirstLaunch();
-    setShowLanding(true);
+    setShowLanding(isFirstLaunch);
   };
 
   const handleMapStateChange = (center: [number, number], zoom: number) => {
@@ -203,48 +244,35 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <FavoritesProvider>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {showLanding ? (
-              <Stack.Screen
-                name="Landing"
-                component={LandingScreen}
-                options={{
-                  presentation: 'modal',
-                  animation: 'slide_from_bottom'
-                }}
-              />
-            ) : (
-              <>
-                <Stack.Screen name="CitySelect">
-                  {() => (
-                    <View style={styles.container}>
-                      <CitySelect 
-                        onCitySelect={handleCitySelect} 
-                        useLocalData={useLocalData}
-                      />
-                      <View style={styles.debugContainer}>
-                        <TouchableOpacity 
-                          style={styles.debugButton} 
-                          onPress={handleClearCache}
-                        >
-                          <Text style={styles.debugButtonText}>Clear Cache</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity 
-                          style={[styles.debugButton, useLocalData && styles.debugButtonActive]} 
-                          onPress={toggleLocalData}
-                        >
-                          <Text style={styles.debugButtonText}>Use Local Data</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  )}
-                </Stack.Screen>
-                <Stack.Screen
-                  name="CityGuide"
-                  component={TabNavigator}
+          <Stack.Navigator 
+            screenOptions={{ 
+              headerShown: false,
+            }}
+          >
+            <Stack.Screen name="CitySelect">
+              {() => (
+                <CitySelectScreen 
+                  onCitySelect={handleCitySelect}
+                  useLocalData={useLocalData}
+                  handleClearCache={handleClearCache}
+                  toggleLocalData={toggleLocalData}
                 />
-              </>
-            )}
+              )}
+            </Stack.Screen>
+            <Stack.Screen
+              name="CityGuide"
+              component={TabNavigator}
+            />
+            <Stack.Screen
+              name="Landing"
+              options={{
+                presentation: 'modal',
+                animation: 'slide_from_bottom',
+                headerShown: false
+              }}
+            >
+              {(props) => <LandingScreen onDismiss={() => props.navigation.goBack()} />}
+            </Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
       </FavoritesProvider>

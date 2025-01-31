@@ -268,7 +268,8 @@ export default function App() {
               options={{
                 presentation: 'modal',
                 animation: 'slide_from_bottom',
-                headerShown: false
+                headerShown: false,
+                contentStyle: { backgroundColor: 'transparent' }
               }}
             >
               {(props) => <LandingScreen onDismiss={() => props.navigation.goBack()} />}

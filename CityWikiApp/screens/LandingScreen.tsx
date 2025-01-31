@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, Animated } from 'react-native';
 import { useFonts, Montserrat_600SemiBold, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
 
 interface LandingScreenProps {
@@ -12,41 +12,61 @@ export function LandingScreen({ onDismiss }: LandingScreenProps) {
     Montserrat_400Regular,
   });
 
+  const [isReady, setIsReady] = useState(false);
+  const opacity = React.useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      setIsReady(true);
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [fontsLoaded]);
+
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.topBackground} />
-      <View style={styles.content}>
-        <View style={styles.imageContainer}>
-          <Image 
-            source={require('../assets/onboarding_hero.png')} 
-            style={styles.image}
-            resizeMode="contain"
-          />
+    <Animated.View style={[styles.modalContainer, { opacity }]}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.topBackground} />
+        <View style={styles.content}>
+          <View style={styles.imageContainer}>
+            <Image 
+              source={require('../assets/onboarding_hero.png')} 
+              style={styles.image}
+              resizeMode="contain"
+            />
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>Welcome to City Wandr</Text>
+            <Text style={styles.subtitle}>
+              Discover new places and experiences in the cities you love.
+            </Text>
+          </View>
         </View>
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>Welcome to City Wandr</Text>
-          <Text style={styles.subtitle}>
-            Discover new places and experiences in the cities you love.
-          </Text>
+        <View style={styles.bottomContainer}>
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={onDismiss}
+          >
+            <Text style={styles.buttonText}>Get your first guide for free</Text>
+          </TouchableOpacity>
         </View>
-      </View>
-      <View style={styles.bottomContainer}>
-        <TouchableOpacity 
-          style={styles.button}
-          onPress={onDismiss}
-        >
-          <Text style={styles.buttonText}>Get your first guide for free</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#F8F9FA',
+  },
   container: {
     flex: 1,
     backgroundColor: '#F8F9FA',

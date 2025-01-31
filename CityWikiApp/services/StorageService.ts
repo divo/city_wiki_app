@@ -118,6 +118,20 @@ class StorageService {
       throw error;
     }
   }
+
+  public async checkFirstLaunch(): Promise<boolean> {
+    try {
+      const hasLaunched = await AsyncStorage.getItem('hasLaunched');
+      if (hasLaunched === null) {
+        await AsyncStorage.setItem('hasLaunched', 'true');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error checking first launch:', error);
+      return false;
+    }
+  }
 }
 
 export { StorageService }; 

@@ -18,6 +18,7 @@ import { PoiListDetailView } from './components/PoiListDetailView';
 import * as Location from "expo-location";
 import { Asset } from 'expo-asset';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LandingScreen } from './screens/LandingScreen';
 
 import * as FileSystem from 'expo-file-system';
 
@@ -61,6 +62,7 @@ type RootStackParamList = {
     onMapStateChange: (center: [number, number], zoom: number) => void;
     headerTitle: string;
   };
+  Landing: undefined;
 };
 
 const Tab = createBottomTabNavigator();
@@ -153,6 +155,16 @@ export default function App() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [useLocalData, setUseLocalData] = useState(false);
+  const [showLanding, setShowLanding] = useState(true);
+
+  useEffect(() => {
+    checkFirstLaunch();
+  }, []);
+
+  const checkFirstLaunch = async () => {
+    const isFirstLaunch = await StorageService.getInstance().checkFirstLaunch();
+    setShowLanding(isFirstLaunch);
+  };
 
   const handleMapStateChange = (center: [number, number], zoom: number) => {
     setMapZoom(zoom);
@@ -191,39 +203,48 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <FavoritesProvider>
         <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen 
-              name="CitySelect" 
-              options={{ headerShown: false }}
-            >
-              {() => (
-                <View style={styles.container}>
-                  <CitySelect 
-                    onCitySelect={handleCitySelect} 
-                    useLocalData={useLocalData}
-                  />
-                  <View style={styles.debugContainer}>
-                    <TouchableOpacity 
-                      style={styles.debugButton} 
-                      onPress={handleClearCache}
-                    >
-                      <Text style={styles.debugButtonText}>Clear Cache</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                      style={[styles.debugButton, useLocalData && styles.debugButtonActive]} 
-                      onPress={toggleLocalData}
-                    >
-                      <Text style={styles.debugButtonText}>Use Local Data</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
-            </Stack.Screen>
-            <Stack.Screen
-              name="CityGuide"
-              component={TabNavigator}
-              options={{ headerShown: false }}
-            />
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {showLanding ? (
+              <Stack.Screen
+                name="Landing"
+                component={LandingScreen}
+                options={{
+                  presentation: 'modal',
+                  animation: 'slide_from_bottom'
+                }}
+              />
+            ) : (
+              <>
+                <Stack.Screen name="CitySelect">
+                  {() => (
+                    <View style={styles.container}>
+                      <CitySelect 
+                        onCitySelect={handleCitySelect} 
+                        useLocalData={useLocalData}
+                      />
+                      <View style={styles.debugContainer}>
+                        <TouchableOpacity 
+                          style={styles.debugButton} 
+                          onPress={handleClearCache}
+                        >
+                          <Text style={styles.debugButtonText}>Clear Cache</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity 
+                          style={[styles.debugButton, useLocalData && styles.debugButtonActive]} 
+                          onPress={toggleLocalData}
+                        >
+                          <Text style={styles.debugButtonText}>Use Local Data</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
+                </Stack.Screen>
+                <Stack.Screen
+                  name="CityGuide"
+                  component={TabNavigator}
+                />
+              </>
+            )}
           </Stack.Navigator>
         </NavigationContainer>
       </FavoritesProvider>

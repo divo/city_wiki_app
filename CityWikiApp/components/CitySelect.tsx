@@ -139,7 +139,6 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
       await StorageService.getInstance().markCityAsOwned(city.id);
       setOwnedCities(prev => [...prev, city.id]);
       setSelectedCity(null);
-      await handleCitySelect(city);
     }
   };
 

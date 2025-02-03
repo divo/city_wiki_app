@@ -63,7 +63,7 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
         }}
       >
         <BottomSheetView style={styles.content}>
-          <Text style={styles.title}>Get {city.name} Guide</Text>
+          <Text style={styles.title}>Get the {city.name} Guide</Text>
           <Text style={styles.description}>
             Unlock the complete city guide to discover the best places to eat, drink, and explore in {city.name}.
           </Text>
@@ -99,18 +99,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#DDDDDD',
     width: 40,
   },
-  imageContainer: {
-    top: '20%',
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    zIndex: 2,
-  },
-  heroImage: {
-    width: IMAGE_WIDTH,
-    height: IMAGE_HEIGHT,
-    borderRadius: 1,
-  },
   content: {
     padding: 24,
     paddingBottom: 32,
@@ -122,12 +110,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_600SemiBold',
     color: '#1A1A1A',
     marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    fontFamily: 'Montserrat_500Medium',
-    color: '#666666',
-    marginBottom: 32,
   },
   description: {
     fontSize: 18,
@@ -147,4 +129,4 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Montserrat_600SemiBold',
   },
-}); 
+});

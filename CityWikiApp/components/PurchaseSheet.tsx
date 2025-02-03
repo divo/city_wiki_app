@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import BottomSheet, { BottomSheetView, BottomSheetBackgroundProps } from '@gorhom/bottom-sheet';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
@@ -35,7 +35,7 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
     try {
       await StorageService.getInstance().markCityAsOwned(city.id);
       onPurchase();
-      onClose();
+      requestAnimationFrame(onClose);
     } catch (error) {
       console.error('Error purchasing city:', error);
     }
@@ -51,6 +51,8 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
         style={styles.sheetContainer}
         handleIndicatorStyle={styles.handle}
         backgroundComponent={CustomBackground}
+        enablePanDownToClose={true}
+        onClose={onClose}
       >
         <BottomSheetView style={styles.content}>
           <Text style={styles.title}>Get {city.name} Guide</Text>
@@ -59,7 +61,7 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
             Unlock the complete city guide to discover the best places to eat, drink, and explore in {city.name}.
           </Text>
 
-          <TouchableOpacity style={styles.purchaseButton} onPress={handlePurchase}>
+          <TouchableOpacity style={styles.purchaseButton} onPress={onClose}>
             <Text style={styles.purchaseButtonText}>Get Free Access</Text>
           </TouchableOpacity>
         </BottomSheetView>

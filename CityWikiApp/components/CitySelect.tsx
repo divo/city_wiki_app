@@ -13,6 +13,7 @@ import { LocationService } from '../services/LocationService';
 import { StorageService } from '../services/StorageService';
 import { PurchaseSheet } from './PurchaseSheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -94,25 +95,17 @@ interface CitySelectProps {
 export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   const navigation = useNavigation<CitySelectScreenNavigationProp>();
   const [loadingCity, setLoadingCity] = useState<string | null>(null);
-  const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [ownedCities, setOwnedCities] = useState<string[]>([]);
+  const [cityToPurchase, setCityToPurchase] = useState<City | null>(null);
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_500Medium,
   });
 
-  useEffect(() => {
-    const loadOwnedCities = async () => {
-      const owned = await StorageService.getInstance().getOwnedCities();
-      setOwnedCities(owned);
-    };
-    loadOwnedCities();
-  }, []);
-
   const handleCitySelect = async (city: City) => {
     const isOwned = ownedCities.includes(city.id);
-    if (!isOwned && !city.isOwned) {
-      setSelectedCity(city);
+    if (!isOwned) {
+      setCityToPurchase(city);
       return;
     }
 
@@ -129,7 +122,6 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
       await onCitySelect(city.id);
       
       const cityInfo = locationService.getCityInfo();
-      const centerCoords = locationService.getCenterCoordinates();
       
       navigation.navigate('CityGuide', {
         cityId: city.id,
@@ -144,95 +136,94 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
     }
   };
 
-  const handlePurchase = async () => {
-    if (selectedCity) {
-      const city = { ...selectedCity, isOwned: true };
-      await StorageService.getInstance().markCityAsOwned(city.id);
-      setOwnedCities(prev => [...prev, city.id]);
-      //setSelectedCity(null);
-    }
-  };
-
-  const handleDismiss = () => {
-    setSelectedCity(null);
-  };
+  useEffect(() => {
+    const loadOwnedCities = async () => {
+      const owned = await StorageService.getInstance().getOwnedCities();
+      setOwnedCities(owned);
+    };
+    loadOwnedCities();
+  }, []);
 
   if (!fontsLoaded) {
     return null;
   }
 
   return (
-    <View style={styles.outerContainer}>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <Image 
-            source={cityImages['title_image.png']}
-            style={styles.titleImage}
-            resizeMode="contain"
-          />
-          <View style={styles.titleOverlay}>
-            <Text style={styles.titleText}>City Wandr</Text>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={styles.outerContainer}>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.header}>
+            <Image
+              source={cityImages['title_image.png']}
+              style={styles.titleImage}
+              resizeMode="contain"
+            />
+            <View style={styles.titleOverlay}>
+              <Text style={styles.titleText}>City Wandr</Text>
+            </View>
           </View>
-        </View>
 
-        <ScrollView 
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsHorizontalScrollIndicator={false}
-        >
-          <View style={styles.tilesContainer}>
-            {cities.map(city => (
-              <TouchableOpacity
-                key={city.id}
-                style={styles.cityTile}
-                onPress={() => handleCitySelect(city)}
-                disabled={loadingCity !== null}
-              >
-                <Image
-                  source={
-                    city.imageUrl.startsWith('http')
-                      ? { uri: city.imageUrl }
-                      : cityImages[city.imageUrl as keyof typeof cityImages]
-                  }
-                  style={[styles.cityImage, !ownedCities.includes(city.id) && styles.unownedImage]}
-                  resizeMode="cover"
-                />
-                {!ownedCities.includes(city.id) && <View style={styles.greyTint} />}
-                {ownedCities.includes(city.id) && (
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsHorizontalScrollIndicator={false}
+          >
+            <View style={styles.tilesContainer}>
+              {cities.map(city => (
+                <TouchableOpacity
+                  key={city.id}
+                  style={styles.cityTile}
+                  onPress={() => handleCitySelect(city)}
+                  disabled={loadingCity !== null}
+                >
                   <Image
-                    source={cityImages[`${city.id.toLowerCase().replace(' ', '_')}_stamp.png` as keyof typeof cityImages]}
-                    style={[
-                      styles.stampOverlay,
-                      { transform: [{ rotate: `${getRotationForCity(city.name)}deg` }] }
-                    ]}
-                    resizeMode="contain"
+                    source={
+                      city.imageUrl.startsWith('http')
+                        ? { uri: city.imageUrl }
+                        : cityImages[city.imageUrl as keyof typeof cityImages]
+                    }
+                    style={[styles.cityImage, !ownedCities.includes(city.id) && styles.unownedImage]}
+                    resizeMode="cover"
                   />
-                )}
-                <View style={styles.cityInfo}>
-                  <Text style={styles.countryName}>{city.country}</Text>
-                  <Text style={styles.cityName} numberOfLines={2}>
-                    {city.name.replace(' ', '\n')}
-                  </Text>
-                </View>
-                {loadingCity === city.id && (
-                  <View style={styles.loadingOverlay}>
-                    <ActivityIndicator size="large" color="#FFFFFF" />
+                  {!ownedCities.includes(city.id) && <View style={styles.greyTint} />}
+                  {ownedCities.includes(city.id) && (
+                    <Image
+                      source={cityImages[`${city.id.toLowerCase().replace(' ', '_')}_stamp.png` as keyof typeof cityImages]}
+                      style={[
+                        styles.stampOverlay,
+                        { transform: [{ rotate: `${getRotationForCity(city.name)}deg` }] }
+                      ]}
+                      resizeMode="contain"
+                    />
+                  )}
+                  <View style={styles.cityInfo}>
+                    <Text style={styles.countryName}>{city.country}</Text>
+                    <Text style={styles.cityName} numberOfLines={2}>
+                      {city.name.replace(' ', '\n')}
+                    </Text>
                   </View>
-                )}
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-
-      {selectedCity && (
+                  {loadingCity === city.id && (
+                    <View style={styles.loadingOverlay}>
+                      <ActivityIndicator size="large" color="#FFFFFF" />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </View>
+      {cityToPurchase && (
         <PurchaseSheet
-          city={selectedCity}
-          onClose={handleDismiss}
-          onPurchase={handlePurchase}
+          city={cityToPurchase}
+          onClose={() => setCityToPurchase(null)}
+          onPurchase={async () => {
+            await StorageService.getInstance().markCityAsOwned(cityToPurchase.id);
+            setCityToPurchase(null);
+          }}
         />
       )}
-    </View>
+    </GestureHandlerRootView>
   );
 }
 

@@ -1,7 +1,7 @@
 import React, { useRef, useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import BottomSheet, { BottomSheetView, BottomSheetBackgroundProps } from '@gorhom/bottom-sheet';
-import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 import { StorageService } from '../services/StorageService';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -28,14 +28,17 @@ const CustomBackground: React.FC<BottomSheetBackgroundProps> = ({ style }) => {
 };
 
 export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps) {
-  const snapPoints = React.useMemo(() => ['45%'], []);
+  const snapPoints = useMemo(() => ['45%'], []);
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const handlePurchase = async () => {
     try {
+      // Perform your purchase logic
       await StorageService.getInstance().markCityAsOwned(city.id);
       onPurchase();
-      onClose();
+      
+      // Instead of calling onClose immediately, trigger the close animation:
+      bottomSheetRef.current?.close();
     } catch (error) {
       console.error('Error purchasing city:', error);
     }
@@ -51,14 +54,18 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
         style={styles.sheetContainer}
         handleIndicatorStyle={styles.handle}
         backgroundComponent={CustomBackground}
+        onChange={(index: number) => {
+          // When the bottom sheet is fully closed (typically index -1), call onClose.
+          if (index === -1) {
+            onClose();
+          }
+        }}
       >
         <BottomSheetView style={styles.content}>
           <Text style={styles.title}>Get {city.name} Guide</Text>
-
           <Text style={styles.description}>
             Unlock the complete city guide to discover the best places to eat, drink, and explore in {city.name}.
           </Text>
-
           <TouchableOpacity style={styles.purchaseButton} onPress={handlePurchase}>
             <Text style={styles.purchaseButtonText}>Get Free Access</Text>
           </TouchableOpacity>
@@ -82,10 +89,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 24,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -4,
-    },
+    shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,

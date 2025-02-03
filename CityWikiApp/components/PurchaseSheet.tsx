@@ -49,7 +49,7 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
-        bottomInset={46}
+        bottomInset={300}
         detached={true}
         style={styles.sheetContainer}
         handleIndicatorStyle={styles.handle}

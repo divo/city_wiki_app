@@ -54,6 +54,7 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
         style={styles.sheetContainer}
         handleIndicatorStyle={styles.handle}
         backgroundComponent={CustomBackground}
+        enablePanDownToClose={true}
         onChange={(index: number) => {
           // When the bottom sheet is fully closed (typically index -1), call onClose.
           if (index === -1) {

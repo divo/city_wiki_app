@@ -20,7 +20,6 @@ import * as Location from "expo-location";
 import { Asset } from 'expo-asset';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LandingScreen } from './screens/LandingScreen';
-import { PurchaseSheet } from './components/PurchaseSheet';
 
 import * as FileSystem from 'expo-file-system';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -199,7 +198,6 @@ export default function App() {
   const [errorMsg, setErrorMsg] = useState(null);
   const [useLocalData, setUseLocalData] = useState(false);
   const [showLanding, setShowLanding] = useState(true);
-  const [cityToPurchase, setCityToPurchase] = useState(null);
 
   useEffect(() => {
     checkFirstLaunch();
@@ -248,38 +246,37 @@ export default function App() {
       <BottomSheetModalProvider>
         <FavoritesProvider>
           <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              {showLanding ? (
-                <Stack.Screen name="Landing">
-                  {() => <LandingScreen onDismiss={() => setShowLanding(false)} />}
-                </Stack.Screen>
-              ) : (
-                <Stack.Screen name="CitySelect">
-                  {() => (
-                    <CitySelectScreen 
-                      onCitySelect={handleCitySelect}
-                      useLocalData={useLocalData}
-                      handleClearCache={handleClearCache}
-                      toggleLocalData={toggleLocalData}
-                    />
-                  )}
-                </Stack.Screen>
-              )}
+            <Stack.Navigator 
+              screenOptions={{ 
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="CitySelect">
+                {() => (
+                  <CitySelectScreen 
+                    onCitySelect={handleCitySelect}
+                    useLocalData={useLocalData}
+                    handleClearCache={handleClearCache}
+                    toggleLocalData={toggleLocalData}
+                  />
+                )}
+              </Stack.Screen>
               <Stack.Screen
                 name="CityGuide"
                 component={TabNavigator}
               />
-            </Stack.Navigator>
-            {cityToPurchase && (
-              <PurchaseSheet
-                city={cityToPurchase}
-                onClose={() => setCityToPurchase(null)}
-                onPurchase={async () => {
-                  await StorageService.getInstance().markCityAsOwned(cityToPurchase.id);
-                  setCityToPurchase(null);
+              <Stack.Screen
+                name="Landing"
+                options={{
+                  presentation: 'modal',
+                  animation: 'slide_from_bottom',
+                  headerShown: false,
+                  contentStyle: { backgroundColor: 'transparent' }
                 }}
-              />
-            )}
+              >
+                {(props) => <LandingScreen onDismiss={() => props.navigation.goBack()} />}
+              </Stack.Screen>
+            </Stack.Navigator>
           </NavigationContainer>
         </FavoritesProvider>
       </BottomSheetModalProvider>

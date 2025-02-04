@@ -8,6 +8,7 @@ import { useFavorites } from '../contexts/FavoritesContext';
 import { MAP_STYLE_URL } from '../screens/MapScreen';
 import { getImageSource } from '../utils/imageUtils';
 import { LinearGradient } from 'expo-linear-gradient';
+import { colors } from '../styles/globalStyles';
 
 interface PoiDetailSheetProps {
   poi: PointOfInterest | null;
@@ -118,7 +119,7 @@ export function PoiDetailSheet({ poi, onClose, cityId, onMapPress, snapIndex }: 
               <Ionicons 
                 name={isBookmarked ? "bookmark" : "bookmark-outline"} 
                 size={24} 
-                color={isBookmarked ? "#007AFF" : "#000"} 
+                color={isBookmarked ? colors.primary : "#000"} 
               />
             </TouchableOpacity>
           </View>
@@ -357,10 +358,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   link: {
-    color: '#007AFF',
+    color: colors.primary,
   },
   directionsButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -393,7 +394,7 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   expandButtonText: {
-    color: '#007AFF',
+    color: colors.primary,
     fontSize: 15,
     fontWeight: '500',
   },

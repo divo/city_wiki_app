@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import { PointOfInterest } from '../services/LocationService';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getImageSource } from '../utils/imageUtils';
+import { colors } from '../styles/globalStyles';
 
 interface PoiListCarouselProps {
   title: string;
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   viewAllButton: {
-    color: '#007AFF',
+    color: colors.primary,
     fontSize: 16,
     fontWeight: '500',
   },

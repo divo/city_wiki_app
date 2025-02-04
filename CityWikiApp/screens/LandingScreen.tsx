@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, Animated } from 'react-native';
 import { useFonts, Montserrat_600SemiBold, Montserrat_400Regular } from '@expo-google-fonts/montserrat';
+import { colors } from '../styles/globalStyles';
 
 interface LandingScreenProps {
   onDismiss: () => void;
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#007AFF',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 8,
@@ -143,5 +144,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Montserrat_600SemiBold',
     textAlign: 'center',
+  },
+  buttonContainer: {
+    backgroundColor: colors.primary,
   },
 }); 

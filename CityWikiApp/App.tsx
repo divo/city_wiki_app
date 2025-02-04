@@ -20,6 +20,7 @@ import * as Location from "expo-location";
 import { Asset } from 'expo-asset';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LandingScreen } from './screens/LandingScreen';
+import { colors } from './styles/globalStyles';
 
 import * as FileSystem from 'expo-file-system';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -97,7 +98,7 @@ const TabNavigator = ({ route, navigation }: any) => {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#007AFF',
+        tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: 'gray',
         headerTitle: headerTitle,
         headerLeft: () => (
@@ -105,7 +106,7 @@ const TabNavigator = ({ route, navigation }: any) => {
             <Ionicons 
               name="chevron-back" 
               size={28} 
-              color="#007AFF" 
+              color={colors.primary}
               style={{ marginLeft: 16 }}
             />
           </TouchableOpacity>
@@ -301,7 +302,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   debugButtonActive: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
   },
   debugButtonText: {
     color: 'white',

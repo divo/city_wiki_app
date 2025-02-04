@@ -4,6 +4,7 @@ import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { PointOfInterest } from '../services/LocationService';
 import { Ionicons } from '@expo/vector-icons';
 import { LocationObjectCoords } from 'expo-location';
+import { colors } from '../styles/globalStyles';
 
 type FilterType = 'name' | 'must-visit' | 'nearby';
 
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   segmentButtonTextActive: {
-    color: '#007AFF',
+    color: colors.primary,
     fontWeight: '600',
   },
   segmentButtonDisabled: {

@@ -11,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLocation } from '../hooks/useLocation';
 import { SearchBar } from '../components/SearchBar';
 import * as turf from '@turf/turf';
+import { colors } from '../styles/globalStyles';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
@@ -444,7 +445,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           style={styles.locationButton}
           onPress={handleLocationPress}
         >
-          <Ionicons name="locate" size={24} color="#007AFF" />
+          <Ionicons name="locate" size={24} color={colors.primary} />
         </TouchableOpacity>
       </View>
     </GestureHandlerRootView>

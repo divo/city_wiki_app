@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-nati
 import BottomSheet, { BottomSheetView, BottomSheetBackgroundProps } from '@gorhom/bottom-sheet';
 import Animated from 'react-native-reanimated';
 import { StorageService } from '../services/StorageService';
+import { colors } from '../styles/globalStyles';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_WIDTH = SCREEN_WIDTH * 0.4;
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   purchaseButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.primary,
     paddingVertical: 20,
     borderRadius: 16,
     alignItems: 'center',

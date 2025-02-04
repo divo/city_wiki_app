@@ -6,9 +6,17 @@ const palette = {
   cream: '#FFFF00',
 } as const;
 
+const plaette2 = {
+  brown: '#AB6327',
+  darkBlue: '#32596E',
+  lightBrown: '#D7BF9B',
+  lightBlue: '#508699',
+  orange: '#CE5119',
+}
+
 export const colors = {
   ...palette,
-  primary: palette.orange,
+  primary: plaette2.lightBlue,
   
   // Background colors
   background: {

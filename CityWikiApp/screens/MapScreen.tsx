@@ -317,7 +317,6 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
             styleURL={MAP_STYLE_URL}
             onPress={handleMapPress}
             onTouchStart={() => Keyboard.dismiss()}
-            onRegionIsChanging={() => Keyboard.dismiss()}
             onCameraChanged={event => {
               Keyboard.dismiss();
               setZoomLevel(event.properties.zoom);

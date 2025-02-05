@@ -98,9 +98,8 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
     }
   }, [list.pois]);
 
-  const calculateBoundingBox = useCallback(() => {
-    const allPois = LocationService.getInstance().getAllPois();
-    const validPois = allPois.filter(validateCoordinates);
+  const calculateBoundingBox = useCallback((pois: PointOfInterest[]) => {
+    const validPois = pois.filter(validateCoordinates);
     
     if (!validPois.length) return null;
 
@@ -125,7 +124,24 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
   }, []);
 
   const cameraBounds = useMemo(() => {
-    const bounds = calculateBoundingBox();
+    // Calculate bounds for selected POIs
+    const bounds = calculateBoundingBox(list.pois);
+    if (!bounds) return null;
+
+    // Add padding to the bounds (10% of the total span)
+    const lngPadding = (bounds.maxLng - bounds.minLng) * 0.1;
+    const latPadding = (bounds.maxLat - bounds.minLat) * 0.1;
+
+    return {
+      ne: [bounds.maxLng + lngPadding, bounds.maxLat + latPadding],
+      sw: [bounds.minLng - lngPadding, bounds.minLat - latPadding],
+    };
+  }, [list.pois, calculateBoundingBox]);
+
+  const maxBounds = useMemo(() => {
+    // Calculate bounds for all POIs
+    const allPois = LocationService.getInstance().getAllPois();
+    const bounds = calculateBoundingBox(allPois);
     if (!bounds) return null;
 
     // Add padding to the bounds (10% of the total span)
@@ -182,7 +198,7 @@ export const PoiListDetailView: React.FC<PoiListDetailViewProps> = ({
             <Mapbox.Camera
               ref={cameraRef}
               bounds={cameraBounds || undefined}
-              maxBounds={cameraBounds || undefined}
+              maxBounds={maxBounds || undefined}
               padding={{ paddingTop: 50, paddingBottom: 300, paddingLeft: 50, paddingRight: 50 }}
               animationDuration={0}
             />

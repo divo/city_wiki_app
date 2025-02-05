@@ -16,6 +16,8 @@ type CityId = 'Paris';
 // This is because expo-asset doesn't support loading JSON files from the assets folde
 const cityAssets: Record<CityId, any> = {
   'Paris': require('../assets/Paris/Paris.json'),
+  'London': require('../assets/London/London.json'),
+  'Rome': require('../assets/Rome/Rome.json'),
 };
 
 interface PointOfInterest {

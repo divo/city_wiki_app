@@ -45,9 +45,25 @@ const cityImages = {
   'rome_stamp.png': require('../assets/rome_stamp.png'),
   'san_francisco_stamp.png': require('../assets/san_francisco_stamp.png'),
   'tokyo_stamp.png': require('../assets/tokyo_stamp.png'),
+  'new_york_cover.png': require('../assets/new_york_cover.png'),
+  'london_cover.png': require('../assets/london_cover.png'),
+  'new_york_stamp.png': require('../assets/new_york_stamp.png'),
+  'london_stamp.png': require('../assets/london_stamp.png'),
 };
 
 const cities: City[] = [
+  {
+    id: 'London',
+    name: 'London',
+    country: 'United Kingdom',
+    imageUrl: 'london_cover.png',
+  },
+  {
+    id: 'New York',
+    name: 'New York',
+    country: 'United States',
+    imageUrl: 'new_york_cover.png',
+  },
   {
     id: 'Paris',
     name: 'Paris',
@@ -59,18 +75,6 @@ const cities: City[] = [
     name: 'Rome',
     country: 'Italy',
     imageUrl: 'rome_cover.png',
-  },
-  {
-    id: 'San Francisco',
-    name: 'San Francisco',
-    country: 'United States',
-    imageUrl: 'san_francisco_cover.png',
-  },
-  {
-    id: 'Tokyo',
-    name: 'Tokyo',
-    country: 'Japan',
-    imageUrl: 'tokyo_cover.png',
   }
 ];
 

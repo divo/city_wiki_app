@@ -9,6 +9,7 @@ export default {
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
     newArchEnabled: true,
+    assetBundlePatterns: ["assets/**/*"], // Ensures all files under `assets/` are bundled
     splash: {
       image: "./assets/splash-icon.png",
       resizeMode: "contain",

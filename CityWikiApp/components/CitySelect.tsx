@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator, Animated } from 'react-native';
 import { SearchBar } from './SearchBar';
 import { 
   useFonts,
@@ -95,11 +95,63 @@ interface CitySelectProps {
   useLocalData: boolean;
 }
 
+interface AnimatedStampProps {
+  cityId: string;
+  rotation: number;
+  onAnimationComplete: () => void;
+  isStatic?: boolean;
+}
+
+const AnimatedStamp = ({ cityId, rotation, onAnimationComplete, isStatic }: AnimatedStampProps) => {
+  const scale = useRef(new Animated.Value(isStatic ? 1 : 8)).current;
+  const opacity = useRef(new Animated.Value(isStatic ? 1 : 0)).current;
+
+  useEffect(() => {
+    if (!isStatic) {
+      Animated.sequence([
+        // First make the stamp visible
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+        // Then animate the scale with a spring effect
+        Animated.spring(scale, {
+          toValue: 1,
+          friction: 8,
+          tension: 40,
+          useNativeDriver: true,
+        })
+      ]).start(() => {
+        onAnimationComplete();
+      });
+    }
+  }, []);
+
+  return (
+    <Animated.Image
+      source={cityImages[`${cityId.toLowerCase().replace(' ', '_')}_stamp.png` as keyof typeof cityImages]}
+      style={[
+        styles.stampOverlay,
+        {
+          transform: [
+            { scale },
+            { rotate: `${rotation}deg` }
+          ],
+          opacity
+        }
+      ]}
+      resizeMode="contain"
+    />
+  );
+};
+
 export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   const navigation = useNavigation<CitySelectScreenNavigationProp>();
   const [loadingCity, setLoadingCity] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [ownedCities, setOwnedCities] = useState<string[]>([]);
+  const [animatingCityId, setAnimatingCityId] = useState<string | null>(null);
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_500Medium,
@@ -152,12 +204,13 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
     if (selectedCity) {
       const city = { ...selectedCity, isOwned: true };
       await StorageService.getInstance().markCityAsOwned(city.id);
+      setAnimatingCityId(city.id);
       setOwnedCities(prev => [...prev, city.id]);
-      //setSelectedCity(null);
     }
   };
 
-  const handleDismiss = () => {
+  const handleAnimationComplete = () => {
+    setAnimatingCityId(null);
     setSelectedCity(null);
   };
 
@@ -203,13 +256,18 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
                 />
                 {!ownedCities.includes(city.id) && <View style={styles.greyTint} />}
                 {ownedCities.includes(city.id) && (
-                  <Image
-                    source={cityImages[`${city.id.toLowerCase().replace(' ', '_')}_stamp.png` as keyof typeof cityImages]}
-                    style={[
-                      styles.stampOverlay,
-                      { transform: [{ rotate: `${getRotationForCity(city.name)}deg` }] }
-                    ]}
-                    resizeMode="contain"
+                  <AnimatedStamp
+                    cityId={city.id}
+                    rotation={getRotationForCity(city.name)}
+                    onAnimationComplete={() => {}}
+                    isStatic={true}
+                  />
+                )}
+                {animatingCityId === city.id && (
+                  <AnimatedStamp
+                    cityId={city.id}
+                    rotation={getRotationForCity(city.name)}
+                    onAnimationComplete={handleAnimationComplete}
                   />
                 )}
                 <View style={styles.cityInfo}>
@@ -232,7 +290,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
       {selectedCity && (
         <PurchaseSheet
           city={selectedCity}
-          onClose={handleDismiss}
+          onClose={() => setSelectedCity(null)}
           onPurchase={handlePurchase}
         />
       )}

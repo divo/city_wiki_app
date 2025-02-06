@@ -109,10 +109,12 @@ const AnimatedStamp = ({ cityId, rotation, onAnimationComplete, isStatic }: Anim
   useEffect(() => {
     if (!isStatic) {
       Animated.sequence([
-        // First make the stamp visible
+        // Initial delay
+        Animated.delay(500),
+        // Make stamp visible with a fade in
         Animated.timing(opacity, {
           toValue: 1,
-          duration: 0,
+          duration: 100, // Short fade in
           useNativeDriver: true,
         }),
         // Then animate the scale with a spring effect
@@ -205,7 +207,9 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
       const city = { ...selectedCity, isOwned: true };
       await StorageService.getInstance().markCityAsOwned(city.id);
       setAnimatingCityId(city.id);
-      setOwnedCities(prev => [...prev, city.id]);
+      setTimeout(() => {
+        setOwnedCities(prev => [...prev, city.id]);
+      }, 500);
     }
   };
 

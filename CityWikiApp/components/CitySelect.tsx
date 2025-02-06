@@ -45,9 +45,9 @@ const cityImages = {
   'rome_stamp.png': require('../assets/rome_stamp.png'),
   'san_francisco_stamp.png': require('../assets/san_francisco_stamp.png'),
   'tokyo_stamp.png': require('../assets/tokyo_stamp.png'),
-  'new_york_cover.png': require('../assets/new_york_cover.png'),
+  'new_york_city_cover.png': require('../assets/new_york_city_cover.png'),
   'london_cover.png': require('../assets/london_cover.png'),
-  'new_york_stamp.png': require('../assets/new_york_stamp.png'),
+  'new_york_city_stamp.png': require('../assets/new_york_city_stamp.png'),
   'london_stamp.png': require('../assets/london_stamp.png'),
 };
 

@@ -62,7 +62,7 @@ const cities: City[] = [
     id: 'New York City',
     name: 'New York City',
     country: 'United States',
-    imageUrl: 'new_york_cover.png',
+    imageUrl: 'new_york_city_cover.png',
   },
   {
     id: 'Paris',

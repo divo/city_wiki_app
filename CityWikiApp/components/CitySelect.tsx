@@ -110,7 +110,7 @@ const AnimatedStamp = ({ cityId, rotation, onAnimationComplete, isStatic }: Anim
     if (!isStatic) {
       Animated.sequence([
         // Initial delay
-        Animated.delay(500),
+        Animated.delay(200),
         // Make stamp visible with a fade in
         Animated.timing(opacity, {
           toValue: 1,
@@ -138,9 +138,18 @@ const AnimatedStamp = ({ cityId, rotation, onAnimationComplete, isStatic }: Anim
         {
           transform: [
             { scale },
-            { rotate: `${rotation}deg` }
+            { rotate: `${rotation}deg` },
+            { translateX: -5 },
+            { translateY: 5 }
           ],
-          opacity
+          opacity,
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.5,
+          shadowRadius: 3.84,
         }
       ]}
       resizeMode="contain"
@@ -153,7 +162,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   const [loadingCity, setLoadingCity] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [ownedCities, setOwnedCities] = useState<string[]>([]);
-  const [animatingCityId, setAnimatingCityId] = useState<string | null>(null);
+  const [animatingCities, setAnimatingCities] = useState<{[key: string]: boolean}>({});
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_500Medium,
@@ -206,15 +215,19 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
     if (selectedCity) {
       const city = { ...selectedCity, isOwned: true };
       await StorageService.getInstance().markCityAsOwned(city.id);
-      setAnimatingCityId(city.id);
+      setAnimatingCities(prev => ({ ...prev, [city.id]: true }));
       setTimeout(() => {
         setOwnedCities(prev => [...prev, city.id]);
       }, 500);
     }
   };
 
-  const handleAnimationComplete = () => {
-    setAnimatingCityId(null);
+  const handleAnimationComplete = (cityId: string) => {
+    setAnimatingCities(prev => {
+      const next = { ...prev };
+      delete next[cityId];
+      return next;
+    });
     setSelectedCity(null);
   };
 
@@ -263,15 +276,8 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
                   <AnimatedStamp
                     cityId={city.id}
                     rotation={getRotationForCity(city.name)}
-                    onAnimationComplete={() => {}}
-                    isStatic={true}
-                  />
-                )}
-                {animatingCityId === city.id && (
-                  <AnimatedStamp
-                    cityId={city.id}
-                    rotation={getRotationForCity(city.name)}
-                    onAnimationComplete={handleAnimationComplete}
+                    onAnimationComplete={() => handleAnimationComplete(city.id)}
+                    isStatic={!animatingCities[city.id]}
                   />
                 )}
                 <View style={styles.cityInfo}>

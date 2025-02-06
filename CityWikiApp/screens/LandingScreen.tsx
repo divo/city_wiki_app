@@ -89,10 +89,12 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '100%',
     backgroundColor: '#F8F9FA',
+    alignItems: 'center',
   },
   imageContainer: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     maxHeight: '50%',
     width: '100%',
   },
@@ -104,12 +106,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
     paddingHorizontal: 20,
+    width: '100%',
   },
   title: {
     fontSize: 28,
     color: '#1A1A1A',
     fontFamily: 'Montserrat_600SemiBold',
     marginBottom: 12,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
@@ -118,26 +122,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 24,
   },
-  paginationDots: {
-    flexDirection: 'row',
-    marginBottom: 32,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#DDD',
-    marginHorizontal: 4,
-  },
-  activeDot: {
-    backgroundColor: '#007AFF',
-  },
   button: {
     backgroundColor: colors.primary,
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 8,
     width: '100%',
+    alignItems: 'center',
   },
   buttonText: {
     color: 'white',
@@ -147,5 +138,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     backgroundColor: colors.primary,
+    alignItems: 'center',
   },
 }); 

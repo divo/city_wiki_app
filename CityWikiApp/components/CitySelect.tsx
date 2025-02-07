@@ -27,7 +27,7 @@ type RootStackParamList = {
 type CitySelectScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CitySelect'>;
 
 interface City {
-  id: 'Paris' | 'Rome' | 'San Francisco' | 'Tokyo';
+  id: string;
   name: string;
   country: string;
   imageUrl: string;

@@ -9,7 +9,7 @@ Object.keys(requiredAssets).forEach((key) => {
 console.log('Assets included in the bundle.');
 
 // For now, only include Paris as we're testing
-type CityId = 'Paris';
+type CityId = string;
 
 
 // Simply require the JSON file from the assets folder

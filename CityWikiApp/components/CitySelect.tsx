@@ -260,7 +260,8 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
 
   return (
     <View style={styles.outerContainer}>
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <SafeAreaView style={styles.topSafeArea} />
         <View style={styles.header}>
           <Image 
             source={cityImages['title_image.png']}
@@ -318,7 +319,8 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
             ))}
           </View>
         </ScrollView>
-      </SafeAreaView>
+        <SafeAreaView style={styles.bottomSafeArea} />
+      </View>
 
       {selectedCity && (
         <PurchaseSheet
@@ -339,6 +341,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  topSafeArea: {
+    flex: 0,
+    backgroundColor: '#88A9AA',
+  },
+  bottomSafeArea: {
+    flex: 0,
+    backgroundColor: 'white',
   },
   header: {
     paddingTop: 16,

@@ -4,7 +4,7 @@ import * as Location from 'expo-location';
 export const useLocation = () => {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [hasPermission, setHasPermission] = useState<boolean>(true);
 
   const checkLocationPermission = async () => {
     const { status } = await Location.getForegroundPermissionsAsync();

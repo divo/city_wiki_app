@@ -197,7 +197,7 @@ export default function App() {
   const [mapZoom, setMapZoom] = useState(12);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [useLocalData, setUseLocalData] = useState(false);
+  const [useLocalData, setUseLocalData] = useState(true);
   const [showLanding, setShowLanding] = useState(true);
 
   useEffect(() => {

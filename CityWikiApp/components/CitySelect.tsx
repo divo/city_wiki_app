@@ -132,7 +132,7 @@ const AnimatedStamp = ({ cityId, rotation, onAnimationComplete, isStatic }: Anim
 
   return (
     <Animated.Image
-      source={cityImages[`${cityId.toLowerCase().replace(' ', '_')}_stamp.png` as keyof typeof cityImages]}
+      source={cityImages[`${cityId.toLowerCase().replace(/ /g, '_')}_stamp.png` as keyof typeof cityImages]}
       style={[
         styles.stampOverlay,
         {

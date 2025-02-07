@@ -14,6 +14,7 @@ import { StorageService } from '../services/StorageService';
 import { PurchaseStorage } from '../services/PurchaseStorage';
 import { PurchaseSheet } from './PurchaseSheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { cities, City } from '../types/city';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -26,15 +27,6 @@ type RootStackParamList = {
 };
 
 type CitySelectScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'CitySelect'>;
-
-interface City {
-  id: string;
-  name: string;
-  country: string;
-  imageUrl: string;
-  isOwned?: boolean;
-  iap_id: string;
-}
 
 const cityImages = {
   'paris_cover.png': require('../assets/paris_cover.png'),
@@ -52,37 +44,6 @@ const cityImages = {
   'new_york_city_stamp.png': require('../assets/new_york_city_stamp.png'),
   'london_stamp.png': require('../assets/london_stamp.png'),
 };
-
-const cities: City[] = [
-  {
-    id: 'London',
-    name: 'London',
-    country: 'United Kingdom',
-    imageUrl: 'london_cover.png',
-    iap_id: 'com.halfspud.CityWikiApp.london',
-  },
-  {
-    id: 'New York City',
-    name: 'New York City',
-    country: 'United States',
-    imageUrl: 'new_york_city_cover.png',
-    iap_id: 'com.halfspud.CityWikiApp.newyork',
-  },
-  {
-    id: 'Paris',
-    name: 'Paris',
-    country: 'France',
-    imageUrl: 'paris_cover.png',
-    iap_id: 'com.halfspud.CityWikiApp.paris',
-  },
-  {
-    id: 'Rome',
-    name: 'Rome',
-    country: 'Italy',
-    imageUrl: 'rome_cover.png',
-    iap_id: 'com.halfspud.CityWikiApp.rome',
-  }
-];
 
 const getRotationForCity = (cityName: string) => {
   // Sum the character codes to get a deterministic number

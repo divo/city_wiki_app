@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Button, View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { Button, View, TouchableOpacity, Text, StyleSheet, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -21,6 +21,7 @@ import { Asset } from 'expo-asset';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LandingScreen } from './screens/LandingScreen';
 import { colors } from './styles/globalStyles';
+import { IAPService } from './services/IAPService';
 
 import * as FileSystem from 'expo-file-system';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -209,6 +210,41 @@ export default function App() {
 
   useEffect(() => {
     checkFirstLaunch();
+  }, []);
+
+  useEffect(() => {
+    const initializeIAP = async () => {
+      try {
+        await IAPService.getInstance().initialize();
+      } catch (error) {
+        console.error('Failed to initialize IAP:', error);
+      }
+    };
+
+    initializeIAP();
+
+    const subscription = AppState.addEventListener('change', async (nextAppState) => {
+      if (nextAppState === 'background' || nextAppState === 'inactive') {
+        try {
+          await IAPService.getInstance().endConnection();
+        } catch (error) {
+          console.error('Failed to end IAP connection:', error);
+        }
+      } else if (nextAppState === 'active') {
+        try {
+          await IAPService.getInstance().initialize();
+        } catch (error) {
+          console.error('Failed to reinitialize IAP:', error);
+        }
+      }
+    });
+
+    return () => {
+      subscription.remove();
+      IAPService.getInstance().endConnection().catch(error => {
+        console.error('Failed to end IAP connection during cleanup:', error);
+      });
+    };
   }, []);
 
   const checkFirstLaunch = async () => {

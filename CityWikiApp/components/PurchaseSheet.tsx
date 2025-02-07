@@ -4,6 +4,7 @@ import BottomSheet, { BottomSheetView, BottomSheetBackgroundProps } from '@gorho
 import Animated from 'react-native-reanimated';
 import { PurchaseStorage } from '../services/PurchaseStorage';
 import { colors } from '../styles/globalStyles';
+import { IAPService } from '../services/IAPService';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_WIDTH = SCREEN_WIDTH * 0.4;
@@ -46,12 +47,15 @@ export function PurchaseSheet({ city, onClose, onPurchase, ownedCities }: Purcha
 
   const handlePurchase = async () => {
     try {
-      // TODO: Implement actual purchase flow
-      console.log('Purchase flow for city:', city.id);
-      // For now, just mark as owned
-      await PurchaseStorage.getInstance().markCityAsOwned(city.id);
-      onPurchase();
-      bottomSheetRef.current?.close();
+      // Get the IAP service instance
+      const iapService = IAPService.getInstance();
+      
+      // Request the purchase
+      const success = await iapService.purchaseCity(city.id);
+      if (success) {
+        onPurchase();
+        bottomSheetRef.current?.close();
+      }
     } catch (error) {
       console.error('Error purchasing city:', error);
     }

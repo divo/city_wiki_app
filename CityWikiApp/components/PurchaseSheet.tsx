@@ -34,11 +34,8 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
 
   const handlePurchase = async () => {
     try {
-      // Perform your purchase logic
       await PurchaseStorage.getInstance().markCityAsOwned(city.id);
       onPurchase();
-      
-      // Instead of calling onClose immediately, trigger the close animation:
       bottomSheetRef.current?.close();
     } catch (error) {
       console.error('Error purchasing city:', error);

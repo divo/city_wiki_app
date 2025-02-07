@@ -1,16 +1,33 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+type Listener = () => void;
+
 class PurchaseStorage {
   private static instance: PurchaseStorage;
   private static readonly OWNED_CITIES_KEY = 'owned_cities';
+  private listeners: Set<Listener>;
 
-  private constructor() {}
+  private constructor() {
+    this.listeners = new Set();
+  }
 
   public static getInstance(): PurchaseStorage {
     if (!PurchaseStorage.instance) {
       PurchaseStorage.instance = new PurchaseStorage();
     }
     return PurchaseStorage.instance;
+  }
+
+  public addChangeListener(callback: Listener): void {
+    this.listeners.add(callback);
+  }
+
+  public removeChangeListener(callback: Listener): void {
+    this.listeners.delete(callback);
+  }
+
+  private notifyListeners(): void {
+    this.listeners.forEach(listener => listener());
   }
 
   // Methods for managing owned cities
@@ -30,6 +47,7 @@ class PurchaseStorage {
       if (!ownedCities.includes(cityId)) {
         ownedCities.push(cityId);
         await AsyncStorage.setItem(PurchaseStorage.OWNED_CITIES_KEY, JSON.stringify(ownedCities));
+        this.notifyListeners();
       }
     } catch (error) {
       console.error('Error marking city as owned:', error);
@@ -50,6 +68,7 @@ class PurchaseStorage {
   public async clearPurchases(): Promise<void> {
     try {
       await AsyncStorage.removeItem(PurchaseStorage.OWNED_CITIES_KEY);
+      this.notifyListeners();
     } catch (error) {
       console.error('Error clearing purchases:', error);
       throw error;

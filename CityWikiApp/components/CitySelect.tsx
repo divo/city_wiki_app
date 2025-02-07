@@ -177,10 +177,27 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   useEffect(() => {
     const loadOwnedCities = async () => {
       const owned = await PurchaseStorage.getInstance().getOwnedCities();
+      const newCities = owned.filter(cityId => !ownedCities.includes(cityId));
       setOwnedCities(owned);
+      
+      // Trigger animation for newly owned cities
+      newCities.forEach(cityId => {
+        setAnimatingCities(prev => ({ ...prev, [cityId]: true }));
+      });
     };
+    
+    // Load initial state
     loadOwnedCities();
-  }, []);
+
+    // Listen for changes
+    const purchaseStorage = PurchaseStorage.getInstance();
+    purchaseStorage.addChangeListener(loadOwnedCities);
+
+    // Cleanup
+    return () => {
+      purchaseStorage.removeChangeListener(loadOwnedCities);
+    };
+  }, [ownedCities]);
 
   const handleCitySelect = async (city: City) => {
     const isOwned = ownedCities.includes(city.id);
@@ -219,12 +236,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
 
   const handlePurchase = async () => {
     if (selectedCity) {
-      const city = { ...selectedCity, isOwned: true };
-      await PurchaseStorage.getInstance().markCityAsOwned(city.id);
-      setAnimatingCities(prev => ({ ...prev, [city.id]: true }));
-      setTimeout(() => {
-        setOwnedCities(prev => [...prev, city.id]);
-      }, 500);
+      setSelectedCity(null);
     }
   };
 

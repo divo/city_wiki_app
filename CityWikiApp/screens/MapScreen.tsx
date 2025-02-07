@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity, Keyboard, Platform, Dimensions } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity, Keyboard, Platform, Dimensions, AppState } from 'react-native';
 import Mapbox, { UserLocation, Camera, UserLocationRenderMode, Images } from '@rnmapbox/maps';
 import { CategoryTab } from '../components/CategoryTab';
 import { LocationService, PointOfInterest } from '../services/LocationService';
@@ -12,6 +12,7 @@ import { useLocation } from '../hooks/useLocation';
 import { SearchBar } from '../components/SearchBar';
 import * as turf from '@turf/turf';
 import { colors } from '../styles/globalStyles';
+import { LocationPermissionSheet } from '../components/LocationPermissionSheet';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
@@ -52,7 +53,7 @@ const fuzzyMatch = (text: string, query: string): boolean => {
 };
 
 export default function MapScreen({ initialZoom, onMapStateChange, cityId }: MapScreenProps) {
-  const { location } = useLocation();
+  const { location, hasPermission, checkLocationPermission } = useLocation();
   const cameraRef = useRef<Camera>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [locations, setLocations] = useState<PointOfInterest[]>([]);
@@ -65,6 +66,20 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   }, []);
   const [searchQuery, setSearchQuery] = useState('');
   const [poiListSheetIndex, setPoiListSheetIndex] = useState(1); // Default to middle position
+  const [showLocationPermissionSheet, setShowLocationPermissionSheet] = useState(false);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') {
+        console.log("App came to foreground, checking location permission...");
+        checkLocationPermission();
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   // Add effect to log state changes
   useEffect(() => {
@@ -254,12 +269,17 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   }, [cameraBounds]);
 
   const handleLocationPress = () => {
-    if (location && cameraRef.current) {
-      cameraRef.current.setCamera({
-        centerCoordinate: [location.coords.longitude, location.coords.latitude],
-        zoomLevel: 15,
-        animationDuration: 1000,
-      });
+    if (hasPermission) {
+      if (location && cameraRef.current) {
+        cameraRef.current.setCamera({
+          centerCoordinate: [location.coords.longitude, location.coords.latitude],
+          zoomLevel: 15,
+          animationDuration: 1000,
+        });
+      } 
+    } else {
+      setPoiListSheetIndex(0);
+      setShowLocationPermissionSheet(true);
     }
   };
 
@@ -493,10 +513,20 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
 
         <TouchableOpacity 
           style={styles.locationButton}
-          onPress={handleLocationPress}
+            onPress={handleLocationPress}
         >
-          <Ionicons name="locate" size={24} color={colors.primary} />
+          {hasPermission ? (
+            <Ionicons name="locate" size={24} color={colors.primary} />
+          ) : (
+            <Ionicons name="alert-circle" size={24} color="#E12D39" />
+          )}
         </TouchableOpacity>
+
+        {showLocationPermissionSheet && (
+          <LocationPermissionSheet
+            onClose={() => setShowLocationPermissionSheet(false)}
+          />
+        )}
       </View>
     </GestureHandlerRootView>
   );

@@ -29,7 +29,7 @@ export const useLocation = () => {
         const subscription = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.Balanced,
-            timeInterval: 5000,
+            timeInterval: 1000,
             distanceInterval: 10,
           },
           (newLocation) => {

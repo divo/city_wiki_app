@@ -17,6 +17,7 @@ interface PurchaseSheetProps {
   };
   onClose: () => void;
   onPurchase: () => void;
+  ownedCities: string[];
 }
 
 const CustomBackground: React.FC<BottomSheetBackgroundProps> = ({ style }) => {
@@ -28,12 +29,26 @@ const CustomBackground: React.FC<BottomSheetBackgroundProps> = ({ style }) => {
   return <Animated.View pointerEvents="none" style={containerStyle} />;
 };
 
-export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps) {
+export function PurchaseSheet({ city, onClose, onPurchase, ownedCities }: PurchaseSheetProps) {
   const snapPoints = useMemo(() => ['45%'], []);
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const hasOwnedCities = ownedCities.length > 0;
+
+  const handleFreeAccess = async () => {
+    try {
+      await PurchaseStorage.getInstance().markCityAsOwned(city.id);
+      onPurchase();
+      bottomSheetRef.current?.close();
+    } catch (error) {
+      console.error('Error purchasing city:', error);
+    }
+  };
 
   const handlePurchase = async () => {
     try {
+      // TODO: Implement actual purchase flow
+      console.log('Purchase flow for city:', city.id);
+      // For now, just mark as owned
       await PurchaseStorage.getInstance().markCityAsOwned(city.id);
       onPurchase();
       bottomSheetRef.current?.close();
@@ -54,7 +69,6 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
         backgroundComponent={CustomBackground}
         enablePanDownToClose={true}
         onChange={(index: number) => {
-          // When the bottom sheet is fully closed (typically index -1), call onClose.
           if (index === -1) {
             onClose();
           }
@@ -65,8 +79,16 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
           <Text style={styles.description}>
             Unlock the complete city guide to discover the best places to eat, drink, and explore in {city.name}.
           </Text>
-          <TouchableOpacity style={styles.purchaseButton} onPress={handlePurchase}>
-            <Text style={styles.purchaseButtonText}>Get Free Access</Text>
+          <TouchableOpacity 
+            style={[
+              styles.purchaseButton,
+              hasOwnedCities && styles.paidPurchaseButton
+            ]} 
+            onPress={hasOwnedCities ? handlePurchase : handleFreeAccess}
+          >
+            <Text style={styles.purchaseButtonText}>
+              {hasOwnedCities ? 'Purchase City Guide' : 'First Guide is Free'}
+            </Text>
           </TouchableOpacity>
         </BottomSheetView>
       </BottomSheet>
@@ -128,5 +150,8 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontFamily: 'Montserrat_600SemiBold',
+  },
+  paidPurchaseButton: {
+    backgroundColor: colors.darkBlue,
   },
 });

@@ -51,6 +51,7 @@ export default {
         },
       ],
       "expo-font",
+      ["react-native-iap"]
     ],
     extra: {
       eas: {

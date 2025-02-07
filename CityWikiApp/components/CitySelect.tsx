@@ -175,29 +175,34 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   });
 
   useEffect(() => {
-    const loadOwnedCities = async () => {
+    const loadNewlyOwnedCities = async () => {
       const owned = await PurchaseStorage.getInstance().getOwnedCities();
       const newCities = owned.filter(cityId => !ownedCities.includes(cityId));
       setOwnedCities(owned);
-      
       // Trigger animation for newly owned cities
       newCities.forEach(cityId => {
         setAnimatingCities(prev => ({ ...prev, [cityId]: true }));
       });
-    };
+    };  
     
     // Load initial state
     loadOwnedCities();
 
     // Listen for changes
     const purchaseStorage = PurchaseStorage.getInstance();
-    purchaseStorage.addChangeListener(loadOwnedCities);
+    purchaseStorage.addChangeListener(loadNewlyOwnedCities);
 
     // Cleanup
     return () => {
-      purchaseStorage.removeChangeListener(loadOwnedCities);
+      purchaseStorage.removeChangeListener(loadNewlyOwnedCities);
     };
   }, [ownedCities]);
+
+  const loadOwnedCities = async () => {
+    const owned = await PurchaseStorage.getInstance().getOwnedCities();
+    const newCities = owned.filter(cityId => !ownedCities.includes(cityId));
+    setOwnedCities(owned);
+  };
 
   const handleCitySelect = async (city: City) => {
     const isOwned = ownedCities.includes(city.id);
@@ -320,6 +325,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
           city={selectedCity}
           onClose={() => setSelectedCity(null)}
           onPurchase={handlePurchase}
+          ownedCities={ownedCities}
         />
       )}
     </View>

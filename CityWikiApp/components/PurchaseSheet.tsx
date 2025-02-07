@@ -2,7 +2,7 @@ import React, { useRef, useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import BottomSheet, { BottomSheetView, BottomSheetBackgroundProps } from '@gorhom/bottom-sheet';
 import Animated from 'react-native-reanimated';
-import { StorageService } from '../services/StorageService';
+import { PurchaseStorage } from '../services/PurchaseStorage';
 import { colors } from '../styles/globalStyles';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -35,7 +35,7 @@ export function PurchaseSheet({ city, onClose, onPurchase }: PurchaseSheetProps)
   const handlePurchase = async () => {
     try {
       // Perform your purchase logic
-      await StorageService.getInstance().markCityAsOwned(city.id);
+      await PurchaseStorage.getInstance().markCityAsOwned(city.id);
       onPurchase();
       
       // Instead of calling onClose immediately, trigger the close animation:

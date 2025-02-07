@@ -4,7 +4,6 @@ import { CityData, PointOfInterest } from './LocationService';
 class StorageService {
   private static instance: StorageService;
   private static readonly FAVORITES_KEY_PREFIX = 'favorites';
-  private static readonly OWNED_CITIES_KEY = 'owned_cities';
 
   private constructor() {}
 
@@ -131,40 +130,6 @@ class StorageService {
       return false;
     } catch (error) {
       console.error('Error checking first launch:', error);
-      return false;
-    }
-  }
-
-  // Methods for managing owned cities
-  public async getOwnedCities(): Promise<string[]> {
-    try {
-      const ownedCities = await this.getData<string[]>(StorageService.OWNED_CITIES_KEY);
-      return ownedCities || [];
-    } catch (error) {
-      console.error('Error getting owned cities:', error);
-      return [];
-    }
-  }
-
-  public async markCityAsOwned(cityId: string): Promise<void> {
-    try {
-      const ownedCities = await this.getOwnedCities();
-      if (!ownedCities.includes(cityId)) {
-        ownedCities.push(cityId);
-        await this.storeData(StorageService.OWNED_CITIES_KEY, ownedCities);
-      }
-    } catch (error) {
-      console.error('Error marking city as owned:', error);
-      throw error;
-    }
-  }
-
-  public async isCityOwned(cityId: string): Promise<boolean> {
-    try {
-      const ownedCities = await this.getOwnedCities();
-      return ownedCities.includes(cityId);
-    } catch (error) {
-      console.error('Error checking if city is owned:', error);
       return false;
     }
   }

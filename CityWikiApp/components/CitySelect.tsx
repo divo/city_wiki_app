@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LocationService } from '../services/LocationService';
 import { StorageService } from '../services/StorageService';
+import { PurchaseStorage } from '../services/PurchaseStorage';
 import { PurchaseSheet } from './PurchaseSheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
@@ -175,7 +176,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
 
   useEffect(() => {
     const loadOwnedCities = async () => {
-      const owned = await StorageService.getInstance().getOwnedCities();
+      const owned = await PurchaseStorage.getInstance().getOwnedCities();
       setOwnedCities(owned);
     };
     loadOwnedCities();
@@ -219,7 +220,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   const handlePurchase = async () => {
     if (selectedCity) {
       const city = { ...selectedCity, isOwned: true };
-      await StorageService.getInstance().markCityAsOwned(city.id);
+      await PurchaseStorage.getInstance().markCityAsOwned(city.id);
       setAnimatingCities(prev => ({ ...prev, [city.id]: true }));
       setTimeout(() => {
         setOwnedCities(prev => [...prev, city.id]);

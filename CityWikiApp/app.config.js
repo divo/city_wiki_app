@@ -2,7 +2,7 @@ const assetsConfig = require("./assetsConfig.json");
 
 export default {
   expo: {
-    name: "CityWikiApp",
+    name: "City Wandr",
     slug: "CityWikiApp",
     version: "1.0.0",
     orientation: "portrait",

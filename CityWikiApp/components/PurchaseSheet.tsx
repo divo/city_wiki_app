@@ -105,12 +105,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
+    textAlign: 'center',
     fontFamily: 'Montserrat_600SemiBold',
     color: '#1A1A1A',
     marginBottom: 8,
   },
   description: {
     fontSize: 18,
+    textAlign: 'center',
     fontFamily: 'Montserrat_400Regular',
     color: '#333333',
     lineHeight: 28,

@@ -158,11 +158,18 @@ type CitySelectScreenProps = {
   useLocalData: boolean;
   handleClearCache: () => void;
   toggleLocalData: () => void;
+  showLanding: boolean;
 };
 
-const CitySelectScreen = ({ onCitySelect, useLocalData, handleClearCache, toggleLocalData }: CitySelectScreenProps) => {
+const CitySelectScreen = ({ onCitySelect, useLocalData, handleClearCache, toggleLocalData, showLanding }: CitySelectScreenProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   
+  useEffect(() => {
+    if (showLanding) {
+      navigation.navigate('Landing');
+    }
+  }, [showLanding, navigation]);
+
   return (
     <View style={styles.container}>
       <CitySelect 
@@ -196,9 +203,9 @@ const CitySelectScreen = ({ onCitySelect, useLocalData, handleClearCache, toggle
 export default function App() {
   const [mapZoom, setMapZoom] = useState(12);
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [useLocalData, setUseLocalData] = useState(true);
-  const [showLanding, setShowLanding] = useState(true);
+  const [showLanding, setShowLanding] = useState(false);
 
   useEffect(() => {
     checkFirstLaunch();
@@ -259,6 +266,7 @@ export default function App() {
                     useLocalData={useLocalData}
                     handleClearCache={handleClearCache}
                     toggleLocalData={toggleLocalData}
+                    showLanding={showLanding}
                   />
                 )}
               </Stack.Screen>

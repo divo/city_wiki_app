@@ -125,6 +125,7 @@ class StorageService {
       const hasLaunched = await AsyncStorage.getItem('hasLaunched');
       if (hasLaunched === null) {
         await AsyncStorage.setItem('hasLaunched', 'true');
+        console.log("First launch detected, setting hasLaunched to true");
         return true;
       }
       return false;

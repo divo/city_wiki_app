@@ -13,7 +13,7 @@ export default {
     splash: {
       image: "./assets/splash-icon.png",
       resizeMode: "contain",
-      backgroundColor: "#ffffff",
+      backgroundColor: "#FAF4E2",
     },
     ios: {
       supportsTablet: true,

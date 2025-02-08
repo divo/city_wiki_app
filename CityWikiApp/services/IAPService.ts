@@ -64,6 +64,7 @@ class IAPService {
       });
 
       await this.getProducts(); // Load products after initialization
+      await this.restorePurchases(); // Restore any previous purchases
     } catch (error) {
       console.error('Failed to initialize IAP:', error);
       throw error;
@@ -136,7 +137,27 @@ class IAPService {
 
   // Restore previous purchases
   public async restorePurchases(): Promise<void> {
-    // TODO: Restore purchases
+    try {
+      // Get all available purchases
+      const purchases = await RNIap.getAvailablePurchases();
+      
+      // Process each purchase
+      for (const purchase of purchases) {
+        try {
+          // Extract the city ID from the product ID
+          const cityId = this.getCityIdFromProductId(purchase.productId);
+          if (cityId) {
+            // Mark the city as owned
+            await this.purchaseStorage.markCityAsOwned(cityId);
+          }
+        } catch (error) {
+          console.error('Error processing restored purchase:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to restore purchases:', error);
+      throw error;
+    }
   }
 
   // Validate receipt

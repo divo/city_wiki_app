@@ -1387,6 +1387,11 @@
   dependencies:
     merge-options "^3.0.4"
 
+"@react-native-firebase/firestore@^21.7.2":
+  version "21.7.2"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/firestore/-/firestore-21.7.2.tgz#92fd8f371420bc0f6de82eec2db08c69d86d6d27"
+  integrity sha512-1Jz4JlEGQKs3O+BDm/pZUpvL7wwWJYABoE9TjdRNO+mRT1MMPrY9rkctxzYHpIRNIIY3v37PDjwrGaOQlc8CdA==
+
 "@react-native/assets-registry@0.76.6":
   version "0.76.6"
   resolved "https://registry.npmjs.org/@react-native/assets-registry/-/assets-registry-0.76.6.tgz"

@@ -1,7 +1,8 @@
 import { PurchaseStorage } from './PurchaseStorage';
 import * as RNIap from 'react-native-iap';
 import { cities } from '../types/city';
-import { EmitterSubscription } from 'react-native';
+import { EmitterSubscription, Platform } from 'react-native';
+import { AppWriteService } from './AppWriteService';
 
 interface IAPProduct {
   id: string;
@@ -14,13 +15,22 @@ interface IAPProduct {
 class IAPService {
   private static instance: IAPService;
   private purchaseStorage: PurchaseStorage;
+  private appWriteService: AppWriteService;
   private isInitialized: boolean = false;
   private products: RNIap.Product[] = [];
   private purchaseUpdateSubscription: EmitterSubscription | null = null;
   private purchaseErrorSubscription: EmitterSubscription | null = null;
+  private isSimulator: boolean;
 
   private constructor() {
     this.purchaseStorage = PurchaseStorage.getInstance();
+    this.appWriteService = AppWriteService.getInstance();
+    // Check if running in simulator
+    this.isSimulator = Platform.select({
+      ios: !!/Simulator/.test(navigator?.userAgent),
+      android: false,
+      default: false,
+    });
   }
 
   public static getInstance(): IAPService {
@@ -30,13 +40,28 @@ class IAPService {
     return IAPService.instance;
   }
 
-  // Initialize IAP service and load products
+  // Initialize both IAP layers
   public async initialize(): Promise<void> {
     if (this.isInitialized) return;
     
     try {
-      await RNIap.initConnection();
+      if (!this.isSimulator) {
+        await this.initializeAppleIAP();
+      } else {
+        console.log('Running in simulator - skipping Apple IAP initialization');
+      }
+      await this.initializeAppWriteIAP();
       this.isInitialized = true;
+    } catch (error) {
+      console.error('Failed to initialize IAP:', error);
+      throw error;
+    }
+  }
+
+  // Initialize Apple IAP
+  private async initializeAppleIAP(): Promise<void> {
+    try {
+      await RNIap.initConnection();
 
       // Setup purchase update listener
       this.purchaseUpdateSubscription = RNIap.purchaseUpdatedListener(async (purchase: RNIap.Purchase) => {
@@ -49,8 +74,10 @@ class IAPService {
             // Extract the city ID from the product ID
             const cityId = this.getCityIdFromProductId(purchase.productId);
             if (cityId) {
-              // Mark the city as owned
+              // Mark the city as owned locally
               await this.purchaseStorage.markCityAsOwned(cityId);
+              // Sync with AppWrite
+              await this.appWriteService.registerPurchase(purchase.productId);
             }
           }
         } catch (error) {
@@ -63,10 +90,27 @@ class IAPService {
         console.error('Purchase error:', error);
       });
 
-      await this.getProducts(); // Load products after initialization
-      await this.restorePurchases(); // Restore any previous purchases
+      // Load products
+      await this.getProducts();
     } catch (error) {
-      console.error('Failed to initialize IAP:', error);
+      console.error('Failed to initialize Apple IAP:', error);
+      throw error;
+    }
+  }
+
+  // Initialize AppWrite IAP
+  private async initializeAppWriteIAP(): Promise<void> {
+    try {
+      // Get purchases from AppWrite and sync them locally
+      const appWritePurchases = await this.appWriteService.getPurchasedSKUs();
+      for (const sku of appWritePurchases) {
+        const cityId = this.getCityIdFromProductId(sku);
+        if (cityId) {
+          await this.purchaseStorage.markCityAsOwned(cityId);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to initialize AppWrite IAP:', error);
       throw error;
     }
   }
@@ -102,9 +146,19 @@ class IAPService {
 
   // Get available products
   public async getProducts(): Promise<RNIap.Product[]> {
+    if (this.isSimulator) {
+      // Return mock products for simulator
+      return cities.map(city => ({
+        productId: city.iap_id,
+        title: `${city.name} Guide`,
+        description: `City guide for ${city.name}`,
+        price: '0.99',
+        currency: 'USD',
+      })) as RNIap.Product[];
+    }
+
     try {
       const skus = cities.map(city => city.iap_id);
-      
       this.products = await RNIap.getProducts({ skus });
       return this.products;
     } catch (error) {
@@ -122,7 +176,14 @@ class IAPService {
         throw new Error(`City not found: ${cityId}`);
       }
 
-      // Request the purchase
+      if (this.isSimulator) {
+        // In simulator, directly mark as owned and sync to AppWrite
+        await this.purchaseStorage.markCityAsOwned(cityId);
+        await this.appWriteService.registerPurchase(city.iap_id);
+        return true;
+      }
+
+      // Request the purchase through Apple IAP
       await RNIap.requestPurchase({
         sku: city.iap_id
       });
@@ -138,20 +199,39 @@ class IAPService {
   // Restore previous purchases
   public async restorePurchases(): Promise<void> {
     try {
-      // Get all available purchases
-      const purchases = await RNIap.getAvailablePurchases();
+      // Get purchases from both sources
+      const [iapPurchases, appWritePurchases] = await Promise.all([
+        this.isSimulator ? [] : RNIap.getAvailablePurchases(),
+        this.appWriteService.getPurchasedSKUs()
+      ]);
       
-      // Process each purchase
-      for (const purchase of purchases) {
+      if (!this.isSimulator) {
+        // Process IAP purchases
+        for (const purchase of iapPurchases) {
+          try {
+            const cityId = this.getCityIdFromProductId(purchase.productId);
+            if (cityId) {
+              await this.purchaseStorage.markCityAsOwned(cityId);
+              // Register with AppWrite if not already there
+              if (!appWritePurchases.includes(purchase.productId)) {
+                await this.appWriteService.registerPurchase(purchase.productId);
+              }
+            }
+          } catch (error) {
+            console.error('Error processing restored IAP purchase:', error);
+          }
+        }
+      }
+
+      // Process AppWrite purchases
+      for (const sku of appWritePurchases) {
         try {
-          // Extract the city ID from the product ID
-          const cityId = this.getCityIdFromProductId(purchase.productId);
+          const cityId = this.getCityIdFromProductId(sku);
           if (cityId) {
-            // Mark the city as owned
             await this.purchaseStorage.markCityAsOwned(cityId);
           }
         } catch (error) {
-          console.error('Error processing restored purchase:', error);
+          console.error('Error processing AppWrite purchase:', error);
         }
       }
     } catch (error) {

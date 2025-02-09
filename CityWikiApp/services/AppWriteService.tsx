@@ -1,9 +1,12 @@
 import { Client, Account, ID, Databases, Query } from 'react-native-appwrite';
+import { PurchaseStorage } from './PurchaseStorage';
+import { cities } from '../types/city';
 
 export class AppWriteService {
   private static instance: AppWriteService;
   private client: Client;
   private databases: Databases;
+  private purchaseStorage: PurchaseStorage;
   private static readonly DATABASE_ID = '67a875fa00164bc54a9e';
   private static readonly COLLECTION_ID = '67a87625002d105645ff';
 
@@ -14,6 +17,7 @@ export class AppWriteService {
       .setPlatform('com.halfspud.CityWikiApp');
 
     this.databases = new Databases(this.client);
+    this.purchaseStorage = PurchaseStorage.getInstance();
   }
 
   public static getInstance(): AppWriteService {
@@ -38,7 +42,17 @@ export class AppWriteService {
         userId
       );
 
-      return response.purchasedSKUs || [];
+      const purchasedSKUs = response.purchasedSKUs || [];
+
+      // Sync with PurchaseStorage
+      for (const sku of purchasedSKUs) {
+        const city = cities.find(c => c.iap_id === sku);
+        if (city) {
+          await this.purchaseStorage.markCityAsOwned(city.id);
+        }
+      }
+
+      return purchasedSKUs;
     } catch (error) {
       // If document doesn't exist, return empty array
       if ((error as any)?.code === 404) {
@@ -56,16 +70,18 @@ export class AppWriteService {
 
       // Don't add duplicate SKUs
       if (!currentPurchases.includes(sku)) {
+        const data = {
+          purchasedSKUs: [...currentPurchases, sku],
+          lastUpdated: new Date().toISOString()
+        };
+
         try {
           // Try to update existing document
           await this.databases.updateDocument(
             AppWriteService.DATABASE_ID,
             AppWriteService.COLLECTION_ID,
             userId,
-            {
-              purchasedSKUs: [...currentPurchases, sku],
-              lastUpdated: new Date().toISOString()
-            }
+            data
           );
         } catch (error) {
           // If document doesn't exist, create it

@@ -92,6 +92,10 @@ export class AppWriteService {
     }
   }
 
+  public async getDeviceId(): Promise<string> {
+    return this.getUserId();
+  }
+
   public async getPurchasedSKUs(): Promise<string[]> {
     try {
       const userId = await this.getUserId();

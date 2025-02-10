@@ -6,6 +6,7 @@ import { IAPService } from '../services/IAPService';
 import { Client, ExecutionMethod, Functions } from 'react-native-appwrite';
 import { AppWriteService } from '../services/AppWriteService';
 import { LicensesScreen } from './LicensesScreen';
+import { PrivacyPolicyScreen } from './PrivacyPolicyScreen';
 
 // Initialize AppWrite client
 const client = new Client()
@@ -27,6 +28,7 @@ interface SettingsItem {
 export function SettingsScreen({ onClose }: SettingsScreenProps) {
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
   const [licensesModalVisible, setLicensesModalVisible] = useState(false);
+  const [privacyModalVisible, setPrivacyModalVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
@@ -72,8 +74,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
   };
 
   const handlePrivacyLegal = () => {
-    // Replace with your privacy policy URL
-    Linking.openURL('https://yourapp.com/privacy');
+    setPrivacyModalVisible(true);
   };
 
   const handleLicenses = () => {
@@ -149,6 +150,15 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
         onRequestClose={() => setLicensesModalVisible(false)}
       >
         <LicensesScreen onClose={() => setLicensesModalVisible(false)} />
+      </Modal>
+
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={privacyModalVisible}
+        onRequestClose={() => setPrivacyModalVisible(false)}
+      >
+        <PrivacyPolicyScreen onClose={() => setPrivacyModalVisible(false)} />
       </Modal>
 
       <Modal

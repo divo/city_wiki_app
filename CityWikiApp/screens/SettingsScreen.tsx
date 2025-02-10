@@ -37,8 +37,12 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
   };
 
   const handleRateApp = () => {
-    // Replace with your app's App Store URL
-    Linking.openURL('https://apps.apple.com/app/yourappid');
+    if (Platform.OS === 'ios') {
+      Linking.openURL('https://apps.apple.com/app/id6741071597');
+    } else {
+      // Handle other platforms if needed
+      console.log('Rating is only available on iOS.');
+    }
   };
 
   const handleSendFeedback = () => {

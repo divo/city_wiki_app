@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import BottomSheet, { BottomSheetView, BottomSheetBackgroundProps } from '@gorhom/bottom-sheet';
 import Animated from 'react-native-reanimated';
@@ -38,28 +38,41 @@ export function PurchaseSheet({ city, onClose, onPurchase, ownedCities }: Purcha
   const handleFreeAccess = async () => {
     try {
       await PurchaseStorage.getInstance().markCityAsOwned(city.id);
-      onPurchase();
-      bottomSheetRef.current?.close();
+      // Modal will be dismissed via purchaseStorage listener
     } catch (error) {
-      console.error('Error purchasing city:', error);
+      console.error('Error processing free access:', error);
     }
   };
 
   const handlePurchase = async () => {
     try {
-      // Get the IAP service instance
       const iapService = IAPService.getInstance();
-      
-      // Request the purchase
-      const success = await iapService.purchaseCity(city.id);
-      if (success) {
-        onPurchase();
-        bottomSheetRef.current?.close();
-      }
+      await iapService.purchaseCity(city.id);
+      // Modal dismissal will be handled by purchaseStorage listener
     } catch (error) {
-      console.error('Error purchasing city:', error);
+      console.error('Error processing purchase:', error);
     }
   };
+
+  useEffect(() => {
+    const listener = async () => {
+      try {
+        const ownedCities = await PurchaseStorage.getInstance().getOwnedCities();
+        if (ownedCities.includes(city.id)) {
+          onPurchase();
+          bottomSheetRef.current?.close();
+        }
+      } catch (error) {
+        console.error('Error in purchase store listener:', error);
+      }
+    };
+
+    PurchaseStorage.getInstance().addChangeListener(listener);
+
+    return () => {
+      PurchaseStorage.getInstance().removeChangeListener(listener);
+    };
+  }, [city.id, onPurchase]);
 
   return (
     <View style={styles.container}>

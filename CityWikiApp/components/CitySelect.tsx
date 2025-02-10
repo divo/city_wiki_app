@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator, Animated } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator, Animated, Modal } from 'react-native';
 import { SearchBar } from './SearchBar';
 import { 
   useFonts,
@@ -15,6 +15,8 @@ import { PurchaseStorage } from '../services/PurchaseStorage';
 import { PurchaseSheet } from './PurchaseSheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { cities, City } from '../types/city';
+import { SettingsScreen } from '../screens/SettingsScreen';
+import { Ionicons } from '@expo/vector-icons';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -134,6 +136,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
     Montserrat_600SemiBold,
     Montserrat_500Medium,
   });
+  const [isSettingsVisible, setIsSettingsVisible] = useState(false);
 
   useEffect(() => {
     const loadNewlyOwnedCities = async () => {
@@ -232,6 +235,13 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
           <View style={styles.titleOverlay}>
             <Text style={styles.titleText}>City Wandr</Text>
           </View>
+          <TouchableOpacity
+            onPress={() => setIsSettingsVisible(true)}
+            style={styles.settingsButton}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <Ionicons name="settings-outline" size={24} color="white" />
+          </TouchableOpacity>
         </View>
 
         <ScrollView 
@@ -291,6 +301,14 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
           ownedCities={ownedCities}
         />
       )}
+
+      <Modal
+        visible={isSettingsVisible}
+        animationType="slide"
+        presentationStyle="fullScreen"
+      >
+        <SettingsScreen onClose={() => setIsSettingsVisible(false)} />
+      </Modal>
     </View>
   );
 }
@@ -423,5 +441,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  settingsButton: {
+    position: 'absolute',
+    right: 16,
+    top: 24,
+    zIndex: 1,
   },
 });

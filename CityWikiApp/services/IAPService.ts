@@ -200,6 +200,7 @@ class IAPService {
       
       if (!this.isSimulator) {
         // Process IAP purchases
+        console.log('Processing IAP purchases');
         for (const purchase of iapPurchases) {
           try {
             const cityId = this.getCityIdFromProductId(purchase.productId);

@@ -79,6 +79,7 @@ class IAPService {
             }
           }
         } catch (error) {
+          // TODO: Present something to the user
           console.error('Error processing purchase:', error);
         }
       });
@@ -166,7 +167,7 @@ class IAPService {
   }
 
   // Start a purchase flow
-  public async purchaseCity(cityId: string): Promise<boolean> {
+  public async purchaseCity(cityId: string) {
     try {
       // Find the city and its IAP ID
       const city = cities.find(c => c.id === cityId);
@@ -177,19 +178,14 @@ class IAPService {
       if (this.isSimulator) {
         // In simulator, directly mark as owned
         await this.purchaseStorage.markCityAsOwned(cityId);
-        return true;
       }
 
       // Request the purchase through Apple IAP
       await RNIap.requestPurchase({
         sku: city.iap_id
       });
-
-      // The purchase result will be handled by the purchaseUpdatedListener
-      return true;
     } catch (error) {
-      console.error('Failed to purchase city:', error);
-      return false;
+      console.warn('Purchase error:', error);
     }
   }
 

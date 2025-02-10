@@ -3,6 +3,7 @@ import * as RNIap from 'react-native-iap';
 import { cities } from '../types/city';
 import { EmitterSubscription, Platform } from 'react-native';
 import { AppWriteService } from './AppWriteService';
+import DeviceInfo from 'react-native-device-info';
 
 interface IAPProduct {
   id: string;
@@ -25,12 +26,8 @@ class IAPService {
   private constructor() {
     this.purchaseStorage = PurchaseStorage.getInstance();
     this.appWriteService = AppWriteService.getInstance();
-    // Check if running in simulator
-    this.isSimulator = Platform.select({
-      ios: !!/Simulator/.test(navigator?.userAgent),
-      android: false,
-      default: false,
-    });
+    // Initialize as false, will be set in initialize()
+    this.isSimulator = false;
   }
 
   public static getInstance(): IAPService {
@@ -45,6 +42,9 @@ class IAPService {
     if (this.isInitialized) return;
     
     try {
+      // Check if running in simulator
+      this.isSimulator = await DeviceInfo.isEmulator();
+      
       if (!this.isSimulator) {
         await this.initializeAppleIAP();
       } else {
@@ -76,8 +76,6 @@ class IAPService {
             if (cityId) {
               // Mark the city as owned locally
               await this.purchaseStorage.markCityAsOwned(cityId);
-              // Sync with AppWrite
-              await this.appWriteService.registerPurchase(purchase.productId);
             }
           }
         } catch (error) {
@@ -177,9 +175,8 @@ class IAPService {
       }
 
       if (this.isSimulator) {
-        // In simulator, directly mark as owned and sync to AppWrite
+        // In simulator, directly mark as owned
         await this.purchaseStorage.markCityAsOwned(cityId);
-        await this.appWriteService.registerPurchase(city.iap_id);
         return true;
       }
 
@@ -212,13 +209,9 @@ class IAPService {
             const cityId = this.getCityIdFromProductId(purchase.productId);
             if (cityId) {
               await this.purchaseStorage.markCityAsOwned(cityId);
-              // Register with AppWrite if not already there
-              if (!appWritePurchases.includes(purchase.productId)) {
-                await this.appWriteService.registerPurchase(purchase.productId);
-              }
             }
           } catch (error) {
-            console.error('Error processing restored IAP purchase:', error);
+            console.error('Error processing restored purchase:', error);
           }
         }
       }
@@ -238,18 +231,6 @@ class IAPService {
       console.error('Failed to restore purchases:', error);
       throw error;
     }
-  }
-
-  // Validate receipt
-  private async validateReceipt(receipt: string): Promise<boolean> {
-    // TODO: Validate receipt with backend
-    return false;
-  }
-
-  // Check if a product is owned
-  public async isProductOwned(productId: string): Promise<boolean> {
-    // TODO: Check if product is owned
-    return false;
   }
 }
 

@@ -1,6 +1,9 @@
 import { Client, Account, ID, Databases, Query } from 'react-native-appwrite';
 import { PurchaseStorage } from './PurchaseStorage';
 import { cities } from '../types/city';
+import * as Keychain from 'react-native-keychain';
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 
 export class AppWriteService {
   private static instance: AppWriteService;
@@ -9,6 +12,8 @@ export class AppWriteService {
   private purchaseStorage: PurchaseStorage;
   private static readonly DATABASE_ID = '67a875fa00164bc54a9e';
   private static readonly COLLECTION_ID = '67a87625002d105645ff';
+  private static readonly UUID_SERVICE = 'com.halfspud.CityWikiApp.uuid';
+  private cachedUserId: string | null = null;
 
   private constructor() {
     this.client = new Client()
@@ -18,6 +23,9 @@ export class AppWriteService {
 
     this.databases = new Databases(this.client);
     this.purchaseStorage = PurchaseStorage.getInstance();
+
+    // Setup listener for purchase storage changes
+    this.purchaseStorage.addChangeListener(this.handlePurchaseChange.bind(this));
   }
 
   public static getInstance(): AppWriteService {
@@ -27,9 +35,61 @@ export class AppWriteService {
     return AppWriteService.instance;
   }
 
+  private async handlePurchaseChange(): Promise<void> {
+    try {
+      // Get current owned cities
+      const ownedCities = await this.purchaseStorage.getOwnedCities();
+      
+      // Convert city IDs to SKUs
+      const skus = ownedCities
+        .map(cityId => cities.find(c => c.id === cityId)?.iap_id)
+        .filter((sku): sku is string => sku !== undefined);
+
+      // Get current AppWrite purchases
+      const currentPurchases = await this.getPurchasedSKUs();
+
+      // Find new SKUs that aren't in AppWrite yet
+      const newSkus = skus.filter(sku => !currentPurchases.includes(sku));
+
+      // Register each new SKU
+      for (const sku of newSkus) {
+        await this.registerPurchase(sku);
+      }
+    } catch (error) {
+      console.error('Error handling purchase change:', error);
+    }
+  }
+
   private async getUserId(): Promise<string> {
-    // Get device unique ID
-    return '67a878e600038bb88801';
+    try {
+      // Return cached ID if available
+      if (this.cachedUserId) {
+        return this.cachedUserId;
+      }
+
+      // Try to retrieve the UUID from keychain
+      const credentials = await Keychain.getGenericPassword({ 
+        service: AppWriteService.UUID_SERVICE 
+      });
+      
+      if (credentials) {
+        this.cachedUserId = credentials.password;
+        return credentials.password;
+      }
+
+      // Generate and store a new UUID if none exists
+      const newUUID = uuidv4();
+      await Keychain.setGenericPassword('uuid', newUUID, { 
+        service: AppWriteService.UUID_SERVICE,
+        accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK
+      });
+      
+      this.cachedUserId = newUUID;
+      return newUUID;
+    } catch (error) {
+      console.error('Error getting/setting UUID:', error);
+      throw error;
+    }
   }
 
   public async getPurchasedSKUs(): Promise<string[]> {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Linking, TextInput, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Linking, TextInput, Modal, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../styles/globalStyles';
 import { IAPService } from '../services/IAPService';
@@ -138,17 +138,30 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
 
       <Modal
         animationType="slide"
-        transparent={true}
+        transparent={false}
         visible={feedbackModalVisible}
         onRequestClose={() => setFeedbackModalVisible(false)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <TouchableOpacity 
+              onPress={() => setFeedbackModalVisible(false)}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons name="close" size={24} color="#000" />
+            </TouchableOpacity>
             <Text style={styles.modalTitle}>Send Feedback</Text>
-            
+            <View style={{ width: 24 }} />
+          </View>
+          
+          <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.modalContent}
+          >
             <TextInput
               style={styles.input}
               placeholder="Your Email"
+              placeholderTextColor="#999"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -158,6 +171,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
             <TextInput
               style={[styles.input, styles.messageInput]}
               placeholder="Your Message"
+              placeholderTextColor="#999"
               value={message}
               onChangeText={setMessage}
               multiline
@@ -165,23 +179,14 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
               textAlignVertical="top"
             />
 
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.cancelButton]} 
-                onPress={() => setFeedbackModalVisible(false)}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.submitButton]} 
-                onPress={submitFeedback}
-              >
-                <Text style={styles.submitButtonText}>Submit</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+            <TouchableOpacity 
+              style={styles.submitButton}
+              onPress={submitFeedback}
+            >
+              <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
       </Modal>
     </SafeAreaView>
   );
@@ -259,24 +264,29 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#F8F9FA',
+  },
+  modalHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+    backgroundColor: 'white',
   },
   modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 20,
-    width: '90%',
-    maxWidth: 400,
+    flex: 1,
+    padding: 16,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: '600',
-    marginBottom: 20,
-    textAlign: 'center',
+    color: '#000',
   },
   input: {
+    backgroundColor: 'white',
     borderWidth: 1,
     borderColor: '#DDDDDD',
     borderRadius: 8,
@@ -285,34 +295,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   messageInput: {
-    height: 100,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  modalButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 8,
-    marginHorizontal: 8,
-  },
-  cancelButton: {
-    backgroundColor: '#F5F5F5',
+    height: 150,
   },
   submitButton: {
     backgroundColor: colors.primary,
-  },
-  cancelButtonText: {
-    color: '#666666',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '600',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
   },
   submitButtonText: {
     color: 'white',
-    textAlign: 'center',
     fontSize: 16,
     fontWeight: '600',
   },

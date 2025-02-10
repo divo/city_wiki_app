@@ -229,6 +229,7 @@ export const requiredAssets = {
   'drink.png': require('./assets/drink.png'),
   'eat.png': require('./assets/eat.png'),
   'favicon.png': require('./assets/favicon.png'),
+  'freepik-logo.png': require('./assets/freepik-logo.png'),
   'icon.png': require('./assets/icon.png'),
   'istanbul.png': require('./assets/istanbul.png'),
   'las_vegas.png': require('./assets/las_vegas.png'),
@@ -240,6 +241,7 @@ export const requiredAssets = {
   'onboarding_hero.png': require('./assets/onboarding_hero.png'),
   'paris_cover.png': require('./assets/paris_cover.png'),
   'paris_stamp.png': require('./assets/paris_stamp.png'),
+  'pixabay-logo.png': require('./assets/pixabay-logo.png'),
   'play.png': require('./assets/play.png'),
   'rome_cover.png': require('./assets/rome_cover.png'),
   'rome_stamp.png': require('./assets/rome_stamp.png'),
@@ -252,5 +254,7 @@ export const requiredAssets = {
   'title_icon.png': require('./assets/title_icon.png'),
   'title_image.png': require('./assets/title_image.png'),
   'tokyo_cover.png': require('./assets/tokyo_cover.png'),
-  'tokyo_stamp.png': require('./assets/tokyo_stamp.png')
+  'tokyo_stamp.png': require('./assets/tokyo_stamp.png'),
+  'wikimedia-logo.png': require('./assets/wikimedia-logo.png'),
+  'wikivoyage-logo.png': require('./assets/wikivoyage-logo.png')
 };

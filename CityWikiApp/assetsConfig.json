@@ -231,6 +231,7 @@
     "assets/drink.png",
     "assets/eat.png",
     "assets/favicon.png",
+    "assets/freepik-logo.png",
     "assets/icon.png",
     "assets/istanbul.png",
     "assets/las_vegas.png",
@@ -242,6 +243,7 @@
     "assets/onboarding_hero.png",
     "assets/paris_cover.png",
     "assets/paris_stamp.png",
+    "assets/pixabay-logo.png",
     "assets/play.png",
     "assets/rome_cover.png",
     "assets/rome_stamp.png",
@@ -254,6 +256,8 @@
     "assets/title_icon.png",
     "assets/title_image.png",
     "assets/tokyo_cover.png",
-    "assets/tokyo_stamp.png"
+    "assets/tokyo_stamp.png",
+    "assets/wikimedia-logo.png",
+    "assets/wikivoyage-logo.png"
   ]
 }

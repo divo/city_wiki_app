@@ -5,6 +5,7 @@ import { colors } from '../styles/globalStyles';
 import { IAPService } from '../services/IAPService';
 import { Client, ExecutionMethod, Functions } from 'react-native-appwrite';
 import { AppWriteService } from '../services/AppWriteService';
+import { LicensesScreen } from './LicensesScreen';
 
 // Initialize AppWrite client
 const client = new Client()
@@ -25,6 +26,7 @@ interface SettingsItem {
 
 export function SettingsScreen({ onClose }: SettingsScreenProps) {
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
+  const [licensesModalVisible, setLicensesModalVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
@@ -75,7 +77,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
   };
 
   const handleLicenses = () => {
-    // TODO: Show licenses screen
+    setLicensesModalVisible(true);
   };
 
   const settingsItems: SettingsItem[] = [
@@ -139,6 +141,15 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
           </TouchableOpacity>
         ))}
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={licensesModalVisible}
+        onRequestClose={() => setLicensesModalVisible(false)}
+      >
+        <LicensesScreen onClose={() => setLicensesModalVisible(false)} />
+      </Modal>
 
       <Modal
         animationType="slide"

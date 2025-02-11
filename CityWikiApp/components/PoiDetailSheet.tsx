@@ -18,6 +18,55 @@ interface PoiDetailSheetProps {
   snapIndex?: number;
 }
 
+interface MapPreviewProps {
+  poi: PointOfInterest;
+  onPress: () => void;
+}
+
+const MapPreview = React.memo(({ poi, onPress }: MapPreviewProps) => {
+  return (
+    <TouchableOpacity 
+      style={styles.mapPreview} 
+      onPress={onPress}
+      activeOpacity={0.9}
+    >
+      <View style={StyleSheet.absoluteFill} pointerEvents="none">
+        <Mapbox.MapView
+          style={styles.map}
+          styleURL={MAP_STYLE_URL}
+          scrollEnabled={false}
+          pitchEnabled={false}
+          rotateEnabled={false}
+          zoomEnabled={false}
+          attributionEnabled={false}
+          logoEnabled={false}
+          compassEnabled={false}
+        >
+          <Mapbox.Camera
+            defaultSettings={{
+              centerCoordinate: [Number(poi.longitude), Number(poi.latitude)],
+              zoomLevel: 14,
+            }}
+          />
+          <Mapbox.PointAnnotation
+            id={poi.name}
+            coordinate={[poi.longitude, poi.latitude]}
+          >
+            <View style={styles.mapMarker} />
+          </Mapbox.PointAnnotation>
+        </Mapbox.MapView>
+      </View>
+      
+      <View style={styles.mapOverlay}>
+        <View style={styles.mapOverlayContent}>
+          <Ionicons name="map-outline" size={20} color="#fff" />
+          <Text style={styles.mapOverlayText}>Show on Map</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+});
+
 const PoiDetailSheetBase = ({ poi, onClose, cityId, onMapPress, snapIndex }: PoiDetailSheetProps) => {
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const [localBookmarked, setLocalBookmarked] = useState<boolean | null>(null);
@@ -170,45 +219,7 @@ const PoiDetailSheetBase = ({ poi, onClose, cityId, onMapPress, snapIndex }: Poi
               />
             )}
 
-            <TouchableOpacity 
-              style={styles.mapPreview} 
-              onPress={handleMapPress}
-              activeOpacity={0.9}
-            >
-              <View style={StyleSheet.absoluteFill} pointerEvents="none">
-                <Mapbox.MapView
-                  style={styles.map}
-                  styleURL={MAP_STYLE_URL}
-                  scrollEnabled={false}
-                  pitchEnabled={false}
-                  rotateEnabled={false}
-                  zoomEnabled={false}
-                  attributionEnabled={false}
-                  logoEnabled={false}
-                  compassEnabled={false}
-                >
-                  <Mapbox.Camera
-                    defaultSettings={{
-                      centerCoordinate: [Number(poi.longitude), Number(poi.latitude)],
-                      zoomLevel: 14,
-                    }}
-                  />
-                  <Mapbox.PointAnnotation
-                    id={poi.name}
-                    coordinate={[poi.longitude, poi.latitude]}
-                  >
-                    <View style={styles.mapMarker} />
-                  </Mapbox.PointAnnotation>
-                </Mapbox.MapView>
-              </View>
-              
-              <View style={styles.mapOverlay}>
-                <View style={styles.mapOverlayContent}>
-                  <Ionicons name="map-outline" size={20} color="#fff" />
-                  <Text style={styles.mapOverlayText}>Show on Map</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
+            <MapPreview poi={poi} onPress={handleMapPress} />
 
             <TouchableOpacity style={styles.directionsButton} onPress={openMaps}>
               <Ionicons name="navigate-outline" size={20} color="#fff" />

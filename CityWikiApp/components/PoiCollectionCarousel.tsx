@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, FlatList, ListRenderItem } from 'react-native';
 import { PointOfInterest } from '../services/LocationService';
 import { getImageSource } from '../utils/imageUtils';
 
@@ -16,47 +16,61 @@ interface PoiListViewProps {
 
 // Used to display a carousel of PoiLists, a list of lists of POIs
 export const PoiCollectionCarousel: React.FC<PoiListViewProps> = ({ title, pois, onSelectList }) => {
+  const ITEM_WIDTH = 272; // width 260 + marginRight 12
+
   const getListImage = (list: PoiList): string | null => {
     // Find the first POI with an image_url
     const poiWithImage = list.pois.find(poi => poi.image_url);
     return poiWithImage?.image_url || null;
   };
 
+  const renderItem: ListRenderItem<PoiList> = React.useCallback(({ item: list }) => {
+    const imageUrl = getListImage(list);
+    return (
+      <TouchableOpacity
+        style={styles.listTile}
+        onPress={() => onSelectList?.(list)}
+      >
+        {imageUrl && (
+          <Image
+            source={getImageSource(imageUrl)}
+            style={styles.listImage}
+            resizeMode="cover"
+          />
+        )}
+        <View style={styles.listContent}>
+          <Text style={styles.listTitle} numberOfLines={2}>
+            {list.title}
+          </Text>
+          <Text style={styles.listCount}>
+            {list.pois.length} places
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }, [onSelectList]);
+
+  const getItemLayout = React.useCallback((data: ArrayLike<PoiList> | null | undefined, index: number) => ({
+    length: ITEM_WIDTH,
+    offset: ITEM_WIDTH * index,
+    index,
+  }), [ITEM_WIDTH]);
+
+  const keyExtractor = React.useCallback((item: PoiList, index: number) => 
+    `${item.title}-${index}`, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
-      <ScrollView 
-        horizontal 
+      <FlatList
+        data={pois}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
-      >
-        {pois.map((list, index) => {
-          const imageUrl = getListImage(list);
-          return (
-            <TouchableOpacity
-              key={`${list.title}-${index}`}
-              style={styles.listTile}
-              onPress={() => onSelectList?.(list)}
-            >
-              {imageUrl && (
-                <Image
-                  source={getImageSource(imageUrl)}
-                  style={styles.listImage}
-                  resizeMode="cover"
-                />
-              )}
-              <View style={styles.listContent}>
-                <Text style={styles.listTitle} numberOfLines={2}>
-                  {list.title}
-                </Text>
-                <Text style={styles.listCount}>
-                  {list.pois.length} places
-                </Text>
-              </View>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+        getItemLayout={getItemLayout}
+      />
     </View>
   );
 };

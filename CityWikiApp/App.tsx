@@ -26,38 +26,6 @@ import { OfflineMapService } from './services/OfflineMapService';
 import * as FileSystem from 'expo-file-system';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const jsonFiles = [
-  'assets/Paris/Paris.json',
-];
-
-async function resolveJsonAssets(fileList: string[]) {
-  const resolvedAssets = [];
-
-  for (const file of fileList) {
-    try {
-      // Resolve the asset and ensure it's available
-      const asset = Asset.fromURI(FileSystem.documentDirectory + file);
-      await asset.downloadAsync();
-
-      // Push resolved asset details to the result
-      resolvedAssets.push({
-        file,
-        localUri: asset.localUri, // File location in the filesystem
-      });
-    } catch (error) {
-      console.error(`Error resolving JSON asset: ${file}`, error);
-    }
-  }
-
-  return resolvedAssets;
-}
-
-resolveJsonAssets(jsonFiles).then((resolvedAssets) => {
-  resolvedAssets.forEach(({ file, localUri }) => {
-    console.log(`Resolved JSON asset: ${file}, located at: ${localUri}`);
-  });
-});
-
 type RootStackParamList = {
   CitySelect: undefined;
   CityGuide: {

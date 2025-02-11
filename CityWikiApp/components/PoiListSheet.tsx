@@ -58,7 +58,7 @@ export function PoiListSheet({
 
   const ITEM_HEIGHT = 68; // Fixed height for each POI list item
 
-  const renderSegmentButton = (type: FilterType, label: string) => (
+  const renderSegmentButton = useCallback((type: FilterType, label: string) => (
     <TouchableOpacity
       style={[
         styles.segmentButton,
@@ -76,7 +76,7 @@ export function PoiListSheet({
         {label}
       </Text>
     </TouchableOpacity>
-  );
+  ), [activeFilter, userLocation]);
 
   return (
     <BottomSheet

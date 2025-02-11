@@ -7,7 +7,7 @@ interface SearchBarProps {
   value: string;
 }
 
-export function SearchBar({ onChangeText, value }: SearchBarProps) {
+const SearchBarBase = ({ onChangeText, value }: SearchBarProps) => {
   return (
     <View style={styles.container}>
       <Ionicons name="search" size={20} color="#666666" style={styles.icon} />
@@ -30,6 +30,8 @@ export function SearchBar({ onChangeText, value }: SearchBarProps) {
     </View>
   );
 }
+
+export const SearchBar = React.memo(SearchBarBase);
 
 const styles = StyleSheet.create({
   container: {

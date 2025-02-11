@@ -151,6 +151,12 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   const spinValue = useRef(new Animated.Value(0)).current;
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [requiredResources, setRequiredResources] = useState(0);
+  const [filteredPoisState, setFilteredPoisState] = useState<PointOfInterest[]>([]);
+  const filterRequestRef = useRef<number>();
+  const lastFilterParams = useRef<{ query: string; locations: PointOfInterest[] }>({ 
+    query: '', 
+    locations: [] 
+  });
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -282,14 +288,39 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     });
   }, [location]);
 
-  // Update the filteredPois to include sorting capability
-  const filteredPois = useMemo(() => {
-    let filtered = locations;
-    if (searchQuery.trim()) {
-      filtered = filtered.filter(poi => fuzzyMatch(poi.name, searchQuery.trim()));
+  // Add this useEffect to handle background filtering
+  useEffect(() => {
+    // Cancel any pending filter operations
+    if (filterRequestRef.current) {
+      cancelAnimationFrame(filterRequestRef.current);
     }
-    return filtered;
+
+    // Skip if parameters haven't changed
+    if (lastFilterParams.current.query === searchQuery.trim() && 
+        lastFilterParams.current.locations === locations) {
+      return;
+    }
+
+    lastFilterParams.current = { query: searchQuery.trim(), locations };
+
+    // Schedule filtering in the background
+    filterRequestRef.current = requestAnimationFrame(() => {
+      let filtered = locations;
+      if (searchQuery.trim()) {
+        filtered = locations.filter(poi => fuzzyMatch(poi.name, searchQuery.trim()));
+      }
+      setFilteredPoisState(filtered);
+    });
+
+    return () => {
+      if (filterRequestRef.current) {
+        cancelAnimationFrame(filterRequestRef.current);
+      }
+    };
   }, [locations, searchQuery]);
+
+  // Replace the existing filteredPois with a reference to the state
+  const filteredPois = filteredPoisState;
 
   // Convert POIs to GeoJSON feature collection
   const poiFeatures = useMemo(() => ({

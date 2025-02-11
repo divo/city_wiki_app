@@ -56,6 +56,8 @@ export function PoiListSheet({
     }
   }, [pois, activeFilter, sortByDistance]);
 
+  const ITEM_HEIGHT = 68; // Fixed height for each POI list item
+
   const renderSegmentButton = (type: FilterType, label: string) => (
     <TouchableOpacity
       style={[
@@ -102,6 +104,7 @@ export function PoiListSheet({
         data={filteredPois}
         keyExtractor={(item) => `${item.name}-${item.latitude}-${item.longitude}`}
         contentContainerStyle={styles.scrollContent}
+        getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
         renderItem={({ item }) => (
           <TouchableOpacity 
             style={styles.poiItem}

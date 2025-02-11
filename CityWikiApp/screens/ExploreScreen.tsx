@@ -26,6 +26,57 @@ interface ExploreScreenProps {
 //const TAB_BAR_HEIGHT = Platform.OS === 'ios' ? 85 : 65;
 //const NAV_BAR_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
 
+interface HeroSectionProps {
+  heroImageUrl: string;
+  cityName: string;
+}
+
+const HeroSection = React.memo(({ heroImageUrl, cityName }: HeroSectionProps) => (
+  <View style={styles.heroContainer}>
+    <Image
+      source={getImageSource(heroImageUrl)}
+      style={styles.heroImage}
+      resizeMode="cover"
+    />
+    <View style={styles.heroOverlay}>
+      <Text style={styles.cityNameOverlay}>{cityName}</Text>
+    </View>
+  </View>
+));
+
+interface AboutSectionProps {
+  cityAbout: string;
+}
+
+const AboutSection = React.memo(({ cityAbout }: AboutSectionProps) => (
+  <Text style={styles.description}>
+    {cityAbout}
+  </Text>
+));
+
+interface ListModalProps {
+  isVisible: boolean;
+  selectedList: { title: string; pois: PointOfInterest[] } | null;
+  cityId: string;
+  onClose: () => void;
+}
+
+const ListModal = React.memo(({ isVisible, selectedList, cityId, onClose }: ListModalProps) => (
+  <Modal
+    visible={isVisible}
+    animationType="slide"
+    presentationStyle="fullScreen"
+  >
+    <GestureHandlerRootView style={styles.container}>
+      <PoiListDetailView
+        list={selectedList}
+        cityId={cityId}
+        onClose={onClose}
+      />
+    </GestureHandlerRootView>
+  </Modal>
+));
+
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
   const { mapZoom, cityId } = route.params;
   const placeholderCenter: [number, number] = [-122.4194, 37.7749];
@@ -71,18 +122,22 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
     loadLocations();
   }, [cityId]);
 
-  const handlePoiSelect = (poi: PointOfInterest) => {
+  const handlePoiSelect = useCallback((poi: PointOfInterest) => {
     setSelectedPoi(poi);
-  };
+  }, []);
 
-  const handleShare = () => {
+  const handleShare = useCallback(() => {
     console.log('Sharing POI:', selectedPoi?.name);
-  };
+  }, [selectedPoi?.name]);
 
-  const handleListSelect = (list: { title: string; pois: PointOfInterest[] }) => {
+  const handleListSelect = useCallback((list: { title: string; pois: PointOfInterest[] }) => {
     setSelectedList(list);
     setIsListModalVisible(true);
-  };
+  }, []);
+
+  const handleModalClose = useCallback(() => {
+    setIsListModalVisible(false);
+  }, []);
 
   const mustSeeList = useMemo(() => {
     return poiLists.find(list => 
@@ -93,24 +148,9 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Hero Image with City Name Overlay */}
-        <View style={styles.heroContainer}>
-          <Image
-            source={getImageSource(heroImageUrl)} // This works if the asset is bundled
-            style={styles.heroImage}
-            resizeMode="cover"
-          />
-          <View style={styles.heroOverlay}>
-            <Text style={styles.cityNameOverlay}>{cityName}</Text>
-          </View>
-        </View>
-        
-        {/* Description */}
-        <Text style={styles.description}>
-          {cityAbout}
-        </Text>
+        <HeroSection heroImageUrl={heroImageUrl} cityName={cityName} />
+        <AboutSection cityAbout={cityAbout} />
 
-        {/* Must See/Highlights Section */}
         {mustSeeList && (
           <PoiListCarousel
             title={mustSeeList.title}
@@ -120,7 +160,6 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
           />
         )}
 
-        {/* POI Lists */}
         <PoiCollectionCarousel
           key="collections"
           title="Collections"
@@ -130,23 +169,15 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route }) => {
           onSelectList={handleListSelect}
         />
 
-        {/* Bottom Spacing */}
         <View style={styles.bottomSpacing} />
       </ScrollView>
 
-      <Modal
-        visible={isListModalVisible}
-        animationType="slide"
-        presentationStyle="fullScreen"
-      >
-        <GestureHandlerRootView style={styles.container}>
-          <PoiListDetailView
-            list={selectedList}
-            cityId={cityId}
-            onClose={() => setIsListModalVisible(false)}
-          />
-        </GestureHandlerRootView>
-      </Modal>
+      <ListModal
+        isVisible={isListModalVisible}
+        selectedList={selectedList}
+        cityId={cityId}
+        onClose={handleModalClose}
+      />
 
       {selectedPoi && (
         <PoiDetailSheet 
@@ -263,5 +294,5 @@ const styles = StyleSheet.create({
 });
  
 
-export default ExploreScreen;
+export default React.memo(ExploreScreen);
 

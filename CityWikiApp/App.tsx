@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect, useCallback, useMemo, useContext } from 'react';
+import { NavigationContainer, useNavigation, useRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Button, View, TouchableOpacity, Text, StyleSheet, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -24,15 +24,21 @@ import { colors } from './styles/globalStyles';
 import { IAPService } from './services/IAPService';
 import { OfflineMapService } from './services/OfflineMapService';
 import * as FileSystem from 'expo-file-system';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+// Type definitions
 type RootStackParamList = {
-  CitySelect: undefined;
+  CitySelect: {
+    onCitySelect: (cityId: string) => Promise<void>;
+    useLocalData: boolean;
+    handleClearCache: () => void;
+    toggleLocalData: () => void;
+    showLanding: boolean;
+  };
   CityGuide: {
     cityId: string;
+    headerTitle: string;
     mapZoom: number;
     onMapStateChange: (center: [number, number], zoom: number) => void;
-    headerTitle: string;
   };
   Landing: undefined;
 };
@@ -58,78 +64,41 @@ const BookmarksScreen = React.memo(({ cityId, favorites }: { cityId: string; fav
   </View>
 ));
 
-// Memoize TabNavigator
-const TabNavigator = React.memo(({ route, navigation }: any) => {
-  const { cityId, mapZoom, onMapStateChange, headerTitle } = route.params;
-  const locationService = LocationService.getInstance();
-  const storageService = StorageService.getInstance();
-  const centerCoordinates = useMemo(() => locationService.getCenterCoordinates(), []);
-  const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
-  const { favorites, loadFavorites } = useFavorites();
-
-  const screenOptions = useMemo(() => {
-    return ({ route }: { route: any }) => ({
-      tabBarIcon: ({ focused, color, size }: { focused: boolean; color: string; size: number }) => {
-        let iconName: keyof typeof Ionicons.glyphMap;
-        if (route.name === 'Map') {
-          iconName = focused ? 'map' : 'map-outline';
-        } else if (route.name === 'Guide') {
-          iconName = focused ? 'compass' : 'compass-outline';
-        } else {
-          iconName = focused ? 'bookmark' : 'bookmark-outline';
-        }
-        return <Ionicons name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: colors.primary,
-      tabBarInactiveTintColor: 'gray',
-      headerTitle: headerTitle,
-      headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons 
-            name="chevron-back" 
-            size={28} 
-            color={colors.primary}
-            style={{ marginLeft: 16 }}
-          />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation, headerTitle]);
-
-  // Load favorites when tab is focused
-  useEffect(() => {
-    loadFavorites(cityId);
-  }, [cityId, loadFavorites]);
-
-  const renderGuideScreen = useCallback(() => (
+// Add these screen wrapper components at the top level after the memoized components
+const GuideScreenWrapper = React.memo(({ route }: { route: any }) => {
+  const { mapZoom, cityId } = route.params;
+  
+  return (
     <MemoizedExploreScreen
       route={{ params: { mapZoom, cityId } }}
     />
-  ), [mapZoom, cityId]);
+  );
+});
 
-  const renderMapScreen = useCallback(() => (
+const MapScreenWrapper = React.memo(({ route }: { route: any }) => {
+  const { mapZoom, cityId, onMapStateChange } = route.params;
+  const locationService = LocationService.getInstance();
+  const centerCoordinates = useMemo(() => locationService.getCenterCoordinates(), []);
+  
+  return (
     <MemoizedMapScreen
       initialZoom={mapZoom}
       initialCenter={centerCoordinates}
       onMapStateChange={onMapStateChange}
       cityId={cityId}
     />
-  ), [mapZoom, centerCoordinates, onMapStateChange, cityId]);
+  );
+});
 
-  const renderBookmarksScreen = useCallback(() => (
-    <BookmarksScreen cityId={cityId} favorites={favorites} />
-  ), [cityId, favorites]);
-
+const BookmarksScreenWrapper = React.memo(({ route }: { route: any }) => {
+  const { cityId } = route.params;
+  const { favorites } = useFavorites();
+  
   return (
-    <Tab.Navigator screenOptions={screenOptions}>
-      <Tab.Screen name="Guide" component={renderGuideScreen} />
-      <Tab.Screen name="Map" component={renderMapScreen} />
-      <Tab.Screen 
-        name="Bookmarks" 
-        component={renderBookmarksScreen}
-        options={{ tabBarLabel: 'Bookmarks' }}
-      />
-    </Tab.Navigator>
+    <BookmarksScreen 
+      cityId={cityId} 
+      favorites={favorites} 
+    />
   );
 });
 
@@ -191,21 +160,123 @@ const CitySelectScreen = React.memo(({
   );
 });
 
+// Create proper screen components for the stack navigator
+const CitySelectScreenWrapper = React.memo(({ route }: { route: any }) => {
+  const { onCitySelect, useLocalData, handleClearCache, toggleLocalData, showLanding } = route.params;
+  return (
+    <CitySelectScreen 
+      onCitySelect={onCitySelect}
+      useLocalData={useLocalData}
+      handleClearCache={handleClearCache}
+      toggleLocalData={toggleLocalData}
+      showLanding={showLanding}
+    />
+  );
+});
+
+const LandingScreenWrapper = React.memo(({ navigation }: { navigation: any }) => (
+  <LandingScreen onDismiss={() => navigation.goBack()} />
+));
+
+// Update TabNavigator to use the wrapper components directly
+const TabNavigator = React.memo(({ route, navigation }: any) => {
+  const { cityId, headerTitle, mapZoom, onMapStateChange } = route.params;
+  const { loadFavorites } = useFavorites();
+
+  const screenOptions = useMemo(() => {
+    return ({ route }: { route: any }) => ({
+      tabBarIcon: ({ focused, color, size }: { focused: boolean; color: string; size: number }) => {
+        let iconName: keyof typeof Ionicons.glyphMap;
+        if (route.name === 'Map') {
+          iconName = focused ? 'map' : 'map-outline';
+        } else if (route.name === 'Guide') {
+          iconName = focused ? 'compass' : 'compass-outline';
+        } else {
+          iconName = focused ? 'bookmark' : 'bookmark-outline';
+        }
+        return <Ionicons name={iconName} size={size} color={color} />;
+      },
+      tabBarActiveTintColor: colors.primary,
+      tabBarInactiveTintColor: 'gray',
+      headerTitle: headerTitle,
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons 
+            name="chevron-back" 
+            size={28} 
+            color={colors.primary}
+            style={{ marginLeft: 16 }}
+          />
+        </TouchableOpacity>
+      ),
+      tabBarHideOnKeyboard: true,
+      tabBarStyle: { elevation: 0, borderTopWidth: 1, borderTopColor: '#EEEEEE' },
+      tabBarLabelStyle: { paddingBottom: 4 },
+      animationEnabled: false,
+    });
+  }, [navigation, headerTitle]);
+
+  // Load favorites when tab is focused
+  useEffect(() => {
+    loadFavorites(cityId);
+  }, [cityId, loadFavorites]);
+
+  return (
+    <Tab.Navigator screenOptions={screenOptions}>
+      <Tab.Screen 
+        name="Guide" 
+        component={GuideScreenWrapper}
+        initialParams={{ mapZoom, cityId }}
+      />
+      <Tab.Screen 
+        name="Map" 
+        component={MapScreenWrapper}
+        initialParams={{ mapZoom, cityId, onMapStateChange }}
+      />
+      <Tab.Screen 
+        name="Bookmarks" 
+        component={BookmarksScreenWrapper}
+        initialParams={{ cityId }}
+        options={{ tabBarLabel: 'Bookmarks' }}
+      />
+    </Tab.Navigator>
+  );
+});
+
 // Main App component with memoized callbacks and values
-const App = () => {
+const AppNavigator = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [mapZoom, setMapZoom] = useState(12);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [useLocalData, setUseLocalData] = useState(true);
   const [showLanding, setShowLanding] = useState(false);
 
+  const landingScreenOptions = useMemo(() => ({
+    presentation: 'modal' as const,
+    animation: 'slide_from_bottom' as const,
+    headerShown: false,
+    contentStyle: { backgroundColor: 'transparent' }
+  }), []);
+
+  const stackNavigatorOptions = useMemo(() => ({
+    headerShown: false,
+    animation: 'fade' as const,
+    animationDuration: 200
+  }), []);
+
   const handleMapStateChange = useCallback((center: [number, number], zoom: number) => {
     setMapZoom(zoom);
   }, []);
 
   const handleCitySelect = useCallback(async (cityId: string) => {
-    return Promise.resolve();
-  }, []);
+    navigation.navigate('CityGuide', {
+      cityId,
+      headerTitle: LocationService.getInstance().getCityInfo()?.name || '',
+      mapZoom: mapZoom,
+      onMapStateChange: handleMapStateChange
+    });
+  }, [mapZoom, handleMapStateChange, navigation]);
 
   const handleClearCache = useCallback(async () => {
     await AsyncStorage.clear();
@@ -217,96 +288,41 @@ const App = () => {
     setUseLocalData(prev => !prev);
   }, []);
 
-  const renderCitySelectScreen = useCallback(() => (
-    <CitySelectScreen 
-      onCitySelect={handleCitySelect}
-      useLocalData={useLocalData}
-      handleClearCache={handleClearCache}
-      toggleLocalData={toggleLocalData}
-      showLanding={showLanding}
-    />
-  ), [handleCitySelect, useLocalData, handleClearCache, toggleLocalData, showLanding]);
+  const citySelectScreenParams = useMemo(() => ({
+    onCitySelect: handleCitySelect,
+    useLocalData,
+    handleClearCache,
+    toggleLocalData,
+    showLanding
+  }), [handleCitySelect, useLocalData, handleClearCache, toggleLocalData, showLanding]);
 
-  const renderLandingScreen = useCallback((props: any) => (
-    <LandingScreen onDismiss={() => props.navigation.goBack()} />
-  ), []);
+  return (
+    <Stack.Navigator screenOptions={stackNavigatorOptions}>
+      <Stack.Screen 
+        name="CitySelect" 
+        component={CitySelectScreenWrapper}
+        initialParams={citySelectScreenParams}
+      />
+      <Stack.Screen 
+        name="CityGuide" 
+        component={TabNavigator}
+      />
+      <Stack.Screen
+        name="Landing"
+        component={LandingScreenWrapper}
+        options={landingScreenOptions}
+      />
+    </Stack.Navigator>
+  );
+};
 
-  useEffect(() => {
-    checkFirstLaunch();
-  }, []);
-
-  useEffect(() => {
-    const initializeIAP = async () => {
-      try {
-        await IAPService.getInstance().initialize();
-      } catch (error) {
-        console.error('Failed to initialize IAP:', error);
-      }
-    };
-
-    initializeIAP();
-
-    const subscription = AppState.addEventListener('change', async (nextAppState) => {
-      if (nextAppState === 'background' || nextAppState === 'inactive') {
-        try {
-          await IAPService.getInstance().endConnection();
-        } catch (error) {
-          console.error('Failed to end IAP connection:', error);
-        }
-      } else if (nextAppState === 'active') {
-        try {
-          await IAPService.getInstance().initialize();
-        } catch (error) {
-          console.error('Failed to reinitialize IAP:', error);
-        }
-      }
-    });
-
-    return () => {
-      subscription.remove();
-      IAPService.getInstance().endConnection().catch(error => {
-        console.error('Failed to end IAP connection during cleanup:', error);
-      });
-    };
-  }, []);
-
-  useEffect(() => {
-    const getLocation = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-      await Location.getCurrentPositionAsync({});
-    };
-
-    getLocation();
-  }, []);
-
-  const checkFirstLaunch = useCallback(async () => {
-    const isFirstLaunch = await StorageService.getInstance().checkFirstLaunch();
-    setShowLanding(isFirstLaunch);
-  }, []);
-
+const App = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BottomSheetModalProvider>
         <FavoritesProvider>
           <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="CitySelect" component={renderCitySelectScreen} />
-              <Stack.Screen name="CityGuide" component={TabNavigator} />
-              <Stack.Screen
-                name="Landing"
-                component={renderLandingScreen}
-                options={{
-                  presentation: 'modal',
-                  animation: 'slide_from_bottom',
-                  headerShown: false,
-                  contentStyle: { backgroundColor: 'transparent' }
-                }}
-              />
-            </Stack.Navigator>
+            <AppNavigator />
           </NavigationContainer>
         </FavoritesProvider>
       </BottomSheetModalProvider>

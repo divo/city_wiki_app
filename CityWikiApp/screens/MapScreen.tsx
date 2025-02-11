@@ -461,6 +461,107 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     setSelectedCategory(category);
   }, []);
 
+  // Memoize layer styles
+  const shadowLayerStyle = useMemo(() => ({
+    circleRadius: 16,
+    circleColor: '#000000',
+    circleOpacity: [
+      'case',
+      ['==', ['get', 'poiName'], selectedPoi?.name || ''],
+      0.5,
+      0
+    ],
+    circleBlur: 3,
+    circleSortKey: 0
+  }), [selectedPoi?.name]);
+
+  const dotsLayerStyle = useMemo(() => ({
+    circleRadius: [
+      'case',
+      ['==', ['get', 'poiName'], selectedPoi?.name || ''],
+      8,  // Selected POI size
+      5   // Normal POI size
+    ],
+    circleColor: [
+      'match',
+      ['get', 'poiCategory'],
+      'see', '#F0B429',
+      'eat', '#F35627',
+      'sleep', '#0967D2',
+      'shop', '#DA127D',
+      'drink', '#E12D39',
+      'play', '#6CD410',
+      '#FFFFFF'
+    ],
+    circleSortKey: [
+      'match',
+      ['get', 'poiCategory'],
+      'see', 2,    // See POIs will render on top
+      'sleep', 0,  // Sleep POIs will render underneath
+      1           // All other POIs will render in the middle
+    ],
+    circleStrokeWidth: [
+      'case',
+      ['==', ['get', 'poiName'], selectedPoi?.name || ''],
+      2,  // Selected POI stroke width
+      1   // Normal POI stroke width
+    ],
+    circleStrokeColor: 'white',
+    circleOpacity: [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      12.8, 1,
+      13, 0
+    ]
+  }), [selectedPoi?.name]);
+
+  const symbolLayerStyle = useMemo(() => ({
+    iconImage: ['get', 'poiCategory'],
+    iconSize: [
+      'case',
+      ['==', ['get', 'poiName'], selectedPoi?.name || ''],
+      0.15,  // Selected POI icon size
+      0.12   // Normal POI icon size
+    ],
+    iconAllowOverlap: true,
+    iconColor: [
+      'match',
+      ['get', 'poiCategory'],
+      'see', '#F0B429',
+      'eat', '#F35627',
+      'sleep', '#0967D2',
+      'shop', '#DA127D',
+      'drink', '#E12D39',
+      'play', '#6CD410',
+      '#FFFFFF'
+    ],
+    symbolSortKey: [
+      'match',
+      ['get', 'poiCategory'],
+      'see', 2,    // See POIs will render on top
+      'sleep', 0,  // Sleep POIs will render underneath
+      1           // All other POIs will render in the middle
+    ],
+    iconPadding: 4,
+    iconOffset: [0, 4],
+    iconOpacity: [
+      'interpolate',
+      ['linear'],
+      ['zoom'],
+      12.8, 0,
+      13, 1
+    ],
+    iconHaloWidth: [
+      'case',
+      ['==', ['get', 'poiName'], selectedPoi?.name || ''],
+      3,  // Selected POI halo width
+      0   // Normal POI halo width
+    ],
+    iconHaloColor: 'rgba(0, 0, 0, 0.5)',
+    iconHaloBlur: 2
+  }), [selectedPoi?.name]);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -513,113 +614,17 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
               shape={poiFeatures}
               onPress={handleSymbolPress}
             >
-              {/* Shadow layer for selected POI */}
               <Mapbox.CircleLayer
                 id="poiShadow"
-                style={{
-                  circleRadius: 16,
-                  circleColor: '#000000',
-                  circleOpacity: [
-                    'case',
-                    ['==', ['get', 'poiName'], selectedPoi?.name || ''],
-                    0.5,
-                    0
-                  ],
-                  circleBlur: 3,
-                  circleSortKey: 0
-                }}
+                style={shadowLayerStyle}
               />
               <Mapbox.CircleLayer
                 id="poiDots"
-                style={{
-                  circleRadius: [
-                    'case',
-                    ['==', ['get', 'poiName'], selectedPoi?.name || ''],
-                    8,  // Selected POI size
-                    5   // Normal POI size
-                  ],
-                  circleColor: [
-                    'match',
-                    ['get', 'poiCategory'],
-                    'see', '#F0B429',
-                    'eat', '#F35627',
-                    'sleep', '#0967D2',
-                    'shop', '#DA127D',
-                    'drink', '#E12D39',
-                    'play', '#6CD410',
-                    '#FFFFFF'
-                  ],
-                  circleSortKey: [
-                    'match',
-                    ['get', 'poiCategory'],
-                    'see', 2,    // See POIs will render on top
-                    'sleep', 0,  // Sleep POIs will render underneath
-                    1           // All other POIs will render in the middle
-                  ],
-                  circleStrokeWidth: [
-                    'case',
-                    ['==', ['get', 'poiName'], selectedPoi?.name || ''],
-                    2,  // Selected POI stroke width
-                    1   // Normal POI stroke width
-                  ],
-                  circleStrokeColor: 'white',
-                  circleOpacity: [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    12.8, 1,
-                    13, 0
-                  ]
-                }}
+                style={dotsLayerStyle}
               />
               <Mapbox.SymbolLayer
                 id="poiSymbols"
-                style={{
-                  iconImage: ['get', 'poiCategory'],
-                  iconSize: [
-                    'case',
-                    ['==', ['get', 'poiName'], selectedPoi?.name || ''],
-                    0.15,  // Selected POI icon size
-                    0.12   // Normal POI icon size
-                  ],
-                  iconAllowOverlap: true,
-                  iconColor: [
-                    'match',
-                    ['get', 'poiCategory'],
-                    'see', '#F0B429',
-                    'eat', '#F35627',
-                    'sleep', '#0967D2',
-                    'shop', '#DA127D',
-                    'drink', '#E12D39',
-                    'play', '#6CD410',
-                    '#FFFFFF'
-                  ],
-                  symbolSortKey: [
-                    'match',
-                    ['get', 'poiCategory'],
-                    'see', 2,    // See POIs will render on top
-                    'sleep', 0,  // Sleep POIs will render underneath
-                    1           // All other POIs will render in the middle
-                  ],
-                  iconPadding: 4,
-                  iconOffset: [0, 4],
-                  iconOpacity: [
-                    'interpolate',
-                    ['linear'],
-                    ['zoom'],
-                    12.8, 0,
-                    13, 1
-                  ],
-                  // Add shadow for selected POI
-                  iconHaloWidth: [
-                    'case',
-                    ['==', ['get', 'poiName'], selectedPoi?.name || ''],
-                    3,  // Selected POI halo width
-                    0   // Normal POI halo width
-                  ],
-                  iconHaloColor: 'rgba(0, 0, 0, 0.5)',
-                  iconHaloBlur: 2
-                }}
+                style={symbolLayerStyle}
               />
             </Mapbox.ShapeSource>
 

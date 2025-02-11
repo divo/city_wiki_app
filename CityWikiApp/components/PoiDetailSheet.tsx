@@ -18,7 +18,7 @@ interface PoiDetailSheetProps {
   snapIndex?: number;
 }
 
-export function PoiDetailSheet({ poi, onClose, cityId, onMapPress, snapIndex }: PoiDetailSheetProps) {
+const PoiDetailSheetBase = ({ poi, onClose, cityId, onMapPress, snapIndex }: PoiDetailSheetProps) => {
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
   const [localBookmarked, setLocalBookmarked] = useState<boolean | null>(null);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
@@ -39,7 +39,7 @@ export function PoiDetailSheet({ poi, onClose, cityId, onMapPress, snapIndex }: 
 
   const isBookmarked = localBookmarked ?? isFavorite(poi);
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     const newState = !isBookmarked;
     setLocalBookmarked(newState);
     if (newState) {
@@ -47,16 +47,38 @@ export function PoiDetailSheet({ poi, onClose, cityId, onMapPress, snapIndex }: 
     } else {
       removeFavorite(cityId, poi);
     }
-  };
+  }, [isBookmarked, addFavorite, removeFavorite, cityId, poi]);
 
-  const handleMapPress = () => {
+  const handleMapPress = useCallback(() => {
     if (onMapPress && poi) {
       onMapPress(poi);
       setCurrentIndex(0);
       // Scroll to top with animation
       scrollViewRef.current?.scrollTo({ y: 0, animated: true });
     }
-  };
+  }, [onMapPress, poi, scrollViewRef]);
+
+  const handleWebsitePress = useCallback(() => {
+    if (poi.website) {
+      Linking.openURL(poi.website);
+    }
+  }, [poi.website]);
+
+  const handlePhonePress = useCallback(() => {
+    if (poi.phone) {
+      Linking.openURL(`tel:${poi.phone}`);
+    }
+  }, [poi.phone]);
+
+  const toggleDescription = useCallback(() => {
+    setIsTextExpanded(!isTextExpanded);
+    Animated.spring(animatedHeight, {
+      toValue: isTextExpanded ? 0 : 1,
+      useNativeDriver: false,
+      friction: 10,
+      tension: 40
+    }).start();
+  }, [isTextExpanded, animatedHeight]);
 
   const openMaps = () => {
     const scheme = Platform.select({ ios: 'maps:', android: 'geo:' }) ?? 'maps:';
@@ -72,28 +94,6 @@ export function PoiDetailSheet({ poi, onClose, cityId, onMapPress, snapIndex }: 
         console.log("Don't know how to open URI: " + url);
       }
     });
-  };
-
-  const handleWebsitePress = () => {
-    if (poi.website) {
-      Linking.openURL(poi.website);
-    }
-  };
-
-  const handlePhonePress = () => {
-    if (poi.phone) {
-      Linking.openURL(`tel:${poi.phone}`);
-    }
-  };
-
-  const toggleDescription = () => {
-    setIsTextExpanded(!isTextExpanded);
-    Animated.spring(animatedHeight, {
-      toValue: isTextExpanded ? 0 : 1,
-      useNativeDriver: false,
-      friction: 10,
-      tension: 40
-    }).start();
   };
 
   return (
@@ -259,7 +259,9 @@ export function PoiDetailSheet({ poi, onClose, cityId, onMapPress, snapIndex }: 
       </BottomSheet>
     </View>
   );
-}
+};
+
+export const PoiDetailSheet = React.memo(PoiDetailSheetBase);
 
 const styles = StyleSheet.create({
   container: {

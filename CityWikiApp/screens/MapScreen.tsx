@@ -47,6 +47,90 @@ const fuzzyMatch = (text: string, query: string): boolean => {
   return regex.test(text.toLowerCase());
 };
 
+// Add the MapHeader component before the main MapScreen component
+interface MapHeaderProps {
+  selectedCategory: string;
+  onCategorySelect: (category: string) => void;
+  searchQuery: string;
+  onSearch: (text: string) => void;
+  isDownloading: boolean;
+  hasOfflinePack: boolean;
+  onDownloadPress: () => void;
+  downloadProgress: number;
+  requiredResources: number;
+  spin: Animated.AnimatedInterpolation<string>;
+}
+
+const MapHeader = React.memo(({ 
+  selectedCategory, 
+  onCategorySelect, 
+  searchQuery, 
+  onSearch,
+  isDownloading,
+  hasOfflinePack,
+  onDownloadPress,
+  downloadProgress,
+  requiredResources,
+  spin
+}: MapHeaderProps) => {
+  return (
+    <View style={styles.header}>
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false}
+        style={styles.categoriesScroll}
+        contentContainerStyle={styles.categoriesContent}
+      >
+        {categories.map((category) => (
+          <CategoryTab
+            key={category}
+            label={category}
+            isActive={selectedCategory === category}
+            onPress={() => onCategorySelect(category)}
+          />
+        ))}
+      </ScrollView>
+
+      <View style={styles.searchContainer}>
+        <View style={styles.searchBarWrapper}>
+          <SearchBar
+            onChangeText={onSearch}
+            value={searchQuery}
+          />
+        </View>
+        <TouchableOpacity 
+          style={styles.downloadButton}
+          onPress={onDownloadPress}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          disabled={isDownloading || hasOfflinePack}
+        >
+          {isDownloading ? (
+            <Animated.View style={{ transform: [{ rotate: spin }] }}>
+              <Ionicons name="sync" size={24} color={colors.primary} />
+            </Animated.View>
+          ) : (
+            <Ionicons 
+              name={hasOfflinePack ? "checkmark-circle" : "download"} 
+              size={24} 
+              color={hasOfflinePack ? colors.success : colors.primary} 
+            />
+          )}
+        </TouchableOpacity>
+        {isDownloading && (
+          <View style={styles.progressBarContainer}>
+            <View 
+              style={[
+                styles.progressBar, 
+                { width: `${requiredResources ? (downloadProgress / requiredResources) * 100 : 0}%` }
+              ]} 
+            />
+          </View>
+        )}
+      </View>
+    </View>
+  );
+});
+
 export default function MapScreen({ initialZoom, onMapStateChange, cityId }: MapScreenProps) {
   const { location, hasPermission, checkLocationPermission } = useLocation();
   const cameraRef = useRef<Camera>(null);
@@ -380,60 +464,18 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false}
-            style={styles.categoriesScroll}
-            contentContainerStyle={styles.categoriesContent}
-          >
-            {categories.map((category) => (
-              <CategoryTab
-                key={category}
-                label={category}
-                isActive={selectedCategory === category}
-                onPress={() => handleCategorySelect(category)}
-              />
-            ))}
-          </ScrollView>
-
-          <View style={styles.searchContainer}>
-            <View style={styles.searchBarWrapper}>
-              <SearchBar
-                onChangeText={handleSearch}
-                value={searchQuery}
-              />
-            </View>
-            <TouchableOpacity 
-              style={styles.downloadButton}
-              onPress={handleDownloadMapPack}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              disabled={isDownloading || hasOfflinePack}
-            >
-              {isDownloading ? (
-                <Animated.View style={{ transform: [{ rotate: spin }] }}>
-                  <Ionicons name="sync" size={24} color={colors.primary} />
-                </Animated.View>
-              ) : (
-                <Ionicons 
-                  name={hasOfflinePack ? "checkmark-circle" : "download"} 
-                  size={24} 
-                  color={hasOfflinePack ? colors.success : colors.primary} 
-                />
-              )}
-            </TouchableOpacity>
-            {isDownloading && (
-              <View style={styles.progressBarContainer}>
-                <View 
-                  style={[
-                    styles.progressBar, 
-                    { width: `${requiredResources ? (downloadProgress / requiredResources) * 100 : 0}%` }
-                  ]} 
-                />
-              </View>
-            )}
-          </View>
-        </View>
+        <MapHeader
+          selectedCategory={selectedCategory}
+          onCategorySelect={handleCategorySelect}
+          searchQuery={searchQuery}
+          onSearch={handleSearch}
+          isDownloading={isDownloading}
+          hasOfflinePack={hasOfflinePack}
+          onDownloadPress={handleDownloadMapPack}
+          downloadProgress={downloadProgress}
+          requiredResources={requiredResources}
+          spin={spin}
+        />
 
         <View style={styles.mapContainer}>
           <Mapbox.MapView

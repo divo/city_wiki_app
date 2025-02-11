@@ -323,8 +323,8 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
       await offlineManager.createPack({
         name: `city_${cityId}`,
         styleURL: MAP_STYLE_URL,
-        minZoom: 10,
-        maxZoom: 15,
+        minZoom: 9,
+        maxZoom: 16,
         bounds: [
           [bounds.minLng, bounds.minLat],
           [bounds.maxLng, bounds.maxLat]

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image, ListRenderItem } from 'react-native';
 import { PointOfInterest } from '../services/LocationService';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getImageSource } from '../utils/imageUtils';
@@ -14,6 +14,35 @@ interface PoiListCarouselProps {
 
 // Displays a carousel of POIs, a single list where each POI is displayed in a card
 export function PoiListCarousel({ title, pois, onSelectPoi, onViewAll }: PoiListCarouselProps) {
+  const ITEM_WIDTH = 204; // width 200 + horizontal margins 2 * 2
+
+  const renderItem: ListRenderItem<PointOfInterest> = React.useCallback(({ item }) => (
+    <TouchableOpacity
+      style={styles.poiItem}
+      onPress={() => onSelectPoi(item)}
+    >
+      <Image 
+        source={getImageSource(item.image_url)}
+        style={styles.poiImage}
+        resizeMode="cover"
+      />
+      <View style={styles.poiInfo}>
+        <Text style={styles.poiSubcategory}>
+          {item.sub_category || item.category}
+        </Text>
+        <Text style={styles.poiName} numberOfLines={2}>
+          {item.name}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  ), [onSelectPoi]);
+
+  const getItemLayout = React.useCallback((data: ArrayLike<PointOfInterest> | null | undefined, index: number) => ({
+    length: ITEM_WIDTH,
+    offset: ITEM_WIDTH * index,
+    index,
+  }), [ITEM_WIDTH]);
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -25,33 +54,15 @@ export function PoiListCarousel({ title, pois, onSelectPoi, onViewAll }: PoiList
         )}
       </View>
       
-      <ScrollView 
-        horizontal 
+      <FlatList
+        data={pois}
+        renderItem={renderItem}
+        keyExtractor={(item) => `${item.name}-${item.latitude}-${item.longitude}`}
+        horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
-      >
-        {pois.map((poi) => (
-          <TouchableOpacity
-            key={`${poi.name}-${poi.latitude}-${poi.longitude}`}
-            style={styles.poiItem}
-            onPress={() => onSelectPoi(poi)}
-          >
-            <Image 
-              source={getImageSource(poi.image_url)} // This works if the asset is bundled
-              style={styles.poiImage}
-              resizeMode="cover"
-            />
-            <View style={styles.poiInfo}>
-              <Text style={styles.poiSubcategory}>
-                {poi.sub_category || poi.category}
-              </Text>
-              <Text style={styles.poiName} numberOfLines={2}>
-                {poi.name}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+        getItemLayout={getItemLayout}
+      />
     </View>
   );
 }

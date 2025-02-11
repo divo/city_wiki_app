@@ -272,7 +272,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     return [cameraBounds.sw, cameraBounds.ne];
   }, [cameraBounds]);
 
-  const handleLocationPress = () => {
+  const handleLocationPress = useCallback(() => {
     if (hasPermission) {
       if (location && cameraRef.current) {
         cameraRef.current.setCamera({
@@ -285,7 +285,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
       setPoiListSheetIndex(0);
       setShowLocationPermissionSheet(true);
     }
-  };
+  }, [hasPermission, location]);
 
   const handleZoomToPoi = useCallback((poi: PointOfInterest) => {
     if (cameraRef.current) {
@@ -303,9 +303,9 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     setSearchQuery(text);
   }, []);
 
-  const handleMapPress = () => {
+  const handleMapPress = useCallback(() => {
     Keyboard.dismiss();
-  };
+  }, []);
 
   const handleDownloadMapPack = useCallback(async () => {
     try {
@@ -365,6 +365,18 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     }
   }, [cityId, locations, hasOfflinePack, isDownloading]);
 
+  const handleCameraChange = useCallback((event: any) => {
+    Keyboard.dismiss();
+    setZoomLevel(event.properties.zoom);
+    if (onMapStateChange) {
+      onMapStateChange([event.properties.center[0], event.properties.center[1]], event.properties.zoom);
+    }
+  }, [onMapStateChange]);
+
+  const handleCategorySelect = useCallback((category: string) => {
+    setSelectedCategory(category);
+  }, []);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -380,7 +392,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
                 key={category}
                 label={category}
                 isActive={selectedCategory === category}
-                onPress={() => setSelectedCategory(category)}
+                onPress={() => handleCategorySelect(category)}
               />
             ))}
           </ScrollView>
@@ -429,13 +441,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
             styleURL={MAP_STYLE_URL}
             onPress={handleMapPress}
             onTouchStart={() => Keyboard.dismiss()}
-            onCameraChanged={event => {
-              Keyboard.dismiss();
-              setZoomLevel(event.properties.zoom);
-              if (onMapStateChange) {
-                onMapStateChange([event.properties.center[0], event.properties.center[1]], event.properties.zoom);
-              }
-            }}
+            onCameraChanged={handleCameraChange}
           >
             <Mapbox.Camera
               ref={cameraRef}

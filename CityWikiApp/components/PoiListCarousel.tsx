@@ -13,7 +13,7 @@ interface PoiListCarouselProps {
 }
 
 // Displays a carousel of POIs, a single list where each POI is displayed in a card
-export function PoiListCarousel({ title, pois, onSelectPoi, onViewAll }: PoiListCarouselProps) {
+const PoiListCarouselBase = ({ title, pois, onSelectPoi, onViewAll }: PoiListCarouselProps) => {
   const ITEM_WIDTH = 204; // width 200 + horizontal margins 2 * 2
 
   const renderItem: ListRenderItem<PointOfInterest> = React.useCallback(({ item }) => (
@@ -43,6 +43,9 @@ export function PoiListCarousel({ title, pois, onSelectPoi, onViewAll }: PoiList
     index,
   }), [ITEM_WIDTH]);
 
+  const keyExtractor = React.useCallback((item: PointOfInterest) => 
+    `${item.name}-${item.latitude}-${item.longitude}`, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -57,7 +60,7 @@ export function PoiListCarousel({ title, pois, onSelectPoi, onViewAll }: PoiList
       <FlatList
         data={pois}
         renderItem={renderItem}
-        keyExtractor={(item) => `${item.name}-${item.latitude}-${item.longitude}`}
+        keyExtractor={keyExtractor}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
@@ -66,6 +69,8 @@ export function PoiListCarousel({ title, pois, onSelectPoi, onViewAll }: PoiList
     </View>
   );
 }
+
+export const PoiListCarousel = React.memo(PoiListCarouselBase);
 
 const styles = StyleSheet.create({
   container: {

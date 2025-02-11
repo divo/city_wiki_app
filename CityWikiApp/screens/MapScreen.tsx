@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity, Keyboard, Platform, Dimensions, AppState } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity, Keyboard, Platform, Dimensions, AppState, Animated, Easing } from 'react-native';
 import Mapbox, { UserLocation, Camera, UserLocationRenderMode, Images } from '@rnmapbox/maps';
 import { CategoryTab } from '../components/CategoryTab';
 import { LocationService, PointOfInterest } from '../services/LocationService';
@@ -13,6 +13,8 @@ import { SearchBar } from '../components/SearchBar';
 import * as turf from '@turf/turf';
 import { colors } from '../styles/globalStyles';
 import { LocationPermissionSheet } from '../components/LocationPermissionSheet';
+import { calculateBoundingBox, BoundingBox } from '../utils/POIUtils';
+import { OfflineMapService } from '../services/OfflineMapService';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
@@ -38,13 +40,6 @@ const categoryIcons = {
   play: require('../assets/play.png'),
 };
 
-interface BoundingBox {
-  minLng: number;
-  maxLng: number;
-  minLat: number;
-  maxLat: number;
-}
-
 // Add this helper function at the top level
 const fuzzyMatch = (text: string, query: string): boolean => {
   const pattern = query.toLowerCase().split('').join('.*');
@@ -67,6 +62,10 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   const [searchQuery, setSearchQuery] = useState('');
   const [poiListSheetIndex, setPoiListSheetIndex] = useState(1); // Default to middle position
   const [showLocationPermissionSheet, setShowLocationPermissionSheet] = useState(false);
+  const [hasOfflinePack, setHasOfflinePack] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const spinValue = useRef(new Animated.Value(0)).current;
+  const [downloadProgress, setDownloadProgress] = useState(0);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -90,6 +89,13 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   useEffect(() => {
     const loadLocations = async () => {
       try {
+        // Check offline pack status first
+        const offlineManager = OfflineMapService.getInstance();
+        const packs = await offlineManager.getPacks();
+        const hasPack = Array.isArray(packs) && packs.some((pack: { name: string }) => pack.name === `city_${cityId}`);
+        setHasOfflinePack(hasPack);
+
+        // Then load locations
         const locationService = LocationService.getInstance();
         await locationService.loadLocations(cityId);
         const filteredLocations = locationService.getPoisByCategory(selectedCategory.toLowerCase());
@@ -108,6 +114,26 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     const locationService = LocationService.getInstance();
     setCenterCoordinate(locationService.getCenterCoordinates());
   }, []);
+
+  useEffect(() => {
+    if (isDownloading) {
+      Animated.loop(
+        Animated.timing(spinValue, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      spinValue.setValue(0);
+    }
+  }, [isDownloading]);
+
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg']
+  });
 
   const validateCoordinates = (poi: PointOfInterest): boolean => {
     if (typeof poi.longitude !== 'number' || typeof poi.latitude !== 'number') {
@@ -225,29 +251,6 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     console.log('Sharing POI:', selectedPoi?.name);
   };
 
-  const calculateBoundingBox = (pois: PointOfInterest[]): BoundingBox | null => {
-    if (!pois.length) return null;
-
-    return pois.reduce((bounds, poi) => {
-      const lng = Number(poi.longitude);
-      const lat = Number(poi.latitude);
-      
-      if (isNaN(lng) || isNaN(lat)) return bounds;
-      
-      return {
-        minLng: Math.min(bounds.minLng, lng),
-        maxLng: Math.max(bounds.maxLng, lng),
-        minLat: Math.min(bounds.minLat, lat),
-        maxLat: Math.max(bounds.maxLat, lat),
-      };
-    }, {
-      minLng: Number(pois[0].longitude),
-      maxLng: Number(pois[0].longitude),
-      minLat: Number(pois[0].latitude),
-      maxLat: Number(pois[0].latitude),
-    });
-  };
-
   const cameraBounds = useMemo(() => {
     const allLocations = LocationService.getInstance().getAllPois();
     const bounds = calculateBoundingBox(allLocations);
@@ -303,6 +306,48 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     Keyboard.dismiss();
   };
 
+  const handleDownloadMapPack = useCallback(async () => {
+    try {
+      if (hasOfflinePack || isDownloading) {
+        return;
+      }
+
+      setIsDownloading(true);
+      setDownloadProgress(0);
+      const bounds = calculateBoundingBox(locations);
+      if (!bounds) return;
+
+      const offlineManager = OfflineMapService.getInstance();
+      await offlineManager.createPack({
+        name: `city_${cityId}`,
+        styleURL: MAP_STYLE_URL,
+        minZoom: 9,
+        maxZoom: 15,
+        bounds: [
+          [bounds.minLng, bounds.minLat],
+          [bounds.maxLng, bounds.maxLat]
+        ]
+      },
+      (pack, status) => {
+        console.log('Download progress:', status);
+        setDownloadProgress(status.percentage);
+        if (status.percentage === 100) {
+          setHasOfflinePack(true);
+          setIsDownloading(false);
+        }
+      },
+      (pack, error) => {
+        console.error('Download error:', error);
+        setIsDownloading(false);
+        setDownloadProgress(0);
+      });
+    } catch (error) {
+      console.error('Error downloading map pack:', error);
+      setIsDownloading(false);
+      setDownloadProgress(0);
+    }
+  }, [cityId, locations, hasOfflinePack, isDownloading]);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -324,10 +369,40 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           </ScrollView>
 
           <View style={styles.searchContainer}>
-            <SearchBar
-              onChangeText={handleSearch}
-              value={searchQuery}
-            />
+            <View style={styles.searchBarWrapper}>
+              <SearchBar
+                onChangeText={handleSearch}
+                value={searchQuery}
+              />
+            </View>
+            <TouchableOpacity 
+              style={styles.downloadButton}
+              onPress={handleDownloadMapPack}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              disabled={isDownloading || hasOfflinePack}
+            >
+              {isDownloading ? (
+                <Animated.View style={{ transform: [{ rotate: spin }] }}>
+                  <Ionicons name="sync" size={24} color={colors.primary} />
+                </Animated.View>
+              ) : (
+                <Ionicons 
+                  name={hasOfflinePack ? "checkmark-circle" : "download"} 
+                  size={24} 
+                  color={hasOfflinePack ? colors.success : colors.primary} 
+                />
+              )}
+            </TouchableOpacity>
+            {isDownloading && (
+              <View style={styles.progressBarContainer}>
+                <View 
+                  style={[
+                    styles.progressBar, 
+                    { width: `${downloadProgress}%` }
+                  ]} 
+                />
+              </View>
+            )}
           </View>
         </View>
 
@@ -559,6 +634,12 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: 16,
     paddingBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 0,
+  },
+  searchBarWrapper: {
+    flex: 1,
   },
   categoriesScroll: {
     flexGrow: 0,
@@ -628,5 +709,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     height: 36,
     borderRadius: 8,
+  },
+  downloadButton: {
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressBarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+    backgroundColor: colors.background.greyTint,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    height: '100%',
+    backgroundColor: colors.primary,
   },
 });

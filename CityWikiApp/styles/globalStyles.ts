@@ -17,6 +17,7 @@ const plaette2 = {
 export const colors = {
   ...palette,
   primary: plaette2.lightBlue,
+  success: '#2F9461',
   
   // Background colors
   background: {

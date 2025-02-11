@@ -22,7 +22,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LandingScreen } from './screens/LandingScreen';
 import { colors } from './styles/globalStyles';
 import { IAPService } from './services/IAPService';
-
+import { OfflineMapService } from './services/OfflineMapService';
 import * as FileSystem from 'expo-file-system';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -263,6 +263,7 @@ export default function App() {
   const handleClearCache = useCallback(async () => {
     await AsyncStorage.clear();
     LocationService.getInstance().clearData();
+    OfflineMapService.getInstance().clearData();
   }, []);
 
   const toggleLocalData = useCallback(() => {

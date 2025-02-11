@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from 'react-native';
-import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { PointOfInterest } from '../services/LocationService';
 import { Ionicons } from '@expo/vector-icons';
 import { LocationObjectCoords } from 'expo-location';
@@ -98,16 +98,18 @@ export function PoiListSheet({
         ) : null}
       </View>
       
-      <BottomSheetScrollView contentContainerStyle={styles.scrollContent}>
-        {filteredPois.map((poi) => (
+      <BottomSheetFlatList
+        data={filteredPois}
+        keyExtractor={(item) => `${item.name}-${item.latitude}-${item.longitude}`}
+        contentContainerStyle={styles.scrollContent}
+        renderItem={({ item }) => (
           <TouchableOpacity 
-            key={`${poi.name}-${poi.latitude}-${poi.longitude}`}
             style={styles.poiItem}
-            onPress={() => onSelectPoi(poi)}
+            onPress={() => onSelectPoi(item)}
           >
             <View style={styles.poiInfo}>
               <View style={styles.titleRow}>
-                {poi.rank === 1 && (
+                {item.rank === 1 && (
                   <Ionicons 
                     name="star" 
                     size={16} 
@@ -115,13 +117,13 @@ export function PoiListSheet({
                     style={styles.starIcon}
                   />
                 )}
-                <Text style={styles.poiName}>{poi.name}</Text>
+                <Text style={styles.poiName}>{item.name}</Text>
               </View>
-              <Text style={styles.poiCategory}>{poi.district} · {poi.category.charAt(0).toUpperCase() + poi.category.slice(1)}</Text>
+              <Text style={styles.poiCategory}>{item.district} · {item.category.charAt(0).toUpperCase() + item.category.slice(1)}</Text>
             </View>
           </TouchableOpacity>
-        ))}
-      </BottomSheetScrollView>
+        )}
+      />
     </BottomSheet>
   );
 }

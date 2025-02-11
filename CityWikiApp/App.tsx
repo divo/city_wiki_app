@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -72,87 +72,98 @@ type RootStackParamList = {
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-const TabNavigator = ({ route, navigation }: any) => {
+// Add memoized screen components at the top level
+const MemoizedExploreScreen = React.memo(ExploreScreen);
+const MemoizedMapScreen = React.memo(MapScreen);
+const MemoizedPoiListDetailView = React.memo(PoiListDetailView);
+
+// Memoize the BookmarksScreen component
+const BookmarksScreen = React.memo(({ cityId, favorites }: { cityId: string; favorites: PointOfInterest[] }) => (
+  <View style={styles.container}>
+    <MemoizedPoiListDetailView
+      list={{
+        title: 'Bookmarks',
+        pois: favorites
+      }}
+      cityId={cityId}
+    />
+  </View>
+));
+
+// Memoize TabNavigator
+const TabNavigator = React.memo(({ route, navigation }: any) => {
   const { cityId, mapZoom, onMapStateChange, headerTitle } = route.params;
   const locationService = LocationService.getInstance();
   const storageService = StorageService.getInstance();
-  const centerCoordinates = locationService.getCenterCoordinates();
+  const centerCoordinates = useMemo(() => locationService.getCenterCoordinates(), []);
   const [selectedPoi, setSelectedPoi] = useState<PointOfInterest | null>(null);
   const { favorites, loadFavorites } = useFavorites();
+
+  const screenOptions = useMemo(() => {
+    return ({ route }: { route: any }) => ({
+      tabBarIcon: ({ focused, color, size }: { focused: boolean; color: string; size: number }) => {
+        let iconName: keyof typeof Ionicons.glyphMap;
+        if (route.name === 'Map') {
+          iconName = focused ? 'map' : 'map-outline';
+        } else if (route.name === 'Guide') {
+          iconName = focused ? 'compass' : 'compass-outline';
+        } else {
+          iconName = focused ? 'bookmark' : 'bookmark-outline';
+        }
+        return <Ionicons name={iconName} size={size} color={color} />;
+      },
+      tabBarActiveTintColor: colors.primary,
+      tabBarInactiveTintColor: 'gray',
+      headerTitle: headerTitle,
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons 
+            name="chevron-back" 
+            size={28} 
+            color={colors.primary}
+            style={{ marginLeft: 16 }}
+          />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, headerTitle]);
 
   // Load favorites when tab is focused
   useEffect(() => {
     loadFavorites(cityId);
   }, [cityId, loadFavorites]);
 
+  const renderGuideScreen = useCallback(() => (
+    <MemoizedExploreScreen
+      route={{ params: { mapZoom, cityId } }}
+    />
+  ), [mapZoom, cityId]);
+
+  const renderMapScreen = useCallback(() => (
+    <MemoizedMapScreen
+      initialZoom={mapZoom}
+      initialCenter={centerCoordinates}
+      onMapStateChange={onMapStateChange}
+      cityId={cityId}
+    />
+  ), [mapZoom, centerCoordinates, onMapStateChange, cityId]);
+
+  const renderBookmarksScreen = useCallback(() => (
+    <BookmarksScreen cityId={cityId} favorites={favorites} />
+  ), [cityId, favorites]);
+
   return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap;
-          if (route.name === 'Map') {
-            iconName = focused ? 'map' : 'map-outline';
-          } else if (route.name === 'Guide') {
-            iconName = focused ? 'compass' : 'compass-outline';
-          } else {
-            iconName = focused ? 'bookmark' : 'bookmark-outline';
-          }
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: 'gray',
-        headerTitle: headerTitle,
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons 
-              name="chevron-back" 
-              size={28} 
-              color={colors.primary}
-              style={{ marginLeft: 16 }}
-            />
-          </TouchableOpacity>
-        ),
-      })}
-    >
-      <Tab.Screen name="Guide">
-        {() => (
-          <ExploreScreen
-            route={{ params: { mapZoom, cityId } }}
-          />
-        )}
-      </Tab.Screen>
-
-      {/* TODO: Have center point and zoom level be passed in as props, store in server */}
-      <Tab.Screen name="Map">
-        {() => (
-          <MapScreen
-            initialZoom={mapZoom}
-            initialCenter={centerCoordinates}
-            onMapStateChange={onMapStateChange}
-            cityId={cityId}
-          />
-        )}
-      </Tab.Screen>
-
+    <Tab.Navigator screenOptions={screenOptions}>
+      <Tab.Screen name="Guide" component={renderGuideScreen} />
+      <Tab.Screen name="Map" component={renderMapScreen} />
       <Tab.Screen 
         name="Bookmarks" 
+        component={renderBookmarksScreen}
         options={{ tabBarLabel: 'Bookmarks' }}
-      >
-        {() => (
-          <View style={styles.container}>
-            <PoiListDetailView
-              list={{
-                title: 'Bookmarks',
-                pois: favorites
-              }}
-              cityId={cityId}
-            />
-          </View>
-        )}
-      </Tab.Screen>
+      />
     </Tab.Navigator>
   );
-};
+});
 
 type CitySelectScreenProps = {
   onCitySelect: (cityId: string) => Promise<void>;
@@ -162,7 +173,14 @@ type CitySelectScreenProps = {
   showLanding: boolean;
 };
 
-const CitySelectScreen = ({ onCitySelect, useLocalData, handleClearCache, toggleLocalData, showLanding }: CitySelectScreenProps) => {
+// Memoize CitySelectScreen
+const CitySelectScreen = React.memo(({ 
+  onCitySelect, 
+  useLocalData, 
+  handleClearCache, 
+  toggleLocalData, 
+  showLanding 
+}: CitySelectScreenProps) => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   
   useEffect(() => {
@@ -171,42 +189,79 @@ const CitySelectScreen = ({ onCitySelect, useLocalData, handleClearCache, toggle
     }
   }, [showLanding, navigation]);
 
+  const debugButtons = useMemo(() => (
+    <View style={styles.debugContainer}>
+      <TouchableOpacity 
+        style={styles.debugButton} 
+        onPress={handleClearCache}
+      >
+        <Text style={styles.debugButtonText}>Clear Cache</Text>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        style={[styles.debugButton, useLocalData && styles.debugButtonActive]} 
+        onPress={toggleLocalData}
+      >
+        <Text style={styles.debugButtonText}>Use Local Data</Text>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.debugButton} 
+        onPress={() => navigation.navigate('Landing')}
+      >
+        <Text style={styles.debugButtonText}>Show Landing</Text>
+      </TouchableOpacity>
+    </View>
+  ), [handleClearCache, useLocalData, toggleLocalData, navigation]);
+
   return (
     <View style={styles.container}>
       <CitySelect 
         onCitySelect={onCitySelect} 
         useLocalData={useLocalData}
       />
-      <View style={styles.debugContainer}>
-        <TouchableOpacity 
-          style={styles.debugButton} 
-          onPress={handleClearCache}
-        >
-          <Text style={styles.debugButtonText}>Clear Cache</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.debugButton, useLocalData && styles.debugButtonActive]} 
-          onPress={toggleLocalData}
-        >
-          <Text style={styles.debugButtonText}>Use Local Data</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.debugButton} 
-          onPress={() => navigation.navigate('Landing')}
-        >
-          <Text style={styles.debugButtonText}>Show Landing</Text>
-        </TouchableOpacity>
-      </View>
+      {debugButtons}
     </View>
   );
-};
+});
 
-export default function App() {
+// Main App component with memoized callbacks and values
+const App = () => {
   const [mapZoom, setMapZoom] = useState(12);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [useLocalData, setUseLocalData] = useState(true);
   const [showLanding, setShowLanding] = useState(false);
+
+  const handleMapStateChange = useCallback((center: [number, number], zoom: number) => {
+    setMapZoom(zoom);
+  }, []);
+
+  const handleCitySelect = useCallback(async (cityId: string) => {
+    return Promise.resolve();
+  }, []);
+
+  const handleClearCache = useCallback(async () => {
+    await AsyncStorage.clear();
+    LocationService.getInstance().clearData();
+    OfflineMapService.getInstance().clearData();
+  }, []);
+
+  const toggleLocalData = useCallback(() => {
+    setUseLocalData(prev => !prev);
+  }, []);
+
+  const renderCitySelectScreen = useCallback(() => (
+    <CitySelectScreen 
+      onCitySelect={handleCitySelect}
+      useLocalData={useLocalData}
+      handleClearCache={handleClearCache}
+      toggleLocalData={toggleLocalData}
+      showLanding={showLanding}
+    />
+  ), [handleCitySelect, useLocalData, handleClearCache, toggleLocalData, showLanding]);
+
+  const renderLandingScreen = useCallback((props: any) => (
+    <LandingScreen onDismiss={() => props.navigation.goBack()} />
+  ), []);
 
   useEffect(() => {
     checkFirstLaunch();
@@ -247,43 +302,22 @@ export default function App() {
     };
   }, []);
 
-  const checkFirstLaunch = async () => {
-    const isFirstLaunch = await StorageService.getInstance().checkFirstLaunch();
-    setShowLanding(isFirstLaunch);
-  };
-
-  const handleMapStateChange = (center: [number, number], zoom: number) => {
-    setMapZoom(zoom);
-  };
-
-  const handleCitySelect = async (cityId: string) => {
-    return Promise.resolve();
-  };
-
-  const handleClearCache = useCallback(async () => {
-    await AsyncStorage.clear();
-    LocationService.getInstance().clearData();
-    OfflineMapService.getInstance().clearData();
-  }, []);
-
-  const toggleLocalData = useCallback(() => {
-    setUseLocalData(prev => !prev);
-  }, []);
-
   useEffect(() => {
     const getLocation = async () => {
-      // Request permission
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
         return;
       }
-
-      // Get location
       await Location.getCurrentPositionAsync({});
     };
 
     getLocation();
+  }, []);
+
+  const checkFirstLaunch = useCallback(async () => {
+    const isFirstLaunch = await StorageService.getInstance().checkFirstLaunch();
+    setShowLanding(isFirstLaunch);
   }, []);
 
   return (
@@ -291,44 +325,28 @@ export default function App() {
       <BottomSheetModalProvider>
         <FavoritesProvider>
           <NavigationContainer>
-            <Stack.Navigator 
-              screenOptions={{ 
-                headerShown: false,
-              }}
-            >
-              <Stack.Screen name="CitySelect">
-                {() => (
-                  <CitySelectScreen 
-                    onCitySelect={handleCitySelect}
-                    useLocalData={useLocalData}
-                    handleClearCache={handleClearCache}
-                    toggleLocalData={toggleLocalData}
-                    showLanding={showLanding}
-                  />
-                )}
-              </Stack.Screen>
-              <Stack.Screen
-                name="CityGuide"
-                component={TabNavigator}
-              />
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="CitySelect" component={renderCitySelectScreen} />
+              <Stack.Screen name="CityGuide" component={TabNavigator} />
               <Stack.Screen
                 name="Landing"
+                component={renderLandingScreen}
                 options={{
                   presentation: 'modal',
                   animation: 'slide_from_bottom',
                   headerShown: false,
                   contentStyle: { backgroundColor: 'transparent' }
                 }}
-              >
-                {(props) => <LandingScreen onDismiss={() => props.navigation.goBack()} />}
-              </Stack.Screen>
+              />
             </Stack.Navigator>
           </NavigationContainer>
         </FavoritesProvider>
       </BottomSheetModalProvider>
     </GestureHandlerRootView>
   );
-}
+};
+
+export default React.memo(App);
 
 const styles = StyleSheet.create({
   container: {
@@ -339,7 +357,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     padding: 8,
     gap: 8,
-    display: 'none',
   },
   debugButton: {
     backgroundColor: '#333',

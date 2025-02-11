@@ -66,6 +66,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   const [isDownloading, setIsDownloading] = useState(false);
   const spinValue = useRef(new Animated.Value(0)).current;
   const [downloadProgress, setDownloadProgress] = useState(0);
+  const [requiredResources, setRequiredResources] = useState(0);
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextAppState) => {
@@ -314,6 +315,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
 
       setIsDownloading(true);
       setDownloadProgress(0);
+      setRequiredResources(0);
       const bounds = calculateBoundingBox(locations);
       if (!bounds) return;
 
@@ -330,8 +332,10 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
       },
       (pack, status) => {
         console.log('Download progress:', status);
-        setDownloadProgress(status.percentage);
-        if (status.percentage === 100) {
+        const { completedResourceCount, requiredResourceCount } = status;
+        setRequiredResources(requiredResourceCount);
+        setDownloadProgress(completedResourceCount);
+        if (completedResourceCount === requiredResourceCount) {
           setHasOfflinePack(true);
           setIsDownloading(false);
         }
@@ -340,11 +344,13 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
         console.error('Download error:', error);
         setIsDownloading(false);
         setDownloadProgress(0);
+        setRequiredResources(0);
       });
     } catch (error) {
       console.error('Error downloading map pack:', error);
       setIsDownloading(false);
       setDownloadProgress(0);
+      setRequiredResources(0);
     }
   }, [cityId, locations, hasOfflinePack, isDownloading]);
 
@@ -398,7 +404,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
                 <View 
                   style={[
                     styles.progressBar, 
-                    { width: `${downloadProgress}%` }
+                    { width: `${requiredResources ? (downloadProgress / requiredResources) * 100 : 0}%` }
                   ]} 
                 />
               </View>

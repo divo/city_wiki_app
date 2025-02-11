@@ -323,7 +323,7 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
       await offlineManager.createPack({
         name: `city_${cityId}`,
         styleURL: MAP_STYLE_URL,
-        minZoom: 9,
+        minZoom: 10,
         maxZoom: 15,
         bounds: [
           [bounds.minLng, bounds.minLat],
@@ -331,7 +331,15 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
         ]
       },
       (pack, status) => {
-        console.log('Download progress:', status);
+        console.log('Download progress:', {
+          name: pack.name,
+          state: pack.state,
+          percentage: status.percentage,
+          completedResourceCount: status.completedResourceCount,
+          requiredResourceCount: status.requiredResourceCount,
+          completedResourceSize: status.completedResourceSize,
+          error: status.error
+        });
         const { completedResourceCount, requiredResourceCount } = status;
         setRequiredResources(requiredResourceCount);
         setDownloadProgress(completedResourceCount);
@@ -341,7 +349,10 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
         }
       },
       (pack, error) => {
-        console.error('Download error:', error);
+        console.error('Download error:', {
+          name: pack.name,
+          error: error
+        });
         setIsDownloading(false);
         setDownloadProgress(0);
         setRequiredResources(0);

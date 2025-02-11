@@ -15,7 +15,8 @@ export class OfflineMapService {
   private static instance: OfflineMapService;
 
   private constructor() {
-    // private to enforce singleton pattern
+    // Set progress event throttle to 100ms for more frequent updates
+    offlineManager.setProgressEventThrottle(100);
   }
 
   public static getInstance(): OfflineMapService {
@@ -56,5 +57,13 @@ export class OfflineMapService {
 
   public async unsubscribe(packName: string): Promise<void> {
     await offlineManager.unsubscribe(packName);
+  }
+
+  public async deletePack(packName: string): Promise<void> {
+    await offlineManager.deletePack(packName);
+  }
+
+  public async invalidatePack(packName: string): Promise<void> {
+    await offlineManager.invalidatePack(packName);
   }
 } 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator, Modal, Animated } from 'react-native';
 import { SearchBar } from './SearchBar';
 import { 
@@ -85,11 +85,12 @@ const CityTile = React.memo(({
   const stampScale = React.useRef(new Animated.Value(1)).current;
   const stampOpacity = React.useRef(new Animated.Value(0.95)).current;
   const prevIsOwnedRef = React.useRef(isOwned);
-  const [isAnimating, setIsAnimating] = React.useState(false);
+  const [showAnimation, setShowAnimation] = React.useState(false);
+  const animationTimeoutRef = React.useRef<NodeJS.Timeout>();
 
   React.useEffect(() => {
     if (isOwned && !prevIsOwnedRef.current) {
-      setIsAnimating(true);
+      setShowAnimation(true);
       stampOpacity.setValue(0);
       stampScale.setValue(10);
       
@@ -98,7 +99,7 @@ const CityTile = React.memo(({
       Animated.parallel([
         Animated.timing(stampOpacity, {
           toValue: 0.95,
-          duration: ANIMATION_DURATION - 20, // End opacity slightly earlier
+          duration: ANIMATION_DURATION - 20,
           useNativeDriver: true,
         }),
         Animated.timing(stampScale, {
@@ -106,12 +107,16 @@ const CityTile = React.memo(({
           duration: ANIMATION_DURATION,
           useNativeDriver: true,
         }),
-      ]).start();
+      ]).start(() => {
+        setShowAnimation(false);
+      });
 
-      // Switch to static image slightly before animation ends
-      setTimeout(() => {
-        setIsAnimating(false);
-      }, ANIMATION_DURATION - 16); // Roughly one frame before end (60fps ≈ 16.7ms)
+      // Cleanup timeout if component unmounts during animation
+      return () => {
+        if (animationTimeoutRef.current) {
+          clearTimeout(animationTimeoutRef.current);
+        }
+      };
     }
     
     prevIsOwnedRef.current = isOwned;
@@ -133,40 +138,42 @@ const CityTile = React.memo(({
         resizeMode="cover"
       />
       {!isOwned && <View style={styles.greyTint} />}
-      {isOwned && isAnimating ? (
-        <Animated.Image
-          source={cityImages[`${city.id.toLowerCase().replace(/ /g, '_')}_stamp.png` as keyof typeof cityImages]}
-          style={[
-            styles.stampOverlay,
-            {
-              opacity: stampOpacity,
-              transform: [
-                { rotate: `${getRotationForCity(city.name)}deg` },
-                { translateX: -5 },
-                { translateY: 5 },
-                { scale: stampScale }
-              ]
-            }
-          ]}
-          resizeMode="contain"
-        />
-      ) : isOwned ? (
-        <Image
-          source={cityImages[`${city.id.toLowerCase().replace(/ /g, '_')}_stamp.png` as keyof typeof cityImages]}
-          style={[
-            styles.stampOverlay,
-            {
-              opacity: 0.95,
-              transform: [
-                { rotate: `${getRotationForCity(city.name)}deg` },
-                { translateX: -5 },
-                { translateY: 5 }
-              ]
-            }
-          ]}
-          resizeMode="contain"
-        />
-      ) : null}
+      {isOwned && (
+        showAnimation ? (
+          <Animated.Image
+            source={cityImages[`${city.id.toLowerCase().replace(/ /g, '_')}_stamp.png` as keyof typeof cityImages]}
+            style={[
+              styles.stampOverlay,
+              {
+                opacity: stampOpacity,
+                transform: [
+                  { rotate: `${getRotationForCity(city.name)}deg` },
+                  { translateX: -5 },
+                  { translateY: 5 },
+                  { scale: stampScale }
+                ]
+              }
+            ]}
+            resizeMode="contain"
+          />
+        ) : (
+          <Image
+            source={cityImages[`${city.id.toLowerCase().replace(/ /g, '_')}_stamp.png` as keyof typeof cityImages]}
+            style={[
+              styles.stampOverlay,
+              {
+                opacity: 0.95,
+                transform: [
+                  { rotate: `${getRotationForCity(city.name)}deg` },
+                  { translateX: -5 },
+                  { translateY: 5 }
+                ]
+              }
+            ]}
+            resizeMode="contain"
+          />
+        )
+      )}
       <View style={styles.cityInfo}>
         <Text style={styles.countryName}>{city.country}</Text>
         <Text style={styles.cityName} numberOfLines={2}>
@@ -180,6 +187,10 @@ const CityTile = React.memo(({
       )}
     </TouchableOpacity>
   );
+}, (prevProps, nextProps) => {
+  return prevProps.city.id === nextProps.city.id &&
+         prevProps.isOwned === nextProps.isOwned &&
+         prevProps.isLoading === nextProps.isLoading;
 });
 
 export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
@@ -193,32 +204,30 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   });
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
 
-  useEffect(() => {
-    const loadNewlyOwnedCities = async () => {
-      const owned = await PurchaseStorage.getInstance().getOwnedCities();
-      setOwnedCities(owned);
-    };  
-    
-    // Load initial state
-    loadOwnedCities();
+  // Memoize the owned cities map for O(1) lookup
+  const ownedCitiesMap = useMemo(() => {
+    return ownedCities.reduce((acc, cityId) => {
+      acc[cityId] = true;
+      return acc;
+    }, {} as Record<string, boolean>);
+  }, [ownedCities]);
 
-    // Listen for changes
+  const loadNewlyOwnedCities = useCallback(async () => {
+    const owned = await PurchaseStorage.getInstance().getOwnedCities();
+    setOwnedCities(owned);
+  }, []);
+
+  useEffect(() => {
+    loadNewlyOwnedCities();
     const purchaseStorage = PurchaseStorage.getInstance();
     purchaseStorage.addChangeListener(loadNewlyOwnedCities);
-
-    // Cleanup
     return () => {
       purchaseStorage.removeChangeListener(loadNewlyOwnedCities);
     };
-  }, []);
-
-  const loadOwnedCities = async () => {
-    const owned = await PurchaseStorage.getInstance().getOwnedCities();
-    setOwnedCities(owned);
-  };
+  }, [loadNewlyOwnedCities]);
 
   const handleCitySelect = useCallback(async (city: City) => {
-    const isOwned = ownedCities.includes(city.id);
+    const isOwned = ownedCitiesMap[city.id];
     if (!isOwned && !city.isOwned) {
       setSelectedCity(city);
       return;
@@ -249,23 +258,31 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
     } finally {
       setLoadingCity(null);
     }
-  }, [ownedCities, useLocalData, onCitySelect, navigation]);
+  }, [useLocalData, onCitySelect, navigation, ownedCitiesMap]);
 
-  const handlePurchase = async () => {
+  const handlePurchase = useCallback(async () => {
     if (selectedCity) {
       setSelectedCity(null);
     }
-  };
+  }, [selectedCity]);
 
-  const renderCityTile = useCallback((city: City) => (
-    <CityTile
-      key={city.id}
-      city={city}
-      isOwned={ownedCities.includes(city.id)}
-      isLoading={loadingCity === city.id}
-      onPress={() => handleCitySelect(city)}
-    />
-  ), [ownedCities, loadingCity, handleCitySelect]);
+  const getCitySelectHandler = useCallback((city: City) => {
+    return () => handleCitySelect(city);
+  }, [handleCitySelect]);
+
+  // Memoize the city tiles array to prevent unnecessary re-renders
+  const cityTiles = useMemo(() => 
+    cities.map(city => (
+      <CityTile
+        key={city.id}
+        city={city}
+        isOwned={ownedCitiesMap[city.id] || false}
+        isLoading={loadingCity === city.id}
+        onPress={getCitySelectHandler(city)}
+      />
+    )),
+    [ownedCitiesMap, loadingCity, getCitySelectHandler]
+  );
 
   if (!fontsLoaded) {
     return null;
@@ -300,7 +317,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
           removeClippedSubviews={true}
         >
           <View style={styles.tilesContainer}>
-            {cities.map(renderCityTile)}
+            {cityTiles}
           </View>
         </ScrollView>
         <SafeAreaView style={styles.bottomSafeArea} />

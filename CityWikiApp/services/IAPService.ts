@@ -178,6 +178,7 @@ class IAPService {
       if (this.isSimulator) {
         // In simulator, directly mark as owned
         await this.purchaseStorage.markCityAsOwned(cityId);
+        return;
       }
 
       // Request the purchase through Apple IAP

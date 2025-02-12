@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator, Animated, Modal } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator, Modal, Animated } from 'react-native';
 import { SearchBar } from './SearchBar';
 import { 
   useFonts,
@@ -34,7 +34,6 @@ const cityImages = {
   'paris_cover.png': require('../assets/paris_cover.png'),
   'rome_cover.png': require('../assets/rome_cover.png'),
   'san_francisco_cover.png': require('../assets/san_francisco_cover.png'),
-  //'test.jpg': require('../assets/test.jpg'),
   'tokyo_cover.png': require('../assets/tokyo_cover.png'),
   'title_image.png': require('../assets/title_image.png'),
   'paris_stamp.png': require('../assets/paris_stamp.png'),
@@ -48,10 +47,17 @@ const cityImages = {
 };
 
 const getRotationForCity = (cityName: string) => {
-  // Sum the character codes to get a deterministic number
+  // Cache the rotation values
+  const rotationCache: { [key: string]: number } = {};
+  
+  if (rotationCache[cityName]) {
+    return rotationCache[cityName];
+  }
+  
   const sum = cityName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  // Use modulo to get an angle between -20 and 20 degrees
-  return ((sum % 41) - 30);
+  const rotation = ((sum % 45) - 30);
+  rotationCache[cityName] = rotation;
+  return rotation;
 };
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -64,74 +70,123 @@ interface CitySelectProps {
   useLocalData: boolean;
 }
 
-interface AnimatedStampProps {
-  cityId: string;
-  rotation: number;
-  onAnimationComplete: () => void;
-  isStatic?: boolean;
-}
+// Memoize the city tile component
+const CityTile = React.memo(({ 
+  city, 
+  isOwned, 
+  isLoading, 
+  onPress, 
+}: { 
+  city: City; 
+  isOwned: boolean; 
+  isLoading: boolean; 
+  onPress: () => void;
+}) => {
+  const stampScale = React.useRef(new Animated.Value(1)).current;
+  const stampOpacity = React.useRef(new Animated.Value(0.95)).current;
+  const prevIsOwnedRef = React.useRef(isOwned);
+  const [isAnimating, setIsAnimating] = React.useState(false);
 
-const AnimatedStamp = ({ cityId, rotation, onAnimationComplete, isStatic }: AnimatedStampProps) => {
-  const scale = useRef(new Animated.Value(isStatic ? 1 : 8)).current;
-  const opacity = useRef(new Animated.Value(isStatic ? 1 : 0)).current;
-
-  useEffect(() => {
-    if (!isStatic) {
-      Animated.sequence([
-        // Initial delay
-        Animated.delay(200),
-        // Make stamp visible with a fade in
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 100, // Short fade in
+  React.useEffect(() => {
+    if (isOwned && !prevIsOwnedRef.current) {
+      setIsAnimating(true);
+      stampOpacity.setValue(0);
+      stampScale.setValue(10);
+      
+      const ANIMATION_DURATION = 400;
+      
+      Animated.parallel([
+        Animated.timing(stampOpacity, {
+          toValue: 0.95,
+          duration: ANIMATION_DURATION - 20, // End opacity slightly earlier
           useNativeDriver: true,
         }),
-        // Then animate the scale with a spring effect
-        Animated.spring(scale, {
+        Animated.timing(stampScale, {
           toValue: 1,
-          friction: 8,
-          tension: 40,
+          duration: ANIMATION_DURATION,
           useNativeDriver: true,
-        })
-      ]).start(() => {
-        onAnimationComplete();
-      });
+        }),
+      ]).start();
+
+      // Switch to static image slightly before animation ends
+      setTimeout(() => {
+        setIsAnimating(false);
+      }, ANIMATION_DURATION - 16); // Roughly one frame before end (60fps ≈ 16.7ms)
     }
-  }, []);
+    
+    prevIsOwnedRef.current = isOwned;
+  }, [isOwned]);
 
   return (
-    <Animated.Image
-      source={cityImages[`${cityId.toLowerCase().replace(/ /g, '_')}_stamp.png` as keyof typeof cityImages]}
-      style={[
-        styles.stampOverlay,
-        {
-          transform: [
-            { scale },
-            { rotate: `${rotation}deg` },
-            { translateX: -5 },
-            { translateY: 5 }
-          ],
-          opacity,
-          shadowColor: '#000',
-          shadowOffset: {
-            width: 0,
-            height: 2,
-          },
-          shadowOpacity: 0.5,
-          shadowRadius: 3.84,
+    <TouchableOpacity
+      style={styles.cityTile}
+      onPress={onPress}
+      disabled={isLoading}
+    >
+      <Image
+        source={
+          city.imageUrl.startsWith('http')
+            ? { uri: city.imageUrl }
+            : cityImages[city.imageUrl as keyof typeof cityImages]
         }
-      ]}
-      resizeMode="contain"
-    />
+        style={[styles.cityImage, !isOwned && styles.unownedImage]}
+        resizeMode="cover"
+      />
+      {!isOwned && <View style={styles.greyTint} />}
+      {isOwned && isAnimating ? (
+        <Animated.Image
+          source={cityImages[`${city.id.toLowerCase().replace(/ /g, '_')}_stamp.png` as keyof typeof cityImages]}
+          style={[
+            styles.stampOverlay,
+            {
+              opacity: stampOpacity,
+              transform: [
+                { rotate: `${getRotationForCity(city.name)}deg` },
+                { translateX: -5 },
+                { translateY: 5 },
+                { scale: stampScale }
+              ]
+            }
+          ]}
+          resizeMode="contain"
+        />
+      ) : isOwned ? (
+        <Image
+          source={cityImages[`${city.id.toLowerCase().replace(/ /g, '_')}_stamp.png` as keyof typeof cityImages]}
+          style={[
+            styles.stampOverlay,
+            {
+              opacity: 0.95,
+              transform: [
+                { rotate: `${getRotationForCity(city.name)}deg` },
+                { translateX: -5 },
+                { translateY: 5 }
+              ]
+            }
+          ]}
+          resizeMode="contain"
+        />
+      ) : null}
+      <View style={styles.cityInfo}>
+        <Text style={styles.countryName}>{city.country}</Text>
+        <Text style={styles.cityName} numberOfLines={2}>
+          {city.name.replace(' ', '\n')}
+        </Text>
+      </View>
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#FFFFFF" />
+        </View>
+      )}
+    </TouchableOpacity>
   );
-};
+});
 
 export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   const navigation = useNavigation<CitySelectScreenNavigationProp>();
   const [loadingCity, setLoadingCity] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
   const [ownedCities, setOwnedCities] = useState<string[]>([]);
-  const [animatingCities, setAnimatingCities] = useState<{[key: string]: boolean}>({});
   const [fontsLoaded] = useFonts({
     Montserrat_600SemiBold,
     Montserrat_500Medium,
@@ -141,12 +196,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   useEffect(() => {
     const loadNewlyOwnedCities = async () => {
       const owned = await PurchaseStorage.getInstance().getOwnedCities();
-      const newCities = owned.filter(cityId => !ownedCities.includes(cityId));
       setOwnedCities(owned);
-      // Trigger animation for newly owned cities
-      newCities.forEach(cityId => {
-        setAnimatingCities(prev => ({ ...prev, [cityId]: true }));
-      });
     };  
     
     // Load initial state
@@ -160,15 +210,14 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
     return () => {
       purchaseStorage.removeChangeListener(loadNewlyOwnedCities);
     };
-  }, [ownedCities]);
+  }, []);
 
   const loadOwnedCities = async () => {
     const owned = await PurchaseStorage.getInstance().getOwnedCities();
-    const newCities = owned.filter(cityId => !ownedCities.includes(cityId));
     setOwnedCities(owned);
   };
 
-  const handleCitySelect = async (city: City) => {
+  const handleCitySelect = useCallback(async (city: City) => {
     const isOwned = ownedCities.includes(city.id);
     if (!isOwned && !city.isOwned) {
       setSelectedCity(city);
@@ -188,7 +237,6 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
       await onCitySelect(city.id);
       
       const cityInfo = locationService.getCityInfo();
-      const centerCoords = locationService.getCenterCoordinates();
       
       navigation.navigate('CityGuide', {
         cityId: city.id,
@@ -201,7 +249,7 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
     } finally {
       setLoadingCity(null);
     }
-  };
+  }, [ownedCities, useLocalData, onCitySelect, navigation]);
 
   const handlePurchase = async () => {
     if (selectedCity) {
@@ -209,14 +257,15 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
     }
   };
 
-  const handleAnimationComplete = (cityId: string) => {
-    setAnimatingCities(prev => {
-      const next = { ...prev };
-      delete next[cityId];
-      return next;
-    });
-    setSelectedCity(null);
-  };
+  const renderCityTile = useCallback((city: City) => (
+    <CityTile
+      key={city.id}
+      city={city}
+      isOwned={ownedCities.includes(city.id)}
+      isLoading={loadingCity === city.id}
+      onPress={() => handleCitySelect(city)}
+    />
+  ), [ownedCities, loadingCity, handleCitySelect]);
 
   if (!fontsLoaded) {
     return null;
@@ -248,46 +297,10 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsHorizontalScrollIndicator={false}
+          removeClippedSubviews={true}
         >
           <View style={styles.tilesContainer}>
-            {cities.map(city => (
-              <TouchableOpacity
-                key={city.id}
-                style={styles.cityTile}
-                onPress={() => handleCitySelect(city)}
-                disabled={loadingCity !== null}
-              >
-                <Image
-                  source={
-                    city.imageUrl.startsWith('http')
-                      ? { uri: city.imageUrl }
-                      : cityImages[city.imageUrl as keyof typeof cityImages]
-                  }
-                  style={[styles.cityImage, !ownedCities.includes(city.id) && styles.unownedImage]}
-                  resizeMode="cover"
-                />
-                {!ownedCities.includes(city.id) && <View style={styles.greyTint} />}
-                {ownedCities.includes(city.id) && (
-                  <AnimatedStamp
-                    cityId={city.id}
-                    rotation={getRotationForCity(city.name)}
-                    onAnimationComplete={() => handleAnimationComplete(city.id)}
-                    isStatic={!animatingCities[city.id]}
-                  />
-                )}
-                <View style={styles.cityInfo}>
-                  <Text style={styles.countryName}>{city.country}</Text>
-                  <Text style={styles.cityName} numberOfLines={2}>
-                    {city.name.replace(' ', '\n')}
-                  </Text>
-                </View>
-                {loadingCity === city.id && (
-                  <View style={styles.loadingOverlay}>
-                    <ActivityIndicator size="large" color="#FFFFFF" />
-                  </View>
-                )}
-              </TouchableOpacity>
-            ))}
+            {cities.map(renderCityTile)}
           </View>
         </ScrollView>
         <SafeAreaView style={styles.bottomSafeArea} />
@@ -421,6 +434,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  settingsButton: {
+    position: 'absolute',
+    right: 16,
+    top: 24,
+    zIndex: 1,
+  },
   stampOverlay: {
     position: 'absolute',
     top: '8%',
@@ -428,24 +447,5 @@ const styles = StyleSheet.create({
     width: '40%',
     height: '40%',
     opacity: 0.95,
-    transform: [
-      { scale: 1.1 },
-      { translateX: -5 },
-      { translateY: 5 },
-    ],
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.5,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  settingsButton: {
-    position: 'absolute',
-    right: 16,
-    top: 24,
-    zIndex: 1,
   },
 });

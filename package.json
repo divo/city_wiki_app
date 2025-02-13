@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@expo/image-utils": "^0.6.4",
+    "sharp": "^0.33.5"
+  }
+}

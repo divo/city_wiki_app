@@ -10,6 +10,22 @@ export default {
     userInterfaceStyle: "light",
     newArchEnabled: true,
     assetBundlePatterns: ["assets/**/*"], // Ensures all files under `assets/` are bundled
+    experiments: {
+      tsconfigPaths: true,
+      useSharpForImageProcessing: true
+    },
+    extra: {
+      assetBundleConfig: {
+        maxMemoryUsageInMB: 512,
+        enableParallelProcessing: true,
+        optimizeImages: true,
+        imageProcessingBatchSize: 10
+      },
+      eas: {
+        projectId: "e4a563a7-c296-4f7c-af28-803bc5b3c4ae",
+        mapbox_token: process.env.EXPO_PUBLIC_MAPBOX_TOKEN
+      },
+    },
     splash: {
       image: "./assets/splash-icon.png",
       resizeMode: "contain",
@@ -53,11 +69,5 @@ export default {
       "expo-font",
       ["react-native-iap"]
     ],
-    extra: {
-      eas: {
-        projectId: "e4a563a7-c296-4f7c-af28-803bc5b3c4ae",
-        mapbox_token: process.env.EXPO_PUBLIC_MAPBOX_TOKEN
-      },
-    },
   },
 };

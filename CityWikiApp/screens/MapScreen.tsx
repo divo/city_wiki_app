@@ -15,6 +15,7 @@ import { colors } from '../styles/globalStyles';
 import { LocationPermissionSheet } from '../components/LocationPermissionSheet';
 import { calculateBoundingBox, BoundingBox } from '../utils/POIUtils';
 import { OfflineMapService } from '../services/OfflineMapService';
+import { MapDownloadButtonComponent } from '../components/MapDownloadButtonComponent';
 
 // Initialize Mapbox with your access token
 Mapbox.setAccessToken(process.env.EXPO_PUBLIC_MAPBOX_TOKEN);
@@ -58,7 +59,6 @@ interface MapHeaderProps {
   onDownloadPress: () => void;
   downloadProgress: number;
   requiredResources: number;
-  spin: Animated.AnimatedInterpolation<string>;
 }
 
 const MapHeader = React.memo(({ 
@@ -71,7 +71,6 @@ const MapHeader = React.memo(({
   onDownloadPress,
   downloadProgress,
   requiredResources,
-  spin
 }: MapHeaderProps) => {
   return (
     <View style={styles.header}>
@@ -98,24 +97,11 @@ const MapHeader = React.memo(({
             value={searchQuery}
           />
         </View>
-        <TouchableOpacity 
-          style={styles.downloadButton}
+        <MapDownloadButtonComponent 
+          type={isDownloading ? 'downloading' : hasOfflinePack ? 'downloaded' : 'download'}
           onPress={onDownloadPress}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           disabled={isDownloading || hasOfflinePack}
-        >
-          {isDownloading ? (
-            <Animated.View style={{ transform: [{ rotate: spin }] }}>
-              <Ionicons name="sync" size={24} color={colors.primary} />
-            </Animated.View>
-          ) : (
-            <Ionicons 
-              name={hasOfflinePack ? "checkmark-circle" : "download"} 
-              size={24} 
-              color={hasOfflinePack ? colors.success : colors.primary} 
-            />
-          )}
-        </TouchableOpacity>
+        />
         {isDownloading && (
           <View style={styles.progressBarContainer}>
             <View 
@@ -148,7 +134,6 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
   const [showLocationPermissionSheet, setShowLocationPermissionSheet] = useState(false);
   const [hasOfflinePack, setHasOfflinePack] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const spinValue = useRef(new Animated.Value(0)).current;
   const [downloadProgress, setDownloadProgress] = useState(0);
   const [requiredResources, setRequiredResources] = useState(0);
   const [filteredPoisState, setFilteredPoisState] = useState<PointOfInterest[]>([]);
@@ -205,26 +190,6 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
     const locationService = LocationService.getInstance();
     setCenterCoordinate(locationService.getCenterCoordinates());
   }, []);
-
-  useEffect(() => {
-    if (isDownloading) {
-      Animated.loop(
-        Animated.timing(spinValue, {
-          toValue: 1,
-          duration: 1000,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        })
-      ).start();
-    } else {
-      spinValue.setValue(0);
-    }
-  }, [isDownloading]);
-
-  const spin = spinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg']
-  });
 
   const validateCoordinates = (poi: PointOfInterest): boolean => {
     if (typeof poi.longitude !== 'number' || typeof poi.latitude !== 'number') {
@@ -606,7 +571,6 @@ export default function MapScreen({ initialZoom, onMapStateChange, cityId }: Map
           onDownloadPress={handleDownloadMapPack}
           downloadProgress={downloadProgress}
           requiredResources={requiredResources}
-          spin={spin}
         />
 
         <View style={styles.mapContainer}>

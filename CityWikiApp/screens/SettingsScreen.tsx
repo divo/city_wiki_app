@@ -117,7 +117,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
       onPress: handleLicenses,
     },
     {
-      title: 'Map Packs Debug',
+      title: 'Map Packs',
       icon: 'map-outline',
       onPress: handleMapPacks,
     },
@@ -251,8 +251,8 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
             <View style={{ width: 24 }} />
           </View>
           
-          <ScrollView style={styles.modalContent}>
-            <Text style={styles.debugTitle}>Offline Map Packs:</Text>
+          <ScrollView style={styles.modalContent} contentContainerStyle={styles.scrollContent}>
+            <Text style={styles.debugTitle}>Offline Map Packs</Text>
             {mapPacks.length === 0 ? (
               <Text style={styles.debugText}>No map packs found</Text>
             ) : (
@@ -262,16 +262,10 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
                 const pack = root.pack;
                 return (
                   <View key={index} style={styles.debugItem}>
-                    <Text style={styles.debugText}>Name: {root.metadata.name ?? 'Unknown'}</Text>
-                    <Text style={styles.debugText}>Status: {String(pack.state ?? 'unknown')}</Text>
-                    <Text style={styles.debugText}>Progress: {(pack.percentage ?? 0).toFixed(2)}%</Text>
-                    <Text style={styles.debugText}>Resources: {pack.completedResourceCount ?? 0}/{pack.requiredResourceCount ?? 0}</Text>
-                    <Text style={styles.debugText}>Size: {((pack.completedResourceSize ?? 0) / 1024 / 1024).toFixed(2)} MB</Text>
-                    <Text style={styles.debugText}>Style URL: {metadata.styleURI ?? 'N/A'}</Text>
-                    <Text style={styles.debugText}>Zoom Range: {metadata._rnmapbox?.zoomRange?.[0] ?? 0} - {metadata._rnmapbox?.zoomRange?.[1] ?? 0}</Text>
-                    <Text style={styles.debugText}>Bounds:</Text>
-                    <Text style={[styles.debugText, styles.indentedText]}>NE: [{(bounds[2]?.[0] ?? 0).toFixed(6)}, {(bounds[2]?.[1] ?? 0).toFixed(6)}]</Text>
-                    <Text style={[styles.debugText, styles.indentedText]}>SW: [{(bounds[0]?.[0] ?? 0).toFixed(6)}, {(bounds[0]?.[1] ?? 0).toFixed(6)}]</Text>
+                    <Text style={styles.debugItemTitle}>{root.metadata.name?.replace(/^city_/, '') ?? 'Unknown'}</Text>
+                    <View style={styles.debugItemContent}>
+                      <Text style={styles.debugText}>Size: {((pack.completedResourceSize ?? 0) / 1024 / 1024).toFixed(2)} MB</Text>
+                    </View>
                   </View>
                 );
               })
@@ -400,21 +394,51 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   debugTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  debugItem: {
+    backgroundColor: 'white',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  debugItemTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: '#333',
-    marginBottom: 16,
-  },
-  debugItem: {
-    backgroundColor: '#F5F5F5',
-    padding: 12,
-    borderRadius: 8,
     marginBottom: 12,
+  },
+  debugItemContent: {
+    gap: 8,
   },
   debugText: {
     fontSize: 14,
     color: '#666',
     marginBottom: 4,
+  },
+  scrollContent: {
+    padding: 16,
+  },
+  progressBar: {
+    height: 8,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 4,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: colors.primary,
+    borderRadius: 4,
   },
   indentedText: {
     marginLeft: 16,

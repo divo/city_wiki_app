@@ -44,6 +44,8 @@ const cityImages = {
   'london_cover.png': require('../assets/london_cover.png'),
   'new_york_city_stamp.png': require('../assets/new_york_city_stamp.png'),
   'london_stamp.png': require('../assets/london_stamp.png'),
+  'county_dublin_cover.png': require('../assets/county_dublin_cover.png'),
+  'county_dublin_stamp.png': require('../assets/county_dublin_stamp.png'),
 };
 
 const getRotationForCity = (cityName: string) => {

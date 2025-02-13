@@ -20,6 +20,7 @@
 		A3853321D1F840329C1DE677 /* Rome.json in Resources */ = {isa = PBXBuildFile; fileRef = E095F06D33E0464195EB89DD /* Rome.json */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		DCF78B97507646C0B7797284 /* County Dublin.json in Resources */ = {isa = PBXBuildFile; fileRef = 868E2684C92B4C139CD061A5 /* County Dublin.json */; };
 		EAD1CBFD7B7449A9BCEF35DA /* Paris.json in Resources */ = {isa = PBXBuildFile; fileRef = 669A1164F45B4FB1A1B0D63D /* Paris.json */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,7 @@
 		669A1164F45B4FB1A1B0D63D /* Paris.json */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Paris.json; path = ../assets/Paris/Paris.json; sourceTree = "<group>"; };
 		6C2E3173556A471DD304B334 /* Pods-CityWikiApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CityWikiApp.debug.xcconfig"; path = "Target Support Files/Pods-CityWikiApp/Pods-CityWikiApp.debug.xcconfig"; sourceTree = "<group>"; };
 		7A4D352CD337FB3A3BF06240 /* Pods-CityWikiApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CityWikiApp.release.xcconfig"; path = "Target Support Files/Pods-CityWikiApp/Pods-CityWikiApp.release.xcconfig"; sourceTree = "<group>"; };
+		868E2684C92B4C139CD061A5 /* County Dublin.json */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "County Dublin.json"; path = "../assets/County Dublin/County Dublin.json"; sourceTree = "<group>"; };
 		93202BD812FE9F2796DE6053 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = CityWikiApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		93773EA32D56609F008BA398 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = CityWikiApp/SplashScreen.storyboard; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 				293F28144B504C4195FD94AB /* London.json */,
 				E095F06D33E0464195EB89DD /* Rome.json */,
 				1D0091D4C69E41CE825FB122 /* New York City.json */,
+				868E2684C92B4C139CD061A5 /* County Dublin.json */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -232,6 +235,7 @@
 				94344CE00559468DACFFBFF6 /* London.json in Resources */,
 				A3853321D1F840329C1DE677 /* Rome.json in Resources */,
 				76954E955DB2481098DDC136 /* New York City.json in Resources */,
+				DCF78B97507646C0B7797284 /* County Dublin.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

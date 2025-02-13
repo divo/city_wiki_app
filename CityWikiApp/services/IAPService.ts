@@ -181,6 +181,11 @@ class IAPService {
         return;
       }
 
+      if (city.id === 'County Dublin') {
+        await this.purchaseStorage.markCityAsOwned(cityId);
+        return;
+      }
+
       // Request the purchase through Apple IAP
       await RNIap.requestPurchase({
         sku: city.iap_id

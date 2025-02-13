@@ -19,6 +19,7 @@ const cityAssets: Record<CityId, any> = {
   'London': require('../assets/London/London.json'),
   'Rome': require('../assets/Rome/Rome.json'),
   'New York City': require('../assets/New York City/New York City.json'),
+  'County Dublin': require('../assets/County Dublin/County Dublin.json'),
 };
 
 interface PointOfInterest {

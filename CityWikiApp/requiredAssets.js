@@ -249,6 +249,8 @@ export const requiredAssets = {
   'Rome/media/cities/images/rome.jpg': require('./assets/Rome/media/cities/images/rome.jpg'),
   'adaptive-icon.png': require('./assets/adaptive-icon.png'),
   'barcelona.png': require('./assets/barcelona.png'),
+  'county_dublin_cover.png': require('./assets/county_dublin_cover.png'),
+  'county_dublin_stamp.png': require('./assets/county_dublin_stamp.png'),
   'drink.png': require('./assets/drink.png'),
   'eat.png': require('./assets/eat.png'),
   'favicon.png': require('./assets/favicon.png'),

@@ -293,6 +293,8 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
   return (
     <View style={styles.outerContainer}>
       <View style={styles.container}>
+        <View style={styles.backgroundTop} />
+        <View style={styles.backgroundBottom} />
         <SafeAreaView style={styles.topSafeArea} />
         <View style={styles.header}>
           <Image 
@@ -348,10 +350,25 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
 const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
-    backgroundColor: '#88A9AA',
   },
   container: {
     flex: 1,
+  },
+  backgroundTop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    backgroundColor: '#88A9AA',
+  },
+  backgroundBottom: {
+    position: 'absolute',
+    top: 80,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'white',
   },
   topSafeArea: {
     flex: 0,
@@ -362,15 +379,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   header: {
-    paddingTop: 16,
-    paddingBottom: 0,
-    height: 60,
-    backgroundColor: '#88A9AA',
+    height: 80,
     position: 'relative',
+    width: '100%',
+    overflow: 'hidden',
+    zIndex: 1,
   },
   titleImage: {
-    width: SCREEN_WIDTH,
+    width: '100%',
     height: '100%',
+    position: 'absolute',
+    top: 0,
   },
   titleOverlay: {
     position: 'absolute',
@@ -380,6 +399,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 0,
+    paddingBottom: 8,
   },
   titleText: {
     color: 'white',
@@ -392,8 +413,8 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-    paddingTop: 16,
     backgroundColor: 'white',
+    marginTop: -1,
   },
   scrollContent: {
     padding: TILE_MARGIN,

@@ -325,6 +325,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     padding: 8,
     gap: 8,
+    display: 'none',
   },
   debugButton: {
     backgroundColor: '#333',

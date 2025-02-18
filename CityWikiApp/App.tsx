@@ -25,6 +25,7 @@ import { IAPService } from './services/IAPService';
 import { OfflineMapService } from './services/OfflineMapService';
 import * as FileSystem from 'expo-file-system';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import * as amplitude from '@amplitude/analytics-react-native';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -233,6 +234,10 @@ const App = () => {
 
   useEffect(() => {
     checkFirstLaunch();
+  }, []);
+
+  useEffect(() => {
+    amplitude.init('1722608f92b1d40c756a3ce859c45e11');
   }, []);
 
   useEffect(() => {

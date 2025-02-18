@@ -13,6 +13,7 @@
     "build": "npm run update-assets && npm run generate-required-assets && expo prebuild"
   },
   "dependencies": {
+    "@amplitude/analytics-react-native": "^1.4.11",
     "@expo-google-fonts/montserrat": "^0.2.3",
     "@expo/metro-runtime": "~4.0.1",
     "@gorhom/bottom-sheet": "^5.0.6",

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Button, View, TouchableOpacity, Text, StyleSheet, AppState } from 'react-native';
+import { Button, View, TouchableOpacity, Text, StyleSheet, AppState, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -26,6 +26,9 @@ import { OfflineMapService } from './services/OfflineMapService';
 import * as FileSystem from 'expo-file-system';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as amplitude from '@amplitude/analytics-react-native';
+import { AppWriteService } from './services/AppWriteService';
+import { AnalyticsService } from './services/AnalyticsService';
+import { flush } from './services/AnalyticsService';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -158,8 +161,8 @@ const CitySelectScreen = React.memo(({
     }
   }, [showLanding, navigation]);
 
-  const debugButtons = useMemo(() => (
-    <View style={styles.debugContainer}>
+  const debugButtons = __DEV__ ? (
+    <View style={styles.debugButtonContainer}>
       <TouchableOpacity 
         style={styles.debugButton} 
         onPress={handleClearCache}
@@ -178,8 +181,17 @@ const CitySelectScreen = React.memo(({
       >
         <Text style={styles.debugButtonText}>Show Landing</Text>
       </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.debugButton} 
+        onPress={async () => {
+          await flush();
+          Alert.alert('Analytics', 'Events flushed');
+        }}
+      >
+        <Text style={styles.debugButtonText}>Flush Analytics</Text>
+      </TouchableOpacity>
     </View>
-  ), [handleClearCache, useLocalData, toggleLocalData, navigation]);
+  ) : null;
 
   return (
     <View style={styles.container}>
@@ -237,7 +249,16 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    amplitude.init('1722608f92b1d40c756a3ce859c45e11');
+    const initializeAmplitude = async () => {
+      try {
+        const userId = await AppWriteService.getInstance().getUserId();
+        await AnalyticsService.getInstance().initialize(userId);
+      } catch (error) {
+        console.error('Failed to initialize Amplitude:', error);
+      }
+    };
+
+    initializeAmplitude();
   }, []);
 
   useEffect(() => {
@@ -330,7 +351,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     padding: 8,
     gap: 8,
-    display: 'none',
   },
   debugButton: {
     backgroundColor: '#333',
@@ -344,5 +364,12 @@ const styles = StyleSheet.create({
   debugButtonText: {
     color: 'white',
     fontSize: 12,
+  },
+  debugButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    padding: 8,
+    gap: 8,
+    display: 'none',
   },
 });

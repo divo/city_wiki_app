@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator, Modal, Animated } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, Image, Dimensions, ActivityIndicator, Modal, Animated, Platform, Linking } from 'react-native';
 import { SearchBar } from './SearchBar';
 import { 
   useFonts,
@@ -17,6 +17,8 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { cities, City } from '../types/city';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { Ionicons } from '@expo/vector-icons';
+import { track } from '../services/AnalyticsService';
+import { IAPService } from '../services/IAPService';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -230,13 +232,16 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
 
   const handleCitySelect = useCallback(async (city: City) => {
     const isOwned = ownedCitiesMap[city.id];
+    
     if (!isOwned && !city.isOwned) {
+      track('Purchase Sheet Opened', { city_id: city.id });
       setSelectedCity(city);
       return;
     }
 
     try {
       setLoadingCity(city.id);
+      track('City Selected', { city_id: city.id, is_owned: isOwned });
       const locationService = LocationService.getInstance();
       
       if (useLocalData) {
@@ -257,6 +262,10 @@ export function CitySelect({ onCitySelect, useLocalData }: CitySelectProps) {
       });
     } catch (error) {
       console.error('Error loading city data:', error);
+      track('City Load Failed', { 
+        city_id: city.id, 
+        error_message: error instanceof Error ? error.message : 'Unknown error' 
+      });
     } finally {
       setLoadingCity(null);
     }

@@ -60,7 +60,7 @@ export class AppWriteService {
     }
   }
 
-  private async getUserId(): Promise<string> {
+  public async getUserId(): Promise<string> {
     try {
       // Return cached ID if available
       if (this.cachedUserId) {

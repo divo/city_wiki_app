@@ -438,6 +438,8 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = CityWikiApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "City Wandr";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -470,6 +472,8 @@
 				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = 9F7FZ3S533;
 				INFOPLIST_FILE = CityWikiApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "City Wandr";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

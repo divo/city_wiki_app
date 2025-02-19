@@ -29,6 +29,7 @@ import * as amplitude from '@amplitude/analytics-react-native';
 import { AppWriteService } from './services/AppWriteService';
 import { AnalyticsService } from './services/AnalyticsService';
 import { flush } from './services/AnalyticsService';
+import Toast from 'react-native-toast-message';
 
 type RootStackParamList = {
   CitySelect: undefined;
@@ -315,28 +316,31 @@ const App = () => {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <BottomSheetModalProvider>
-        <FavoritesProvider>
-          <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="CitySelect" component={renderCitySelectScreen} />
-              <Stack.Screen name="CityGuide" component={TabNavigator} />
-              <Stack.Screen
-                name="Landing"
-                component={renderLandingScreen}
-                options={{
-                  presentation: 'modal',
-                  animation: 'slide_from_bottom',
-                  headerShown: false,
-                  contentStyle: { backgroundColor: 'transparent' }
-                }}
-              />
-            </Stack.Navigator>
-          </NavigationContainer>
-        </FavoritesProvider>
-      </BottomSheetModalProvider>
-    </GestureHandlerRootView>
+    <>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <BottomSheetModalProvider>
+          <FavoritesProvider>
+            <NavigationContainer>
+              <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="CitySelect" component={renderCitySelectScreen} />
+                <Stack.Screen name="CityGuide" component={TabNavigator} />
+                <Stack.Screen
+                  name="Landing"
+                  component={renderLandingScreen}
+                  options={{
+                    presentation: 'modal',
+                    animation: 'slide_from_bottom',
+                    headerShown: false,
+                    contentStyle: { backgroundColor: 'transparent' }
+                  }}
+                />
+              </Stack.Navigator>
+            </NavigationContainer>
+          </FavoritesProvider>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
+      <Toast />
+    </>
   );
 };
 

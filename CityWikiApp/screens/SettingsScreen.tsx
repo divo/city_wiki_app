@@ -8,6 +8,8 @@ import { AppWriteService } from '../services/AppWriteService';
 import { LicensesScreen } from './LicensesScreen';
 import { PrivacyPolicyScreen } from './PrivacyPolicyScreen';
 import { OfflineMapService } from '../services/OfflineMapService';
+import { track } from '../services/AnalyticsService';
+import Toast from 'react-native-toast-message';
 
 // Initialize AppWrite client
 const client = new Client()
@@ -71,9 +73,22 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
       setFeedbackModalVisible(false);
       setEmail('');
       setMessage('');
+      showToast('success', 'Feedback sent');
     } catch (error) {
       console.error('Error sending feedback:', error);
+      track('Error Occurred', { 
+        category: 'feedback', 
+        error_message: error instanceof Error ? error.message : 'Unknown error' 
+      });
+      showToast('error', 'Failed to send feedback');
     }
+  };
+
+  const showToast = (type: 'success' | 'error', message: string) => {
+    Toast.show({
+      type,
+      text1: message,
+    });
   };
 
   const handlePrivacyLegal = () => {
@@ -273,6 +288,7 @@ export function SettingsScreen({ onClose }: SettingsScreenProps) {
           </ScrollView>
         </SafeAreaView>
       </Modal>
+      <Toast />
     </SafeAreaView>
   );
 }

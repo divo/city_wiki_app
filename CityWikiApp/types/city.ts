@@ -36,5 +36,11 @@ export const cities: City[] = [
     imageUrl: 'rome_cover.png',
     iap_id: 'com.halfspud.CityWikiApp.rome',
   },
-  
+  {
+    id: 'County Dublin',
+    name: 'County Dublin',
+    country: 'Ireland',
+    imageUrl: 'county_dublin_cover.png',
+    iap_id: 'com.halfspud.CityWikiApp.dublin',
+  }
 ]; 
